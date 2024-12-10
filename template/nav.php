@@ -1,0 +1,36 @@
+<nav>
+<div class="container mx-auto flex justify-between items-center py-4 px-6">
+     <ul class="flex space-x-6">
+      <li>
+       <a class="hover:text-gray-300" href="#">
+        Главная
+       </a>
+      </li>
+      <li>
+       <a class="hover:text-gray-300" href="#">
+        Автомобили
+       </a>
+      </li>
+      <li>
+       <a class="hover:text-gray-300" href="#">
+        О нас
+       </a>
+      </li>
+      <li>
+       <a class="hover:text-gray-300" href="#">
+        Контакты
+       </a>
+      </li>
+      <li>
+       <a class="hover:text-gray-300" href="#">
+        Вход
+       </a>
+      </li>
+      <li>
+       <a class="hover:text-gray-300" href="#">
+        Регистрация
+       </a>
+      </li>
+     </ul>
+</div>
+</nav>
