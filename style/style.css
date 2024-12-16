@@ -1,0 +1,30 @@
+.border-gray-400 {
+    border-color: #A0AEC0; /* Серый цвет */
+}
+
+.border-2 {
+    border-width: 2px; /* Толщина окантовки */
+}
+
+.shadow-lg {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Эффект объемности */
+}
+#body_cars{
+        height: 90; /* Высота на весь экран */
+        display: flex;
+        justify-content: center; /* Горизонтальное центрирование */
+        align-items: center; /* Вертикальное центрирование */
+        background-color: #f7fafc; /* Цвет фона для лучшего контраста */
+}
+.carousel {
+    position: relative;
+  }
+  .carousel img {
+    display: none;
+  }
+  .carousel img.active {
+    display: block;
+  }
+  .thumbnail img {
+    cursor: pointer;
+  }
