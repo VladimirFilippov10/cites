@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная</title>
+    <title>Автомобили</title>
     <script src="js/carsOpenTheAdvancedSearch.js"></script>
 </head>
 <body class="bg-white flex flex-col min-h-screen">
@@ -11,6 +11,9 @@
         include 'template\header.php';
     ?>
      <main class="flex-grow">
+     <h2 class="text-3xl font-bold mb-8 text-center">
+        Поиск автомобилей
+   </h2>
     <div class="bg-gray-100 p-6 rounded-lg shadow-md w-full max-w-4xl mx-auto">
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -80,9 +83,12 @@
             </div>
         </div>
         <div class="mt-4 flex justify-between items-center">
-            <button id="toggle-button" class="text-blue-500" onclick="toggleAdvancedSearch()">Расширенный поиск</button>
-            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg">Показать результаты</button>
-        </div>
+                <button type="button" id="toggle-button" class="text-blue-500" onclick="toggleAdvancedSearch()">Расширенный поиск</button>
+                <div class="flex space-x-2">
+                    <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg" onclick="resetFilters()">Сбросить фильтры</button>
+                    <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Показать результаты</button>
+                </div>
+            </div>
     </div>
   <div class="container mx-auto py-20 px-20">
    <div class="flex flex-col w-full p-5 space-y-5">

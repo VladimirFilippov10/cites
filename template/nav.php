@@ -12,6 +12,11 @@
        </a>
       </li>
       <li>
+       <a class="hover:text-gray-300" href="ransomCars.php">
+        Выкуп автомобилей
+       </a>
+      </li>
+      <li>
        <a class="hover:text-gray-300" href="#">
         О нас
        </a>
@@ -31,6 +36,7 @@
         Регистрация
        </a>
       </li>
+   
      </ul>
 </div>
 </nav>
