@@ -17,22 +17,22 @@
        </a>
       </li>
       <li>
-       <a class="hover:text-gray-300" href="#">
+       <a class="hover:text-gray-300" href="aboutUs.php">
         О нас
        </a>
       </li>
       <li>
-       <a class="hover:text-gray-300" href="#">
+       <a class="hover:text-gray-300" href="contacts.php">
         Контакты
        </a>
       </li>
       <li>
-       <a class="hover:text-gray-300" href="#">
+       <a class="hover:text-gray-300" href="auto.php">
         Вход
        </a>
       </li>
       <li>
-       <a class="hover:text-gray-300" href="#">
+       <a class="hover:text-gray-300" href="registr.php">
         Регистрация
        </a>
       </li>
