@@ -10,37 +10,6 @@
     <?php
         include 'template\header.php';
     ?>
-
-<div class="container mx-auto flex justify-between items-center">
-    <h1 class="text-2xl font-bold">
-     Автосалон
-    </h1>
-    <nav>
-     <ul class="flex space-x-4">
-      <li>
-       <a class="hover:underline" href="#">
-        Главная
-       </a>
-      </li>
-      <li>
-       <a class="hover:underline" href="#">
-        Автомобили
-       </a>
-      </li>
-      <li>
-       <a class="hover:underline" href="#">
-        О нас
-       </a>
-      </li>
-      <li>
-       <a class="hover:underline" href="#">
-        Контакты
-       </a>
-      </li>
-     </ul>
-    </nav>
-   </div>
-  </header>
   <main class="container mx-auto p-4">
    <h2 class="text-3xl font-bold text-center my-8">
     Контакты

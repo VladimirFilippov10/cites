@@ -70,13 +70,6 @@
        </span>
       </li>
       <li class="flex items-center space-x-2">
-       <i class="fas fa-ruble-sign">
-       </i>
-       <span>
-        2145 ₽ / год
-       </span>
-      </li>
-      <li class="flex items-center space-x-2">
        <i class="fas fa-cogs">
        </i>
        <span>

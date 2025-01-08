@@ -3,8 +3,8 @@
             <div>
                 <h3 class="text-lg font-bold mb-2">Контакты</h3>
                 <p>Телефон: +7 (123) 456-78-90</p>
-                <p>Email: info@mysite.com</p>
-                <p>Адрес: ул. Примерная, д. 1, г. Москва, Россия</p>
+                <p>Email: info@autosalon.ru</p>
+                <p>Адрес: ул. Новосёлов, д. 1, с. Благословенка, Россия</p>
             </div>
             <div>
                 <h3 class="text-lg font-bold mb-2">Мы в соцсетях</h3>
