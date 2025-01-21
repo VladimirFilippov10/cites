@@ -27,6 +27,11 @@
        </a>
       </li>
       <li>
+       <a class="hover:text-gray-300" href="offers.php">
+        Вакансии
+       </a>
+      </li>
+      <li>
        <a class="hover:text-gray-300" href="auto.php">
         Вход
        </a>

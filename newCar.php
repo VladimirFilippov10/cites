@@ -12,54 +12,103 @@
         include 'template\nav_employees.php';
     ?>
 <body class="bg-gray-100 text-gray-800">
-    <div class="max-w-5xl mx-auto p-4 bg-white shadow-md mt-10">
+<div class="max-w-7xl w-2/4 mx-auto p-4 bg-white shadow-md mt-10">
         <h1 class="text-2xl font-bold mb-6">Добавить новую запись</h1>
         <form action="submit.php" method="POST" enctype="multipart/form-data">
             <!-- Основная информация -->
             <div class="mb-6">
-                <label for="title" class="block text-lg font-semibold mb-2">Название автомобиля</label>
+                <label for="title" class="block text-lg font-semibold mb-2">WinCod</label>
                 <input type="text" id="title" name="title" class="w-full p-2 border border-gray-300 rounded" required>
             </div>
 
+            <!-- Марка и модель автомобиля -->
             <div class="mb-6">
-                <label for="price" class="block text-lg font-semibold mb-2">Цена</label>
-                <input type="text" id="price" name="price" class="w-full p-2 border border-gray-300 rounded" required>
+                <label for="brand" class="block text-lg font-semibold mb-2">Марка автомобиля</label>
+                <select id="brand" name="brand" class="w-full p-2 border border-gray-300 rounded" required>
+                    <option value="">Выберите марку</option>
+                    <!-- Здесь будут загружаться марки из базы данных -->
+                </select>
             </div>
 
             <div class="mb-6">
-                <label for="description" class="block text-lg font-semibold mb-2">Описание автомобиля</label>
-                <textarea id="description" name="description" class="w-full p-2 border border-gray-300 rounded" rows="4" required></textarea>
+                <label for="model" class="block text-lg font-semibold mb-2">Модель автомобиля</label>
+                <select id="model" name="model" class="w-full p-2 border border-gray-300 rounded" required>
+                    <option value="">Выберите модель</option>
+                    <!-- Здесь будут загружаться модели из базы данных -->
+                </select>
+                <div class="mb-6">
+                    <label for="year" class="block text-lg font-semibold mb-2">Год производства</label>
+                        <select id="year" name="year" class="w-full p-2 border border-gray-300 rounded" required>
+                                <?php
+                                      $currentYear = date('Y');
+                                          for ($i = 1886; $i <= $currentYear; $i++) {
+                                                 echo '<option value="' . $i . '">' . $i . '</option>';
+                                            }
+                                ?>
+                      </select>
+                </div>
+                <div class="mb-6">
+                <label for="generation" class="block text-lg font-semibold mb-2">Поколение</label>
+                <input type="text" id="generation" name="generation" class="w-full p-2 border border-gray-300 rounded" required>
             </div>
 
-            <!-- Дополнительная информация -->
+            </div>
             <div class="mb-6">
                 <h2 class="text-xl font-semibold mb-4">Дополнительная информация</h2>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="generation" class="block text-lg font-semibold mb-2">Поколение</label>
-                        <input type="text" id="generation" name="generation" class="w-full p-2 border border-gray-300 rounded">
+                        <label for="mileage" class="block text-lg font-semibold mb-2">Пробег (км)</label>
+                        <input type="number" id="mileage" name="mileage" class="w-full p-2 border border-gray-300 rounded" required>
                     </div>
                     <div>
-                        <label for="mileage" class="block text-lg font-semibold mb-2">Пробег (км)</label>
-                        <input type="number" id="mileage" name="mileage" class="w-full p-2 border border-gray-300 rounded">
+                        <label for="color" class="block text-lg font-semibold mb-2">Цвет</label>
+                        <input type="text" id="color" name="color" class="w-full p-2 border border-gray-300 rounded" required>
                     </div>
                     <div>
                         <label for="owners" class="block text-lg font-semibold mb-2">Количество владельцев</label>
-                        <input type="number" id="owners" name="owners" class="w-full p-2 border border-gray-300 rounded">
-                    </div>
-                    <div>
-                        <label for="vin" class="block text-lg font-semibold mb-2">VIN код</label>
-                        <input type="text" id="vin" name="vin" class="w-full p-2 border border-gray-300 rounded">
-                    </div>
-                    <div>
-                        <label for="power" class="block text-lg font-semibold mb-2">Мощность (л.с.)</label>
-                        <input type="number" id="power" name="power" class="w-full p-2 border border-gray-300 rounded">
+                        <input type="number" id="owners" name="owners" class="w-full p-2 border border-gray-300 rounded" required>
                     </div>
                     <div>
                         <label for="engine_volume" class="block text-lg font-semibold mb-2">Объем двигателя (л)</label>
-                        <input type="number" step="0.1" id="engine_volume" name="engine_volume" class="w-full p-2 border border-gray-300 rounded">
+                        <input type="number" step="0.1" id="engine_volume" name="engine_volume" class="w-full p-2 border border-gray-300 rounded" required>
+                    </div>
+                    <div>
+                        <label for="power" class="block text-lg font-semibold mb-2">Мощность (л.с.)</label>
+                        <input type="number" id="power" name="power" class="w-full p-2 border border-gray-300 rounded" required>
+                    </div>
+                    <div>
+                        <label for="drive" class="block text-lg font-semibold mb-2">Привод</label>
+ <select id="drive" name="drive" class="w-full p-2 border border-gray-300 rounded" required>
+                            <option value="front">Передний</option>
+                            <option value="rear">Задний</option>
+                            <option value="all">Полный</option>
+                        </select>
                     </div>
                 </div>
+            </div>
+            <div>
+                        <label for="transmission" class="block text-lg font-semibold mb-2">Коробка передач</label>
+                        <select id="transmission" name="transmission" class="w-full p-2 border border-gray-300 rounded" required>
+                            <option value="manual">Механическая</option>
+                            <option value="automatic">Автоматическая</option>
+                            <option value="semi-automatic">Полуавтоматическая</option>
+                        </select>
+                    </div>
+            <!-- Тип топлива -->
+            <div class="mb-6">
+                <label for="fuel_type" class="block text-lg font-semibold mb-2">Тип топлива</label>
+                <select id="fuel_type" name="fuel_type" class="w-full p-2 border border-gray-300 rounded" required>
+                    <option value="petrol">Бензин</option>
+                    <option value="diesel">Дизель</option>
+                    <option value="electric">Электричество</option>
+                    <option value="hybrid">Гибрид</option>
+                </select>
+            </div>
+    
+            <!-- Описание автомобиля -->
+            <div class="mb-6">
+                <label for="description" class="block text-lg font-semibold mb-2">Описание автомобиля</label>
+                <textarea id="description" name="description" class="w-full p-2 border border-gray-300 rounded" rows="4" required></textarea>
             </div>
 
             <!-- Загрузка изображений автомобиля -->
@@ -72,8 +121,7 @@
                     </div>
                 </div>
                 <button type="button" id="addPhoto" class="bg-blue-500 text-white p-2 rounded">Добавить фото</button>
-            </div>
-
+            </div>  
             <!-- Комплектация -->
             <div class="mb-6">
                 <h2 class="text-xl font-semibold mb-4">Комплектация</h2>
