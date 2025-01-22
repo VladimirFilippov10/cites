@@ -4,13 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Добавить авто</title>
-    <script src="js/messageRansomCars.js"></script>
 </head>
 <body class="bg-white flex flex-col min-h-screen">
     <?php
         include 'template\header.php';
         include 'template\nav_employees.php';
     ?>
+        <script src="js/newCarPhoto.js"></script>
+        <script src="js/newCarComplect.js"></script>
+        <script src="js/newCarLimitation.js"></script>
+
+
+
 <body class="bg-gray-100 text-gray-800">
 <div class="max-w-7xl w-2/4 mx-auto p-4 bg-white shadow-md mt-10">
         <h1 class="text-2xl font-bold mb-6">Добавить новую запись</h1>
@@ -127,50 +132,27 @@
                 <h2 class="text-xl font-semibold mb-4">Комплектация</h2>
                 <div id="complectationContainer">
                     <div class="complectation-item mb-4">
-                        <input type="text" name="complectation[]" class="w-full p-2 border border-gray-300 rounded mb-2" placeholder="Комплектация" required>
+                        <input type="text" name="complectation[]" class="w-3/4 p-2 border border-gray-300 rounded mb-2" placeholder="Элемент комплектации" required>
                         <button type="button" class="delete-complectation bg-red-500 text-white p-1 rounded">Удалить</button>
                     </div>
                 </div>
-                <button type="button" id="addComplectation" class="bg-blue-500 text-white p-2 rounded">Добавить комплектацию</button>
+                <button type="button" id="addComplectation" class="bg-blue-500 text-white p-2 rounded">Добавить элемент комплектации</button>
             </div>
-
+            <!-- Ограничения -->
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-4">Ограничения и обременения</h2>
+                <div id="limitationContainer">
+                    <div class="limitation-item mb-4">
+                        <input type="text" name="limitation[]" class="w-3/4 p-2 border border-gray-300 rounded mb-2" placeholder="Ограничение" required>
+                        <button type="button" class="delete-limitation bg-red-500 text-white p-1 rounded">Удалить</button>
+                    </div>
+                </div>
+                <button type="button" id="addLimitation" class="bg-blue-500 text-white p-2 rounded">Добавить ограничения</button>
+            </div>                                        
             <button type="submit" class="bg-green-500 text-white p-2 rounded">Сохранить</button>
         </form>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            // Добавление нового фото
-            $('#addPhoto').click(function() {
-                $('#photoContainer').append(`
-                    <div class="photo-item mb-4">
-                        <input type="file" name="car_photos[]" class="mb-2" required>
-                        <button type="button" class="delete-photo bg-red-500 text-white p-1 rounded">Удалить</button>
-                    </div>
-                `);
-            });
-
-            // Удаление фото
-            $(document).on('click', '.delete-photo', function() {
-                $(this).closest('.photo-item').remove();
-            });
-
-            // Добавление нового элемента комплектации
-            $('#addComplectation').click(function() {
-                $('#complectationContainer').append(`
-                    <div class="complectation-item mb-4">
-                        <input type="text" name="complectation[]" class="w-full p-2 border border-gray-300 rounded mb-2" placeholder="Комплектация" required>
-                        <button type="button" class="delete-complectation bg-red-500 text-white p-1 rounded">Удалить</button>
-                    </div>
-                `);
-            });
-
-            // Удаление элемента комплектации
-            $(document).on('click', '.delete-complectation', function() {
-                $(this).closest('.complectation-item').remove();
-            });
-        });
-    </script>
 <?php
 include 'template/footer.php'
 ?>
