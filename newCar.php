@@ -7,31 +7,46 @@
 </head>
 <body class="bg-white flex flex-col min-h-screen">
     <?php
-        include 'template\header.php';
-        include 'template\nav_employees.php';
+        include 'template/header.php';
+        include 'template/nav_employees.php';
+        include 'php/dbconnect.php'; // Подключение к базе данных
+
     ?>
-        <script src="js/newCarPhoto.js"></script>
-        <script src="js/newCarComplect.js"></script>
-        <script src="js/newCarLimitation.js"></script>
-
-
+    <script src="js/newCarPhoto.js"></script>
+    <script src="js/newCarComplect.js"></script>
+    <script src="js/newCarLimitation.js"></script>
 
 <body class="bg-gray-100 text-gray-800">
 <div class="max-w-7xl w-2/4 mx-auto p-4 bg-white shadow-md mt-10">
         <h1 class="text-2xl font-bold mb-6">Добавить новую запись</h1>
-        <form action="submit.php" method="POST" enctype="multipart/form-data">
+        <form action="php/submit.php" method="POST" enctype="multipart/form-data">
             <!-- Основная информация -->
             <div class="mb-6">
                 <label for="title" class="block text-lg font-semibold mb-2">WinCod</label>
                 <input type="text" id="title" name="title" class="w-full p-2 border border-gray-300 rounded" required>
             </div>
 
+            <!-- Скрытое поле для model_id -->
+            <input type="hidden" id="model_id" name="model_id" value="">
+
             <!-- Марка и модель автомобиля -->
             <div class="mb-6">
                 <label for="brand" class="block text-lg font-semibold mb-2">Марка автомобиля</label>
                 <select id="brand" name="brand" class="w-full p-2 border border-gray-300 rounded" required>
                     <option value="">Выберите марку</option>
-                    <!-- Здесь будут загружаться марки из базы данных -->
+                    <?php
+                    $marksQuery = "SELECT * FROM marks";
+                    $marksResult = $conn->query($marksQuery);
+                    if ($marksResult->num_rows > 0) {
+                        while($row = $marksResult->fetch_assoc()) {
+                            echo '<option value="' . $row['id_marks'] . '">' . $row['name_marks'] . '</option>';
+                            // Отладочная информация
+                            echo $row['name_marks'] . "<br>"; // Вывод имени марки
+                        }
+                    } else {
+                        echo '<option value="">Нет доступных марок</option>';
+                    }
+                    ?>
                 </select>
             </div>
 
@@ -39,7 +54,6 @@
                 <label for="model" class="block text-lg font-semibold mb-2">Модель автомобиля</label>
                 <select id="model" name="model" class="w-full p-2 border border-gray-300 rounded" required>
                     <option value="">Выберите модель</option>
-                    <!-- Здесь будут загружаться модели из базы данных -->
                 </select>
                 <div class="mb-6">
                     <label for="year" class="block text-lg font-semibold mb-2">Год производства</label>
@@ -148,13 +162,40 @@
                     </div>
                 </div>
                 <button type="button" id="addLimitation" class="bg-blue-500 text-white p-2 rounded">Добавить ограничения</button>
-            </div>                                        
+            </div>                                      
             <button type="submit" class="bg-green-500 text-white p-2 rounded">Сохранить</button>
         </form>
     </div>
 
+    <script>
+    document.getElementById('brand').addEventListener('change', function() {
+        var brandId = this.value;
+        var modelSelect = document.getElementById('model');
+        modelSelect.innerHTML = '<option value="">Выберите модель</option>'; // Очистить предыдущие модели
+
+        if (brandId) {
+            fetch('php/getModels.php?id_marks=' + brandId) // Изменен путь к getModels.php
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(function(model) {
+                        var option = document.createElement('option');
+                        option.value = model.id_model;
+                        option.textContent = model.name_model;
+                        modelSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error)); // Добавлена обработка ошибок
+        }
+    });
+
+    document.getElementById('model').addEventListener('change', function() {
+        var modelId = this.value;
+        document.getElementById('model_id').value = modelId; // Устанавливаем model_id в скрытое поле
+    });
+    </script>
+    
 <?php
-include 'template/footer.php'
+include 'template/footer.php';
 ?>
 </body>
 </html>
