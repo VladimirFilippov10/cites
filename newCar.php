@@ -10,7 +10,6 @@
         include 'template/header.php';
         include 'template/nav_employees.php';
         include 'php/dbconnect.php'; // Подключение к базе данных
-
     ?>
     <script src="js/newCarPhoto.js"></script>
     <script src="js/newCarComplect.js"></script>
@@ -40,8 +39,6 @@
                     if ($marksResult->num_rows > 0) {
                         while($row = $marksResult->fetch_assoc()) {
                             echo '<option value="' . $row['id_marks'] . '">' . $row['name_marks'] . '</option>';
-                            // Отладочная информация
-                            echo $row['name_marks'] . "<br>"; // Вывод имени марки
                         }
                     } else {
                         echo '<option value="">Нет доступных марок</option>';
@@ -76,7 +73,7 @@
                 <h2 class="text-xl font-semibold mb-4">Дополнительная информация</h2>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="mileage" class="block text-lg font-semibold mb-2">Пробег (км)</label>
+                        <label for="melage" class="block text-lg font-semibold mb-2">Пробег (км)</label>
                         <input type="number" id="mileage" name="mileage" class="w-full p-2 border border-gray-300 rounded" required>
                     </div>
                     <div>
@@ -163,6 +160,7 @@
                 </div>
                 <button type="button" id="addLimitation" class="bg-blue-500 text-white p-2 rounded">Добавить ограничения</button>
             </div>                                      
+
             <button type="submit" class="bg-green-500 text-white p-2 rounded">Сохранить</button>
         </form>
     </div>
@@ -174,7 +172,7 @@
         modelSelect.innerHTML = '<option value="">Выберите модель</option>'; // Очистить предыдущие модели
 
         if (brandId) {
-            fetch('php/getModels.php?id_marks=' + brandId) // Изменен путь к getModels.php
+            fetch('php/getModels.php?id_marks=' + brandId)
                 .then(response => response.json())
                 .then(data => {
                     data.forEach(function(model) {
@@ -184,7 +182,7 @@
                         modelSelect.appendChild(option);
                     });
                 })
-                .catch(error => console.error('Ошибка:', error)); // Добавлена обработка ошибок
+                .catch(error => console.error('Ошибка:', error));
         }
     });
 
@@ -192,6 +190,15 @@
         var modelId = this.value;
         document.getElementById('model_id').value = modelId; // Устанавливаем model_id в скрытое поле
     });
+
+    // Очистка полей формы и отображение сообщения
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('success')) {
+            alert('Запись успешно добавлена!');
+            document.querySelector('form').reset(); // Очистка полей формы
+        }
+    };
     </script>
     
 <?php
