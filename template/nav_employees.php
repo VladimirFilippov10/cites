@@ -4,7 +4,9 @@
                 <li><a href="#" class="text-gray-700 hover:text-blue-700">Выкупы</a></li>
                 <li><a href="#" class="text-gray-700 hover:text-blue-700">Продажи</a></li>
                 <li><a href="#" class="text-gray-700 hover:text-blue-700">Склад</a></li>
+                <li><a href="newCar.php" class="text-gray-700 hover:text-blue-700">Добавить автомобиль</a></li>
                 <li><a href="newCar.php" class="text-gray-700 hover:text-blue-700">Автомобили</a></li>
+                <li><a href="addBrandsAndModels.php" class="text-gray-700 hover:text-blue-700">Марки и модели</a></li>
 
             </ul>
 </nav>

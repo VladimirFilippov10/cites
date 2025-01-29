@@ -83,10 +83,10 @@
                 // Запрос для получения всех автомобилей с марками и моделями
                 $query = "SELECT cars.*, marks.name_marks, model.name_model FROM cars 
                           JOIN marks ON cars.model_id = marks.id_marks 
-                          JOIN model ON cars.model_id = model.id_model
-                         /* WHERE cars.cars_in_price = true*/";
+                          JOIN model ON cars.model_id = model.id_model";
 
-                // Добавление фильтров к запросу
+                // Закомментировал фильтры для проверки
+                /*
                 if ($brand_id) {
                     $query .= " AND marks.id_marks = $brand_id";
                 }
@@ -105,6 +105,7 @@
                 if ($year_to) {
                     $query .= " AND cars.cars_year_made <= $year_to";
                 }
+                */
 
                 $result = $conn->query($query);
 

@@ -52,28 +52,56 @@
                 <select id="model" name="model" class="w-full p-2 border border-gray-300 rounded" required>
                     <option value="">Выберите модель</option>
                 </select>
-                <div class="mb-6">
-                    <label for="year" class="block text-lg font-semibold mb-2">Год производства</label>
-                        <select id="year" name="year" class="w-full p-2 border border-gray-300 rounded" required>
-                                <?php
-                                      $currentYear = date('Y');
-                                          for ($i = 1886; $i <= $currentYear; $i++) {
-                                                 echo '<option value="' . $i . '">' . $i . '</option>';
-                                            }
-                                ?>
-                      </select>
-                </div>
-                <div class="mb-6">
+            </div>
+
+            <div class="mb-6">
+                <label for="year" class="block text-lg font-semibold mb-2">Год производства</label>
+                <select id="year" name="year" class="w-full p-2 border border-gray-300 rounded" required>
+                    <?php
+                    $currentYear = date('Y');
+                    for ($i = 1886; $i <= $currentYear; $i++) {
+                        echo '<option value="' . $i . '">' . $i . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+
+            <div class="mb-6">
                 <label for="generation" class="block text-lg font-semibold mb-2">Поколение</label>
                 <input type="text" id="generation" name="generation" class="w-full p-2 border border-gray-300 rounded" required>
             </div>
 
+            <!-- Новое поле для типа кузова -->
+            <div class="mb-6">
+                <label for="bodywork" class="block text-lg font-semibold mb-2">Тип кузова</label>
+                <select id="bodywork" name="bodywork" class="w-full p-2 border border-gray-300 rounded" required>
+                    <option value="">Выберите тип кузова</option>
+                    <option value="Седан">Седан</option>
+                    <option value="Хэтчбек">Хэтчбек</option>
+                    <option value="Универсал">Универсал</option>
+                    <option value="Кроссовер">Кроссовер</option>
+                    <option value="Внедорожник">Внедорожник</option>
+                    <option value="Купе">Купе</option>
+                    <option value="Кабриолет">Кабриолет</option>
+                </select>
             </div>
+
+            <!-- Галочка "На продажу" -->
+            <div class="mb-6">
+                <label for="for_sale" class="block text-lg font-semibold mb-2">
+                    <input type="checkbox" id="for_sale" name="for_sale" value="1"> На продажу
+                </label>
+                <div id="price_container" style="display: none;">
+                    <label for="price" class="block text-lg font-semibold mb-2">Цена (₽)</label>
+                    <input type="number" id="price" name="price" class="w-full p-2 border border-gray-300 rounded">
+                </div>
+            </div>
+
             <div class="mb-6">
                 <h2 class="text-xl font-semibold mb-4">Дополнительная информация</h2>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="melage" class="block text-lg font-semibold mb-2">Пробег (км)</label>
+                        <label for="mileage" class="block text-lg font-semibold mb-2">Пробег (км)</label>
                         <input type="number" id="mileage" name="mileage" class="w-full p-2 border border-gray-300 rounded" required>
                     </div>
                     <div>
@@ -94,7 +122,7 @@
                     </div>
                     <div>
                         <label for="drive" class="block text-lg font-semibold mb-2">Привод</label>
- <select id="drive" name="drive" class="w-full p-2 border border-gray-300 rounded" required>
+                        <select id="drive" name="drive" class="w-full p-2 border border-gray-300 rounded" required>
                             <option value="front">Передний</option>
                             <option value="rear">Задний</option>
                             <option value="all">Полный</option>
@@ -103,21 +131,21 @@
                 </div>
             </div>
             <div>
-                        <label for="transmission" class="block text-lg font-semibold mb-2">Коробка передач</label>
-                        <select id="transmission" name="transmission" class="w-full p-2 border border-gray-300 rounded" required>
-                            <option value="manual">Механическая</option>
-                            <option value="automatic">Автоматическая</option>
-                            <option value="semi-automatic">Полуавтоматическая</option>
-                        </select>
-                    </div>
+                <label for="transmission" class="block text-lg font-semibold mb-2">Коробка передач</label>
+                <select id="transmission" name="transmission" class="w-full p-2 border border-gray-300 rounded" required>
+                    <option value="Механическая">Механическая</option>
+                    <option value="Автоматическая">Автоматическая</option>
+                    <option value="Роботизированная">Роботизированная</option>
+                </select>
+            </div>
             <!-- Тип топлива -->
             <div class="mb-6">
                 <label for="fuel_type" class="block text-lg font-semibold mb-2">Тип топлива</label>
                 <select id="fuel_type" name="fuel_type" class="w-full p-2 border border-gray-300 rounded" required>
-                    <option value="petrol">Бензин</option>
-                    <option value="diesel">Дизель</option>
-                    <option value="electric">Электричество</option>
-                    <option value="hybrid">Гибрид</option>
+                    <option value="Бензин">Бензин</option>
+                    <option value="Дизель">Дизель</option>
+                    <option value="Электричество">Электричество</option>
+                    <option value="Гибрид">Гибрид</option>
                 </select>
             </div>
     
@@ -189,6 +217,16 @@
     document.getElementById('model').addEventListener('change', function() {
         var modelId = this.value;
         document.getElementById('model_id').value = modelId; // Устанавливаем model_id в скрытое поле
+    });
+
+    // Показать/скрыть поле для ввода цены в зависимости от галочки "На продажу"
+    document.getElementById('for_sale').addEventListener('change', function() {
+        var priceContainer = document.getElementById('price_container');
+        if (this.checked) {
+            priceContainer.style.display = 'block';
+        } else {
+            priceContainer.style.display = 'none';
+        }
     });
 
     // Очистка полей формы и отображение сообщения
