@@ -81,10 +81,9 @@
             <div class="flex flex-col w-full p-5 space-y-5">
                 <?php
                 // Запрос для получения всех автомобилей с марками и моделями
-                $query = "SELECT cars.*, marks.name_marks, model.name_model FROM cars 
-                          JOIN marks ON cars.model_id = marks.id_marks 
+                $query = "SELECT cars.*, model.name_model FROM cars 
                           JOIN model ON cars.model_id = model.id_model
-                         /* WHERE cars.cars_in_price = true*/";
+                          WHERE cars.cars_in_price = true";
 
                 // Добавление фильтров к запросу
                 if ($brand_id) {
@@ -111,30 +110,39 @@
                 // Проверка наличия автомобилей и их отображение
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                        echo '<a href="car.php?id=' . $row['cars_id'] . '" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">';
-                        echo '<div class="w-1/5">';
-                        echo '<img alt="' . $row['cars_id'] . '1" class="h-full w-full object-cover" src="img/cars/' . $row['cars_id'] . '_1.png" />';
-                        echo '</div>';
-                        echo '<div class="w-2/3 pl-4 flex flex-col justify-between">';
-                        echo '<div>';
-                        echo '<h2 class="text-xl font-bold">' . $row['name_marks'] . ' ' . $row['name_model'] . '</h2>'; // Объединение марки и модели
-                        echo '<p class="text-gray-600 text-sm">' . ($row['cars_volume'] ?? 'Неизвестно') . ' л/' . ($row['cars_power'] ?? 'Неизвестно') . ' л.с./' . ($row['cars_type_oil'] ?? 'Неизвестно') . '</p>';
-                        echo '<p class="text-gray-600 text-sm">' . ($row['cars_drive'] ?? 'Неизвестно') . '</p>';
-                        echo '<p class="text-gray-600 text-sm">' . ($row['cars_bodywork'] ?? 'Неизвестно') . '</p>';
-                        echo '<div class="flex items-center mt-2">';
-                        echo '<span class="text-green-600 text-lg font-bold">' . ($row['cars_price'] ?? 'Неизвестно') . ' ₽</span>';
-                        echo '</div>';
-                        echo '<div class="flex items-center mt-2">';
-                        echo '<span class="text-gray-600 text-sm">' . ($row['cars_year_made'] ?? 'Неизвестно') . '</span>';
-                        echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['cars_melage'] ?? 'Неизвестно') . ' км</span>';
-                        echo '</div>';
-                        echo '<div class="flex items-center mt-2">';
-                        echo '<span class="text-gray-600 text-sm">' . ($row['cars_drive'] ?? 'Неизвестно') . '</span>';
-                        echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['cars_color'] ?? 'Неизвестно') . '</span>';
-                        echo '</div>';
-                        echo '</div>';
-                        echo '</div>';
-                        echo '</a>';
+                        $query_brand = "SELECT marks.name_marks, model.name_model FROM model JOIN marks ON model.id_marks = marks.id_marks WHERE model.name_model = '" . $row['name_model'] . "';";
+                        $res= $conn->query($query_brand);
+                        $brand = $res->fetch_assoc();
+                        $car_id = $row['cars_id'] ?? null; // Проверка на существование ключа
+                        if ($car_id) {
+                            $query_photo = "SELECT * FROM car_photo WHERE car_id = " . $car_id . " LIMIT 1;";
+                            $res_photo= $conn->query($query_photo);
+                            $photo = $res_photo->fetch_assoc();
+                            echo '<a href="car.php?id=' . $car_id . '" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">';
+                            echo '<div class="w-1/5">';
+                            echo '<img alt="' . $car_id . '1" class="h-full w-full object-cover" src="http://localhost/cites/' . ($photo["image_patch"] ?? '') . '" />'; // Проверка на существование ключа
+                            echo '</div>';
+                            echo '<div class="w-2/3 pl-4 flex flex-col justify-between">';
+                            echo '<div>';
+                            echo '<h2 class="text-xl font-bold">' . $brand['name_marks'] . ' ' . $row['name_model'] . '</h2>'; // Объединение марки и модели
+                            echo '<p class="text-gray-600 text-sm">' . ($row['cars_volume'] ?? 'Неизвестно') . ' л/' . ($row['cars_power'] ?? 'Неизвестно') . ' л.с./' . ($row['cars_type_oil'] ?? 'Неизвестно') . '</p>';
+                            echo '<p class="text-gray-600 text-sm">' . ($row['cars_drive'] ?? 'Неизвестно') . '</p>';
+                            echo '<p class="text-gray-600 text-sm">' . ($row['cars_bodywork'] ?? 'Неизвестно') . '</p>';
+                            echo '<div class="flex items-center mt-2">';
+                            echo '<span class="text-green-600 text-lg font-bold">' . ($row['cars_price'] ?? 'Неизвестно') . ' ₽</span>';
+                            echo '</div>';
+                            echo '<div class="flex items-center mt-2">';
+                            echo '<span class="text-gray-600 text-sm">' . ($row['cars_year_made'] ?? 'Неизвестно') . '</span>';
+                            echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['cars_melage'] ?? 'Неизвестно') . ' км</span>';
+                            echo '</div>';
+                            echo '<div class="flex items-center mt-2">';
+                            echo '<span class="text-gray-600 text-sm">' . ($row['cars_drive'] ?? 'Неизвестно') . '</span>';
+                            echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['cars_color'] ?? 'Неизвестно') . '</span>';
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</a>';
+                        }
                     }
                 } else {
                     echo '<p class="text-center">Нет доступных автомобилей.</p>';

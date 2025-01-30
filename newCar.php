@@ -71,7 +71,21 @@
                 <input type="text" id="generation" name="generation" class="w-full p-2 border border-gray-300 rounded" required>
             </div>
 
-            <!-- Новое поле для типа кузова -->
+            <!-- Новые поля -->
+            <div class="mb-6">
+                <label for="car_state_number" class="block text-lg font-semibold mb-2">Госномер</label>
+                <input type="text" id="car_state_number" name="car_state_number" class="w-full p-2 border border-gray-300 rounded" maxlength="9" required>
+            </div>
+            <div class="mb-6">
+                <label for="car_link_specifications" class="block text-lg font-semibold mb-2">Ссылка на спецификации</label>
+                <input type="text" id="car_link_specifications" name="car_link_specifications" class="w-full p-2 border border-gray-300 rounded" maxlength="100" required>
+            </div>
+            <div class="mb-6">
+                <label for="car_link_to_report" class="block text-lg font-semibold mb-2">Ссылка на отчет</label>
+                <input type="text" id="car_link_to_report" name="car_link_to_report" class="w-full p-2 border border-gray-300 rounded" maxlength="100" required>
+            </div>
+
+            <!-- Остальные поля формы -->
             <div class="mb-6">
                 <label for="bodywork" class="block text-lg font-semibold mb-2">Тип кузова</label>
                 <select id="bodywork" name="bodywork" class="w-full p-2 border border-gray-300 rounded" required>
@@ -148,11 +162,14 @@
                     <option value="Гибрид">Гибрид</option>
                 </select>
             </div>
-    
-            <!-- Описание автомобиля -->
             <div class="mb-6">
                 <label for="description" class="block text-lg font-semibold mb-2">Описание автомобиля</label>
                 <textarea id="description" name="description" class="w-full p-2 border border-gray-300 rounded" rows="4" required></textarea>
+            </div>
+            <!-- Описание автомобиля -->
+            <div class="mb-6">
+                <label for="equipment_text" class="block text-lg font-semibold mb-2">Описание комплектации</label>
+                <textarea id="equipment_text" name="equipment_text" class="w-full p-2 border border-gray-300 rounded" rows="4" required></textarea>
             </div>
 
             <!-- Загрузка изображений автомобиля -->
