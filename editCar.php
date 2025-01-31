@@ -47,6 +47,11 @@
             </div>
 
             <div class="mb-6">
+                <label for="price" class="block text-lg font-semibold mb-2">Цена</label>
+                <input type="number" id="price" name="price" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_price']) ? $car['cars_price'] : ''; ?>" required>
+            </div>
+
+            <div class="mb-6">
                 <label for="year" class="block text-lg font-semibold mb-2">Год производства</label>
                 <select id="year" name="year" class="w-full p-2 border border-gray-300 rounded" required>
                     <?php

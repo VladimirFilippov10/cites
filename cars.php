@@ -118,9 +118,9 @@
                             $query_photo = "SELECT * FROM car_photo WHERE car_id = " . $car_id . " LIMIT 1;";
                             $res_photo= $conn->query($query_photo);
                             $photo = $res_photo->fetch_assoc();
-                            echo '<a href="car.php?id=' . $car_id . '" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">';
+                            echo '<a href="carDetails.php?id=' . $car_id . '" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">';
                             echo '<div class="w-1/5">';
-                            echo '<img alt="' . $car_id . '1" class="h-full w-full object-cover" src="http://localhost/cites/' . ($photo["image_patch"] ?? '') . '" />'; // Проверка на существование ключа
+                            echo '<img alt="' . $car_id . '1" class="h-full w-full object-cover" src="php/' . ($photo["image_patch"] ?? '') . '" />'; // Проверка на существование ключа
                             echo '</div>';
                             echo '<div class="w-2/3 pl-4 flex flex-col justify-between">';
                             echo '<div>';

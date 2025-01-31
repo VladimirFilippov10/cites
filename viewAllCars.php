@@ -27,12 +27,21 @@
                 </tr>
             </thead>
             <tbody>
-                <?php while ($car = $carsResult->fetch_assoc()): ?>
+                <?php 
+
+                while ($car = $carsResult->fetch_assoc()): ?>
                     <tr>
+                        <?php
+
+                        $query_photo = "SELECT * FROM car_photo WHERE car_id = " . $car['cars_id'] . " LIMIT 1;";
+                        $res_photo= $conn->query($query_photo);
+                        $photo = $res_photo->fetch_assoc();
+
+                        ?>
                         <td class="border border-gray-300 p-2"><?php echo $car['name_model']; ?></td>
                         <td class="border border-gray-300 p-2"><?php echo $car['cars_win']; ?></td>
                         <td class="border border-gray-300 p-2">
-                            <img src="../img/cars/<?php echo $car['cars_id']; ?>_1.png" alt="Фото" style="max-width: 100px;">
+                            <img src="php/<?php echo $photo["image_patch"]; ?>" alt="Фото" style="max-width: 100px;">
                         </td>
                         <td class="border border-gray-300 p-2">
                             <form action="php/updatePrice.php" method="POST" style="display:inline;">

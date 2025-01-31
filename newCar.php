@@ -18,7 +18,7 @@
 <body class="bg-gray-100 text-gray-800">
 <div class="max-w-7xl w-2/4 mx-auto p-4 bg-white shadow-md mt-10">
         <h1 class="text-2xl font-bold mb-6">Добавить новую запись</h1>
-        <form action="php/submit.php" method="POST" enctype="multipart/form-data">
+        <form action="php/submit.php" method="POST" enctype="multipart/form-data" id="carForm">
             <!-- Основная информация -->
             <div class="mb-6">
                 <label for="title" class="block text-lg font-semibold mb-2">WinCod</label>
@@ -211,6 +211,11 @@
     </div>
 
     <script>
+    document.getElementById('carForm').addEventListener('submit', function(event) {
+        var engineVolumeInput = document.getElementById('engine_volume');
+        engineVolumeInput.value = engineVolumeInput.value.replace(',', '.'); // Replace comma with dot
+    });
+
     document.getElementById('brand').addEventListener('change', function() {
         var brandId = this.value;
         var modelSelect = document.getElementById('model');

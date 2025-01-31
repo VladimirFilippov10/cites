@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Перенаправление на страницу с сообщением об успешном добавлении
-    header("Location: ../newCar.php?success=true");
+    header("Location: ../newCar.php");
     exit();
 }
 ?>
