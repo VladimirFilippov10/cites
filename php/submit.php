@@ -4,44 +4,40 @@ include 'dbconnect.php'; // Подключение к базе данных
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Получение данных из формы
     $model_id = intval($_POST['model_id']);
-    $cars_win = $_POST['title'];
-    $cars_year_made = $_POST['year'];
-    $cars_generation = $_POST['generation'];
+    $cars_win = mysqli_real_escape_string($conn, $_POST['title']);
+    $cars_year_made = intval($_POST['year']);
+    $cars_generation = mysqli_real_escape_string($conn, $_POST['generation']);
     $cars_mileage = intval($_POST['mileage']);
-    $cars_color = $_POST['color'];
-    $cars_drive = $_POST['drive'];
+    $cars_color = mysqli_real_escape_string($conn, $_POST['color']);
+    $cars_drive_num = intval($_POST['drive']);
     $cars_volume = floatval(str_replace(',', '.', $_POST['engine_volume']));
     $cars_power = intval($_POST['power']);
-    $cars_transmission_box = $_POST['transmission'];
-    $cars_type_oil = $_POST['fuel_type'];
-    $cars_description = $_POST['description'];
+    $cars_transmission_box = mysqli_real_escape_string($conn, $_POST['transmission']);
+    $cars_type_oil = mysqli_real_escape_string($conn, $_POST['fuel_type']);
+    $cars_description = mysqli_real_escape_string($conn, $_POST['description']);
     $cars_price = floatval($_POST['price']);
     $cars_owners = intval($_POST['owners']);
-    $cars_bodywork = $_POST['bodywork'];
+    $cars_bodywork = mysqli_real_escape_string($conn, $_POST['bodywork']);
     $cars_in_price = isset($_POST['for_sale']) ? 1 : 0;
 
     // Новые поля
-    $car_state_number = $_POST['car_state_number'];
-    $car_link_specifications = $_POST['car_link_specifications'];
-    $car_link_to_report = $_POST['car_link_to_report'];
+    $car_state_number = mysqli_real_escape_string($conn, $_POST['car_state_number']);
+    $car_link_specifications = mysqli_real_escape_string($conn, $_POST['car_link_specifications']);
+    $car_link_to_report = mysqli_real_escape_string($conn, $_POST['car_link_to_report']);
 
     // Проверка на редактирование или создание новой записи
     if (isset($_POST['car_id']) && !empty($_POST['car_id'])) {
         // Редактирование существующей записи
         $car_id = intval($_POST['car_id']);
-        $updateQuery = "UPDATE cars SET model_id = ?, cars_win = ?, cars_year_made = ?, cars_generation = ?, cars_mileage = ?, cars_color = ?, cars_drive = ?, cars_volume = ?, cars_power = ?, cars_transmission_box = ?, cars_type_oil = ?, cars_description = ?, cars_bodywork = ?, cars_in_price = ?, cars_price = ?, owners = ?, car_state_number = ?, car_link_specifications = ?, car_link_to_report = ? WHERE cars_id = ?";
+        $updateQuery = "UPDATE cars SET model_id = $model_id, cars_win = '$cars_win', cars_year_made = $cars_year_made, cars_generation = '$cars_generation', cars_mileage = $cars_mileage, cars_color = '$cars_color', cars_drive = $cars_drive, cars_volume = $cars_volume, cars_power = $cars_power, cars_transmission_box = '$cars_transmission_box', cars_type_oil = '$cars_type_oil', cars_description = '$cars_description', cars_bodywork = '$cars_bodywork', cars_in_price = $cars_in_price, cars_price = $cars_price, owners = $cars_owners, car_state_number = '$car_state_number', car_link_specifications = '$car_link_specifications', car_link_to_report = '$car_link_to_report' WHERE cars_id = $car_id";
         
-        $stmt = $conn->prepare($updateQuery);
-        $stmt->bind_param("ississdissssiiiissssi", $model_id, $cars_win, $cars_year_made, $cars_generation, $cars_mileage, $cars_color, $cars_drive, $cars_volume, $cars_power, $cars_transmission_box, $cars_type_oil, $cars_description, $cars_bodywork, $cars_in_price, $cars_price, $cars_owners, $car_state_number, $car_link_specifications, $car_link_to_report, $car_id);
-        $stmt->execute();
+        $stmt = $conn->query($updateQuery);
     } else {
         // Создание новой записи
-        $insertQuery = "INSERT INTO cars (model_id, cars_win, cars_year_made, cars_generation, cars_mileage, cars_color, cars_drive, cars_volume, cars_power, cars_transmission_box, cars_type_oil, cars_description, cars_bodywork, cars_in_price, cars_price, owners, car_state_number, car_link_specifications, car_link_to_report) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $insertQuery = "INSERT INTO cars (cars_drive_num, model_id, cars_win, cars_year_made, cars_generation, cars_melage, cars_color, cars_drive, cars_volume, cars_power, cars_transmission_box, cars_type_oil, cars_descriptions, cars_bodywork, cars_in_price, cars_price, car_state_number, car_link_specifications, car_link_to_report) VALUES ('$cars_drive_num',$model_id, '$cars_win', $cars_year_made, '$cars_generation', $cars_mileage, '$cars_color', $cars_owners, $cars_volume, $cars_power, '$cars_transmission_box', '$cars_type_oil', '$cars_description', '$cars_bodywork', $cars_in_price, $cars_price, '$car_state_number', '$car_link_specifications', '$car_link_to_report')";
         
-        $stmt = $conn->prepare($insertQuery);
-        $stmt->bind_param("ississdissssiiiissss", $model_id, $cars_win, $cars_year_made, $cars_generation, $cars_mileage, $cars_color, $cars_drive, $cars_volume, $cars_power, $cars_transmission_box, $cars_type_oil, $cars_description, $cars_bodywork, $cars_in_price, $cars_price, $cars_owners, $car_state_number, $car_link_specifications, $car_link_to_report);
-        $stmt->execute();
-        $car_id = $stmt->insert_id; // Получаем ID добавленной записи
+        $stmt = $conn->query($insertQuery);
+        $car_id = $conn->insert_id; // Получаем ID добавленной записи
     }
 
     // Обработка загрузки фотографий

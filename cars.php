@@ -120,13 +120,13 @@
                             $photo = $res_photo->fetch_assoc();
                             echo '<a href="carDetails.php?id=' . $car_id . '" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">';
                             echo '<div class="w-1/5">';
-                            echo '<img alt="' . $car_id . '1" class="h-full w-full object-cover" src="php/' . ($photo["image_patch"] ?? '') . '" />'; // Проверка на существование ключа
+                            echo '<img alt="' . $car_id . '1" class="h-full w-full object-cover" wight="250px" height="150px" src="php/' . ($photo["image_patch"] ?? '') . '" />'; // Проверка на существование ключа
                             echo '</div>';
                             echo '<div class="w-2/3 pl-4 flex flex-col justify-between">';
                             echo '<div>';
                             echo '<h2 class="text-xl font-bold">' . $brand['name_marks'] . ' ' . $row['name_model'] . '</h2>'; // Объединение марки и модели
                             echo '<p class="text-gray-600 text-sm">' . ($row['cars_volume'] ?? 'Неизвестно') . ' л/' . ($row['cars_power'] ?? 'Неизвестно') . ' л.с./' . ($row['cars_type_oil'] ?? 'Неизвестно') . '</p>';
-                            echo '<p class="text-gray-600 text-sm">' . ($row['cars_drive'] ?? 'Неизвестно') . '</p>';
+                            echo '<p class="text-gray-600 text-sm">' . ($row['cars_drive'] ?? 'Неизвестно') . ' владельцев</p>';
                             echo '<p class="text-gray-600 text-sm">' . ($row['cars_bodywork'] ?? 'Неизвестно') . '</p>';
                             echo '<div class="flex items-center mt-2">';
                             echo '<span class="text-green-600 text-lg font-bold">' . ($row['cars_price'] ?? 'Неизвестно') . ' ₽</span>';
@@ -136,7 +136,7 @@
                             echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['cars_melage'] ?? 'Неизвестно') . ' км</span>';
                             echo '</div>';
                             echo '<div class="flex items-center mt-2">';
-                            echo '<span class="text-gray-600 text-sm">' . ($row['cars_drive'] ?? 'Неизвестно') . '</span>';
+                            echo '<span class="text-gray-600 text-sm">' . ($row['cars_drive_num'] ?? 'Неизвестно') . '</span>';
                             echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['cars_color'] ?? 'Неизвестно') . '</span>';
                             echo '</div>';
                             echo '</div>';

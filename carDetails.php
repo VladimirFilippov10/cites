@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Детали автомобиля</title>
     <script src="js/carFotoSelect.js"></script>
+    <style>
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 400px; /* Задаем фиксированную высоту */
+            overflow: hidden; /* Скрываем переполнение */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.1); /* Размытый фон */
+        }
+        .image-container img {
+            max-height: 100%; /* Ограничиваем максимальную высоту */
+            max-width: 100%; /* Ограничиваем максимальную ширину */
+            object-fit: cover; /* Обеспечиваем сохранение пропорций */
+        }
+    </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
     <?php
@@ -49,7 +66,7 @@
                     <li class="flex items-center space-x-2"><i class="fas fa-tint"></i><span><?php echo $car['cars_color']; ?></span></li>
                     <li class="flex items-center space-x-2"><i class="fas fa-id-card"></i><span><?php echo $car['cars_drive']; ?> владельцев по ПТС</span></li>
                 </ul>
-                <button class="mt-4 bg-gray-200 text-gray-700 px-4 py-2 rounded">Характеристики модели</button>
+                <a href="<?php echo $car['car_link_specifications']; ?>" class="mt-6 bg-gray-200 text-gray-700 px-4 py-2 rounded">Характеристики модели</a>
             </div>
             <div class="w-2/3 pl-4">
                 <div class="carousel">
@@ -59,7 +76,7 @@
                     $res_photo = $conn->query($query_photo);
                     if ($res_photo->num_rows > 0) {
                         while ($photo = $res_photo->fetch_assoc()) {
-                            echo '<img alt="Изображение автомобиля" class="w-full h-auto rounded" height="400" width="600" src="http://localhost/cites/php/' . $photo['image_patch'] . '" />';
+                            echo '<div class="image-container"><img alt="Изображение автомобиля" class="w-full h-auto rounded" height="400" width="600" src="http://localhost/cites/php/' . $photo['image_patch'] . '" /></div>';
                         }
                             echo '</div><div class="flex justify-between mt-2">
                         <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded" id="prev">
@@ -94,13 +111,14 @@
                     </h3>
                     <ul class="list-disc list-inside text-gray-700">
                     <?php
-                $query = "SELECT * FROM car_equipment_element WHERE car_equipment_id = " . $car['id_equipment'];
-                $res_comp = $conn->query($query);
+                if (isset($car['id_equipment'])) {
+                    $query = "SELECT * FROM car_equipment_element WHERE car_equipment_id = " . $car['id_equipment'];
+                    $res_comp = $conn->query($query);
                     if ($res_comp->num_rows)
                         while ($comp = $res_comp->fetch_assoc()) {
                           echo '<li>'.$comp['car_equipment_text'].'</li>';          
                         }
-
+                }
                 ?>
                     </ul>
 
