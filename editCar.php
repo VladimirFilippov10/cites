@@ -45,7 +45,6 @@
                 <label for="title" class="block text-lg font-semibold mb-2">WinCod</label>
                 <input type="text" id="title" name="title" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_win']) ? $car['cars_win'] : ''; ?>" required>
             </div>
-
             <div class="mb-6">
                 <label for="price" class="block text-lg font-semibold mb-2">Цена</label>
                 <input type="number" id="price" name="price" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_price']) ? $car['cars_price'] : ''; ?>" required>
@@ -167,24 +166,17 @@
                 </div>
                 <input type="file" name="car_photos[]" multiple class="mb-4">
                 <button type="button" id="addPhoto" class="bg-blue-500 text-white p-2 rounded">Добавить фото</button>
-
             </div>
 
             <!-- Комплектация -->
             <div class="mb-6">
                 <h2 class="text-xl font-semibold mb-4">Комплектация</h2>
                 <div id="complectationContainer">
-                    <?php
-                    $equipmentItemsQuery = "SELECT * FROM car_equipment_element WHERE car_equipment_id = ?"; // Предполагается, что $equipment_id определен
-                    $equipmentItemsStmt = $conn->prepare($equipmentItemsQuery);
-                    $equipmentItemsStmt->bind_param("i", $equipment_id);
-                    $equipmentItemsStmt->execute();
-                    $equipmentItemsResult = $equipmentItemsStmt->get_result();
-
-                    while ($equipmentItem = $equipmentItemsResult->fetch_assoc()): ?>
+                    <?php while ($equipment = $equipmentResult->fetch_assoc()): ?>
                         <div class="complectation-item mb-4">
-                            <input type="text" name="complectation[]" class="w-3/4 p-2 border border-gray-300 rounded mb-2" value="<?php echo $equipmentItem['car_equipment_text']; ?>" required>
-                            <button type="button" class="delete-complectation bg-red-500 text-white p-1 rounded">Удалить</button>
+                            <input type="text" name="complectation[]" class="w-3/4 p-2 border border-gray-300 rounded mb-2" value="<?php echo $equipment['car_equipment_text']; ?>" required>
+                            <input type="hidden" name="complectation_ids[]" value="<?php echo $equipment['id']; ?>">
+                            <button type="button" class="delete-complectation bg-red-500 text-white p-1 rounded" onclick="deleteComplectation('<?php echo $equipment['id']; ?>')">Удалить</button>
                         </div>
                     <?php endwhile; ?>
                 </div>
@@ -196,30 +188,37 @@
     </div>
 
     <script>
-    // JavaScript для добавления новых фотографий и комплектаций
-    document.getElementById('addPhoto').addEventListener('click', function() {
-        const photoContainer = document.getElementById('photoContainer');
-        const newPhotoDiv = document.createElement('div');
-        newPhotoDiv.classList.add('photo-item', 'mb-4');
-        newPhotoDiv.innerHTML = '<input type="file" name="car_photos[]" class="mb-2"><button type="button" class="delete-photo bg-red-500 text-white p-1 rounded">Удалить</button>';
-        photoContainer.appendChild(newPhotoDiv);
-    });
-
     function deletePhoto(photoPath) {
         if (confirm('Вы уверены, что хотите удалить это фото?')) {
-            // Отправка запроса на удаление фотографии
             const xhr = new XMLHttpRequest();
             xhr.open('POST', 'php/deletePhoto.php', true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.onload = function() {
                 if (xhr.status === 200) {
                     alert('Фото успешно удалено.');
-                    location.reload(); // Перезагрузить страницу для обновления
+                    location.reload();
                 } else {
                     alert('Ошибка при удалении фото.');
                 }
             };
             xhr.send('photoPath=' + encodeURIComponent(photoPath));
+        }
+    }
+
+    function deleteComplectation(complectationId) {
+        if (confirm('Вы уверены, что хотите удалить этот элемент комплектации?')) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'php/deleteComplectation.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert('Элемент комплектации успешно удален.');
+                    location.reload();
+                } else {
+                    alert('Ошибка при удалении элемента комплектации.');
+                }
+            };
+            xhr.send('complectationId=' + encodeURIComponent(complectationId));
         }
     }
     </script>
