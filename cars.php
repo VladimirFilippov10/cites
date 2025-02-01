@@ -81,8 +81,9 @@
             <div class="flex flex-col w-full p-5 space-y-5">
                 <?php
                 // Запрос для получения всех автомобилей с марками и моделями
-                $query = "SELECT cars.*, model.name_model FROM cars 
+                $query = "SELECT cars.*, model.name_model, marks.name_marks FROM cars 
                           JOIN model ON cars.model_id = model.id_model
+                          JOIN marks ON model.id_marks = marks.id_marks
                           WHERE cars.cars_in_price = true";
 
                 // Добавление фильтров к запросу
@@ -110,9 +111,6 @@
                 // Проверка наличия автомобилей и их отображение
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                        $query_brand = "SELECT marks.name_marks, model.name_model FROM model JOIN marks ON model.id_marks = marks.id_marks WHERE model.name_model = '" . $row['name_model'] . "';";
-                        $res= $conn->query($query_brand);
-                        $brand = $res->fetch_assoc();
                         $car_id = $row['cars_id'] ?? null; // Проверка на существование ключа
                         if ($car_id) {
                             $query_photo = "SELECT * FROM car_photo WHERE car_id = " . $car_id . " LIMIT 1;";
@@ -124,7 +122,7 @@
                             echo '</div>';
                             echo '<div class="w-2/3 pl-4 flex flex-col justify-between">';
                             echo '<div>';
-                            echo '<h2 class="text-xl font-bold">' . $brand['name_marks'] . ' ' . $row['name_model'] . '</h2>'; // Объединение марки и модели
+                            echo '<h2 class="text-xl font-bold">' . $row['name_marks'] . ' ' . $row['name_model'] . '</h2>'; // Объединение марки и модели
                             echo '<p class="text-gray-600 text-sm">' . ($row['cars_volume'] ?? 'Неизвестно') . ' л/' . ($row['cars_power'] ?? 'Неизвестно') . ' л.с./' . ($row['cars_type_oil'] ?? 'Неизвестно') . '</p>';
                             echo '<p class="text-gray-600 text-sm">' . ($row['cars_drive'] ?? 'Неизвестно') . ' владельцев</p>';
                             echo '<p class="text-gray-600 text-sm">' . ($row['cars_bodywork'] ?? 'Неизвестно') . '</p>';

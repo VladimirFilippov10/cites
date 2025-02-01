@@ -82,8 +82,8 @@
             </div>
 
             <div class="mb-6">
-                <label for="mileage" class="block text-lg font-semibold mb-2">Пробег (км)</label>
-                <input type="number" id="mileage" name="mileage" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_melage']) ? $car['cars_melage'] : ''; ?>" required>
+                <label for="melage" class="block text-lg font-semibold mb-2">Пробег (км)</label>
+                <input type="number" id="melage" name="melage" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_melage']) ? $car['cars_melage'] : ''; ?>" required>
             </div>
 
             <div class="mb-6">
@@ -138,11 +138,6 @@
                 <label for="equipment_text" class="block text-lg font-semibold mb-2">Описание автомобиля</label>
                 <textarea id="equipment_text" name="equipment_text" class="w-full p-2 border border-gray-300 rounded" rows="4" required><?php echo isset($car['cars_descriptions']) ? $car['cars_descriptions'] : ''; ?></textarea>
             </div>
-
-           <!-- <div class="mb-6">
-                <label for="description" class="block text-lg font-semibold mb-2">Описание автомобиля</label>
-                <textarea id="description" name="description" class="w-full p-2 border border-gray-300 rounded" rows="4" required><?php echo isset($car['cars_description']) ? $car['cars_description'] : ''; ?></textarea>
-            </div>-->
 
             <!-- Новые поля для редактирования -->
             <div class="mb-6">

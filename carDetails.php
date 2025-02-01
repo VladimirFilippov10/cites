@@ -18,7 +18,7 @@
         }
         .image-container img {
             max-height: 100%; /* Ограничиваем максимальную высоту */
-            max-width: 100%; /* Ограничиваем максимальную ширину */
+            width: auto; /* Автоматическая ширина для сохранения пропорций */
             object-fit: cover; /* Обеспечиваем сохранение пропорций */
         }
     </style>
@@ -27,6 +27,12 @@
     <?php
         include 'template/header.php';
         include 'php/dbconnect.php'; // Подключение к базе данных
+
+        // Проверка наличия ID автомобиля в параметрах URL
+        if (!isset($_GET['id'])) {
+            echo "<p>Ошибка: ID автомобиля не указан.</p>";
+            exit();
+        }
 
         // Получение ID автомобиля из параметров URL
         $car_id = intval($_GET['id']);
@@ -66,6 +72,7 @@
                     <li class="flex items-center space-x-2"><i class="fas fa-tint"></i><span><?php echo $car['cars_color']; ?></span></li>
                     <li class="flex items-center space-x-2"><i class="fas fa-id-card"></i><span><?php echo $car['cars_drive']; ?> владельцев по ПТС</span></li>
                 </ul>
+                <br>  
                 <a href="<?php echo $car['car_link_specifications']; ?>" class="mt-6 bg-gray-200 text-gray-700 px-4 py-2 rounded">Характеристики модели</a>
             </div>
             <div class="w-2/3 pl-4">
@@ -76,7 +83,7 @@
                     $res_photo = $conn->query($query_photo);
                     if ($res_photo->num_rows > 0) {
                         while ($photo = $res_photo->fetch_assoc()) {
-                            echo '<div class="image-container"><img alt="Изображение автомобиля" class="w-full h-auto rounded" height="400" width="600" src="http://localhost/cites/php/' . $photo['image_patch'] . '" /></div>';
+                            echo '<img  class="w-full h-auto rounded" height="100" alt="Изображение автомобиля" src="http://localhost/cites/php/' . $photo['image_patch'] . '" />';
                         }
                             echo '</div><div class="flex justify-between mt-2">
                         <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded" id="prev">
@@ -108,19 +115,19 @@
                 </div>
                 <h3 class="text-lg font-semibold mt-2">
                     В комплектацию входит:
-                    </h3>
-                    <ul class="list-disc list-inside text-gray-700">
+                </h3>
+                <ul class="list-disc list-inside text-gray-700">
                     <?php
-                if (isset($car['id_equipment'])) {
-                    $query = "SELECT * FROM car_equipment_element WHERE car_equipment_id = " . $car['id_equipment'];
-                    $res_comp = $conn->query($query);
-                    if ($res_comp->num_rows)
-                        while ($comp = $res_comp->fetch_assoc()) {
-                          echo '<li>'.$comp['car_equipment_text'].'</li>';          
-                        }
-                }
-                ?>
-                    </ul>
+                    if (isset($car['id_equipment'])) {
+                        $query = "SELECT * FROM car_equipment_element WHERE car_equipment_id = " . $car['id_equipment'];
+                        $res_comp = $conn->query($query);
+                        if ($res_comp->num_rows)
+                            while ($comp = $res_comp->fetch_assoc()) {
+                                echo '<li>' . $comp['car_equipment_text'] . '</li>';
+                            }
+                    }
+                    ?>
+                </ul>
 
                 <div class="mt-4 flex items-center space-x-4">
                     <a class="bg-blue-500 text-white px-4 py-2 rounded" href="TG:+71234567890">Связаться в Telergam</a>
