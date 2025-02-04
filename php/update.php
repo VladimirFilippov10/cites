@@ -60,6 +60,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
+        // Обработка комплектаций
+        if (isset($_POST['complectation'])) {
+            $complectationTexts = $_POST['complectation'];
+            $complectationDescriptions = $_POST['complectation_descriptions'];
+            $complectationIds = $_POST['complectation_ids'];
+
+            // Обновление существующих комплектаций
+            foreach ($complectationIds as $index => $id) {
+                $text = mysqli_real_escape_string($conn, $complectationTexts[$index]);
+                $description = mysqli_real_escape_string($conn, $complectationDescriptions[$index]);
+                $updateComplectationQuery = "UPDATE car_equipment SET car_equipment_text = '$text', description = '$description' WHERE id = $id AND car_id = $car_id";
+                $conn->query($updateComplectationQuery);
+            }
+
+            // Добавление новых комплектаций
+            foreach ($complectationTexts as $index => $text) {
+                if (empty($complectationIds[$index])) { // Если ID отсутствует, значит это новая комплектация
+                    $description = mysqli_real_escape_string($conn, $complectationDescriptions[$index]);
+                    $insertComplectationQuery = "INSERT INTO car_equipment (car_equipment_text, description, car_id) VALUES ('$text', '$description', $car_id)";
+                    $conn->query($insertComplectationQuery);
+                }
+            }
+        }
+
         // Перенаправление на страницу со списком автомобилей
         header("Location: ../viewAllCars.php");
         exit();

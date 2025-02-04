@@ -38,11 +38,11 @@
         $car_id = intval($_GET['id']);
 
         // Запрос данных о конкретном автомобиле
-        $query = "SELECT cars.*, model.name_model, marks.name_marks, car_equipment.* FROM cars 
-                  JOIN model ON cars.model_id = model.id_model
-                  JOIN marks ON model.id_marks = marks.id_marks
-                  LEFT JOIN car_equipment ON car_equipment.car_id = cars.cars_id 
-                  WHERE cars.cars_id = ?";
+        $query = "SELECT car.*, model.name_model, brand.brand_name, car_equipment.* FROM car 
+                  JOIN model ON car.model_id = model.model_id
+                  JOIN brand ON model.brand_id = brand.brand_id
+                  LEFT JOIN car_equipment ON car_equipment.car_id = car.car_id 
+                  WHERE car.car_id = ?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $car_id);
         $stmt->execute();
@@ -54,23 +54,23 @@
     <div class="max-w-5xl mx-auto p-4 bg-white shadow-md">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold"><?php echo $car['name_marks'] . ' ' . $car['name_model']; ?>, <?php echo $car['cars_year_made']; ?></h1>
+                <h1 class="text-2xl font-bold"><?php echo $car['brand_name'] . ' ' . $car['name_model']; ?>, <?php echo $car['car_year_made']; ?></h1>
             </div>
-            <div class="text-3xl font-bold text-gray-800"><?php echo number_format($car['cars_price'], 0, ',', ' '); ?> ₽</div>
+            <div class="text-3xl font-bold text-gray-800"><?php echo number_format($car['car_price'], 0, ',', ' '); ?> ₽</div>
         </div>
         <div class="mt-4 flex">
             <div class="w-1/3">
                 <h2 class="text-xl font-semibold mb-2">Характеристики</h2>
                 <ul class="space-y-2 text-gray-700">
                     <li class="flex items-center space-x-2"><i class="fas fa-warehouse"></i><span>В наличии</span></li>
-                    <li class="flex items-center space-x-2"><i class="fas fa-sync-alt"></i><span>Поколение <?php echo $car['cars_generation']; ?></span></li>
-                    <li class="flex items-center space-x-2"><i class="fas fa-calendar-alt"></i><span><?php echo $car['cars_year_made']; ?></span></li>
-                    <li class="flex items-center space-x-2"><i class="fas fa-car"></i><span><?php echo $car['cars_bodywork']; ?></span></li>
-                    <li class="flex items-center space-x-2"><i class="fas fa-cogs"></i><span><?php echo $car['cars_transmission_box']; ?></span></span></li>
-                    <li class="flex items-center space-x-2"><i class="fas fa-tachometer-alt"></i><span><?php echo $car['cars_volume']; ?> л / <?php echo $car['cars_power']; ?> л.с. / бензин</span></li>
-                    <li class="flex items-center space-x-2"><i class="fas fa-road"></i><span><?php echo $car['cars_melage']; ?> км</span></li>
-                    <li class="flex items-center space-x-2"><i class="fas fa-tint"></i><span><?php echo $car['cars_color']; ?></span></li>
-                    <li class="flex items-center space-x-2"><i class="fas fa-id-card"></i><span><?php echo $car['cars_drive']; ?> владельцев по ПТС</span></li>
+                    <li class="flex items-center space-x-2"><i class="fas fa-sync-alt"></i><span>Поколение <?php echo $car['car_generation']; ?></span></li>
+                    <li class="flex items-center space-x-2"><i class="fas fa-calendar-alt"></i><span><?php echo $car['car_year_made']; ?></span></li>
+                    <li class="flex items-center space-x-2"><i class="fas fa-car"></i><span><?php echo $car['car_bodywork']; ?></span></li>
+                    <li class="flex items-center space-x-2"><i class="fas fa-cogs"></i><span><?php echo $car['car_transmission_box']; ?></span></span></li>
+                    <li class="flex items-center space-x-2"><i class="fas fa-tachometer-alt"></i><span><?php echo $car['car_volume']; ?> л / <?php echo $car['car_power']; ?> л.с. / бензин</span></li>
+                    <li class="flex items-center space-x-2"><i class="fas fa-road"></i><span><?php echo $car['car_melage']; ?> км</span></li>
+                    <li class="flex items-center space-x-2"><i class="fas fa-tint"></i><span><?php echo $car['car_color']; ?></span></li>
+                    <li class="flex items-center space-x-2"><i class="fas fa-id-card"></i><span><?php echo $car['car_onwers']; ?> владельцев по ПТС</span></li>
                 </ul>
                 <br>  
                 <a href="<?php echo $car['car_link_specifications']; ?>" class="mt-6 bg-gray-200 text-gray-700 px-4 py-2 rounded">Характеристики модели</a>
@@ -107,7 +107,7 @@
                     ?>
                 <div class="mt-4">
                     <h2 class="text-xl font-semibold mb-2">Описание авто</h2>
-                    <p class="text-gray-700"><?php echo isset($car['cars_descriptions']) ? $car['cars_descriptions'] : 'Описание отсутствует'; ?></p>
+                    <p class="text-gray-700"><?php echo isset($car['car_descriptions']) ? $car['car_descriptions'] : 'Описание отсутствует'; ?></p>
                 </div>
                 <div class="mt-4">
                     <h2 class="text-xl font-semibold mb-2">Описание комплектации</h2>

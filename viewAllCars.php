@@ -12,7 +12,7 @@
         include 'php/dbconnect.php'; // Подключение к базе данных
 
         // Запрос для получения всех автомобилей с именами моделей
-        $carsQuery = "SELECT cars.*, model.name_model FROM cars JOIN model ON cars.model_id = model.id_model";
+        $carsQuery = "SELECT car.*, model.model_name FROM car JOIN model ON car.model_id = model.model_id";
         $carsResult = $conn->query($carsQuery);
     ?>
     <div class="max-w-7xl w-2/4 mx-auto p-4 bg-white shadow-md mt-10">
@@ -28,29 +28,26 @@
             </thead>
             <tbody>
                 <?php 
-
                 while ($car = $carsResult->fetch_assoc()): ?>
                     <tr>
                         <?php
-
-                        $query_photo = "SELECT * FROM car_photo WHERE car_id = " . $car['cars_id'] . " LIMIT 1;";
+                        $query_photo = "SELECT * FROM car_photo WHERE car_id = " . $car['car_id'] . " LIMIT 1;";
                         $res_photo= $conn->query($query_photo);
                         $photo = $res_photo->fetch_assoc();
-
                         ?>
-                        <td class="border border-gray-300 p-2"><?php echo $car['name_model']; ?></td>
-                        <td class="border border-gray-300 p-2"><?php echo $car['cars_win']; ?></td>
+                        <td class="border border-gray-300 p-2"><?php echo $car['model_name']; ?></td>
+                        <td class="border border-gray-300 p-2"><?php echo $car['car_win_code']; ?></td>
                         <td class="border border-gray-300 p-2">
                             <img src="php/<?php echo $photo["image_patch"]; ?>" alt="Фото" style="max-width: 100px;">
                         </td>
                         <td class="border border-gray-300 p-2">
                             <form action="php/updatePrice.php" method="POST" style="display:inline;">
-                                <input type="hidden" name="car_id" value="<?php echo $car['cars_id']; ?>">
+                                <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
                                 <button type="submit" name="toggle_price" class="bg-blue-500 text-white p-1 rounded">
-                                    <?php echo $car['cars_in_price'] ? 'Снять с продажи' : 'Выставить на продажу'; ?>
+                                    <?php echo $car['car_in_price'] ? 'Снять с продажи' : 'Выставить на продажу'; ?>
                                 </button>
                             </form>
-                            <a href="editCar.php?id=<?php echo $car['cars_id']; ?>" class="bg-green-500 text-white p-1 rounded">Редактировать</a>
+                            <a href="editCar.php?id=<?php echo $car['car_id']; ?>" class="bg-green-500 text-white p-1 rounded">Редактировать</a>
                         </td>
                     </tr>
                 <?php endwhile; ?>

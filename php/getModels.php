@@ -1,24 +1,23 @@
 <?php
 include 'dbconnect.php'; // Подключение к базе данных
 
-// Включение отображения ошибок
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 if (isset($_GET['id_marks'])) {
-    $id_marks = intval($_GET['id_marks']);
-    $modelsQuery = "SELECT * FROM model WHERE id_marks = $id_marks";
-    $modelsResult = $conn->query($modelsQuery);
+    $brand_id = intval($_GET['id_marks']);
+    
+    $query = "SELECT * FROM model WHERE brand_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $brand_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    $models = array();
-    if ($modelsResult->num_rows > 0) {
-        while($row = $modelsResult->fetch_assoc()) {
-            $models[] = $row;
-        }
+    $models = [];
+    while ($row = $result->fetch_assoc()) {
+        $models[] = [
+            'id_model' => $row['model_id'],
+            'name_model' => $row['model_name']
+        ];
     }
+
     echo json_encode($models);
-} else {
-    echo json_encode(array("error" => "No id_marks provided"));
 }
 ?>

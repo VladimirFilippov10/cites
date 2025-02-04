@@ -15,7 +15,7 @@
         $car_id = intval($_GET['id']);
 
         // Запрос для получения данных автомобиля
-        $carQuery = "SELECT * FROM cars WHERE cars_id = ?";
+        $carQuery = "SELECT * FROM car WHERE car_id = ?";
         $stmt = $conn->prepare($carQuery);
         $stmt->bind_param("i", $car_id);
         $stmt->execute();
@@ -24,6 +24,8 @@
 
         // Запрос для получения фотографий
         $photoQuery = "SELECT * FROM car_photo WHERE car_id = ?";
+        $photoStmt = $conn->prepare($photoQuery);
+
         $photoStmt = $conn->prepare($photoQuery);
         $photoStmt->bind_param("i", $car_id);
         $photoStmt->execute();
@@ -39,15 +41,15 @@
     <div class="max-w-7xl w-2/4 mx-auto p-4 bg-white shadow-md mt-10">
         <h1 class="text-2xl font-bold mb-6">Редактировать запись</h1>
         <form action="php/update.php" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="car_id" value="<?php echo $car['cars_id']; ?>">
+            <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
             <!-- Основная информация -->
             <div class="mb-6">
                 <label for="title" class="block text-lg font-semibold mb-2">WinCod</label>
-                <input type="text" id="title" name="title" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_win']) ? $car['cars_win'] : ''; ?>" required>
+                <input type="text" id="title" name="title" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_win_code']) ? $car['car_win_code'] : ''; ?>" required>
             </div>
             <div class="mb-6">
                 <label for="price" class="block text-lg font-semibold mb-2">Цена</label>
-                <input type="number" id="price" name="price" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_price']) ? $car['cars_price'] : ''; ?>" required>
+                <input type="number" id="price" name="price" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_price']) ? $car['car_price'] : ''; ?>" required>
             </div>
 
             <div class="mb-6">
@@ -56,7 +58,7 @@
                     <?php
                     $currentYear = date('Y');
                     for ($i = 1886; $i <= $currentYear; $i++) {
-                        echo '<option value="' . $i . '"' . (isset($car['cars_year_made']) && $i == $car['cars_year_made'] ? ' selected' : '') . '>' . $i . '</option>';
+                        echo '<option value="' . $i . '"' . (isset($car['car_year_made']) && $i == $car['car_year_made'] ? ' selected' : '') . '>' . $i . '</option>';
                     }
                     ?>
                 </select>
@@ -65,77 +67,77 @@
             <div class="mb-6">
                 <label for="bodywork" class="block text-lg font-semibold mb-2">Тип кузова</label>
                 <select id="bodywork" name="bodywork" class="w-full p-2 border border-gray-300 rounded" required>
-                    <option value="Седан" <?php echo (isset($car['cars_bodywork']) && $car['cars_bodywork'] == 'Седан') ? 'selected' : ''; ?>>Седан</option>
-                    <option value="Хэтчбек" <?php echo (isset($car['cars_bodywork']) && $car['cars_bodywork'] == 'Хэтчбек') ? 'selected' : ''; ?>>Хэтчбек</option>
-                    <option value="Универсал" <?php echo (isset($car['cars_bodywork']) && $car['cars_bodywork'] == 'Универсал') ? 'selected' : ''; ?>>Универсал</option>
-                    <option value="Кроссовер" <?php echo (isset($car['cars_bodywork']) && $car['cars_bodywork'] == 'Кроссовер') ? 'selected' : ''; ?>>Кроссовер</option>
-                    <option value="Внедорожник" <?php echo (isset($car['cars_bodywork']) && $car['cars_bodywork'] == 'Внедорожник') ? 'selected' : ''; ?>>Внедорожник</option>
-                    <option value="Купе" <?php echo (isset($car['cars_bodywork']) && $car['cars_bodywork'] == 'Купе') ? 'selected' : ''; ?>>Купе</option>
-                    <option value="Кабриолет" <?php echo (isset($car['cars_bodywork']) && $car['cars_bodywork'] == 'Кабриолет') ? 'selected' : ''; ?>>Кабриолет</option>
+                    <option value="Седан" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Седан') ? 'selected' : ''; ?>>Седан</option>
+                    <option value="Хэтчбек" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Хэтчбек') ? 'selected' : ''; ?>>Хэтчбек</option>
+                    <option value="Универсал" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Универсал') ? 'selected' : ''; ?>>Универсал</option>
+                    <option value="Кроссовер" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Кроссовер') ? 'selected' : ''; ?>>Кроссовер</option>
+                    <option value="Внедорожник" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Внедорожник') ? 'selected' : ''; ?>>Внедорожник</option>
+                    <option value="Купе" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Купе') ? 'selected' : ''; ?>>Купе</option>
+                    <option value="Кабриолет" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Кабриолет') ? 'selected' : ''; ?>>Кабриолет</option>
                 </select>
             </div>
 
             <div class="mb-6">
                 <label for="generation" class="block text-lg font-semibold mb-2">Поколение</label>
-                <input type="text" id="generation" name="generation" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_generation']) ? $car['cars_generation'] : ''; ?>" required>
+                <input type="text" id="generation" name="generation" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_generation']) ? $car['car_generation'] : ''; ?>" required>
             </div>
 
             <div class="mb-6">
                 <label for="melage" class="block text-lg font-semibold mb-2">Пробег (км)</label>
-                <input type="number" id="melage" name="melage" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_melage']) ? $car['cars_melage'] : ''; ?>" required>
+                <input type="number" id="melage" name="melage" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_melage']) ? $car['car_melage'] : ''; ?>" required>
             </div>
 
             <div class="mb-6">
                 <label for="color" class="block text-lg font-semibold mb-2">Цвет</label>
-                <input type="text" id="color" name="color" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_color']) ? $car['cars_color'] : ''; ?>" required>
+                <input type="text" id="color" name="color" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_color']) ? $car['car_color'] : ''; ?>" required>
             </div>
 
             <div class="mb-6">
                 <label for="owners" class="block text-lg font-semibold mb-2">Количество владельцев</label>
-                <input type="number" id="owners" name="owners" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_drive']) ? $car['cars_drive'] : ''; ?>" required>
+                <input type="number" id="owners" name="owners" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_onwers']) ? $car['car_onwers'] : ''; ?>" required>
             </div>
 
             <div class="mb-6">
                 <label for="engine_volume" class="block text-lg font-semibold mb-2">Объем двигателя (л)</label>
-                <input type="number" step="0.1" id="engine_volume" name="engine_volume" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_volume']) ? $car['cars_volume'] : ''; ?>" required>
+                <input type="number" step="0.1" id="engine_volume" name="engine_volume" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_volume']) ? $car['car_volume'] : ''; ?>" required>
             </div>
 
             <div class="mb-6">
                 <label for="power" class="block text-lg font-semibold mb-2">Мощность (л.с.)</label>
-                <input type="number" id="power" name="power" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['cars_power']) ? $car['cars_power'] : ''; ?>" required>
+                <input type="number" id="power" name="power" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_power']) ? $car['car_power'] : ''; ?>" required>
             </div>
 
             <div class="mb-6">
                 <label for="drive" class="block text-lg font-semibold mb-2">Привод</label>
                 <select id="drive" name="drive" class="w-full p-2 border border-gray-300 rounded" required>
-                    <option value="front" <?php echo (isset($car['cars_drive']) && $car['cars_drive'] == 'front') ? 'selected' : ''; ?>>Передний</option>
-                    <option value="rear" <?php echo (isset($car['cars_drive']) && $car['cars_drive'] == 'rear') ? 'selected' : ''; ?>>Задний</option>
-                    <option value="all" <?php echo (isset($car['cars_drive']) && $car['cars_drive'] == 'all') ? 'selected' : ''; ?>>Полный</option>
+                    <option value="front" <?php echo (isset($car['car_drive']) && $car['car_drive'] == 'front') ? 'selected' : ''; ?>>Передний</option>
+                    <option value="rear" <?php echo (isset($car['car_drive']) && $car['car_drive'] == 'rear') ? 'selected' : ''; ?>>Задний</option>
+                    <option value="all" <?php echo (isset($car['car_drive']) && $car['car_drive'] == 'all') ? 'selected' : ''; ?>>Полный</option>
                 </select>
             </div>
 
             <div class="mb-6">
                 <label for="transmission" class="block text-lg font-semibold mb-2">Коробка передач</label>
                 <select id="transmission" name="transmission" class="w-full p-2 border border-gray-300 rounded" required>
-                    <option value="Механическая" <?php echo (isset($car['cars_transmission_box']) && $car['cars_transmission_box'] == 'Механическая') ? 'selected' : ''; ?>>Механическая</option>
-                    <option value="Автоматическая" <?php echo (isset($car['cars_transmission_box']) && $car['cars_transmission_box'] == 'Автоматическая') ? 'selected' : ''; ?>>Автоматическая</option>
-                    <option value="Роботизированная" <?php echo (isset($car['cars_transmission_box']) && $car['cars_transmission_box'] == 'Роботизированная') ? 'selected' : ''; ?>>Роботизированная</option>
+                    <option value="Механическая" <?php echo (isset($car['car_transmission_box']) && $car['car_transmission_box'] == 'Механическая') ? 'selected' : ''; ?>>Механическая</option>
+                    <option value="Автоматическая" <?php echo (isset($car['car_transmission_box']) && $car['car_transmission_box'] == 'Автоматическая') ? 'selected' : ''; ?>>Автоматическая</option>
+                    <option value="Роботизированная" <?php echo (isset($car['car_transmission_box']) && $car['car_transmission_box'] == 'Роботизированная') ? 'selected' : ''; ?>>Роботизированная</option>
                 </select>
             </div>
 
             <div class="mb-6">
                 <label for="fuel_type" class="block text-lg font-semibold mb-2">Тип топлива</label>
                 <select id="fuel_type" name="fuel_type" class="w-full p-2 border border-gray-300 rounded" required>
-                    <option value="Бензин" <?php echo (isset($car['cars_type_oil']) && $car['cars_type_oil'] == 'Бензин') ? 'selected' : ''; ?>>Бензин</option>
-                    <option value="Дизель" <?php echo (isset($car['cars_type_oil']) && $car['cars_type_oil'] == 'Дизель') ? 'selected' : ''; ?>>Дизель</option>
-                    <option value="Электричество" <?php echo (isset($car['cars_type_oil']) && $car['cars_type_oil'] == 'Электричество') ? 'selected' : ''; ?>>Электричество</option>
-                    <option value="Гибрид" <?php echo (isset($car['cars_type_oil']) && $car['cars_type_oil'] == 'Гибрид') ? 'selected' : ''; ?>>Гибрид</option>
+                    <option value="Бензин" <?php echo (isset($car['car_type_oil']) && $car['car_type_oil'] == 'Бензин') ? 'selected' : ''; ?>>Бензин</option>
+                    <option value="Дизель" <?php echo (isset($car['car_type_oil']) && $car['car_type_oil'] == 'Дизель') ? 'selected' : ''; ?>>Дизель</option>
+                    <option value="Электричество" <?php echo (isset($car['car_type_oil']) && $car['car_type_oil'] == 'Электричество') ? 'selected' : ''; ?>>Электричество</option>
+                    <option value="Гибрид" <?php echo (isset($car['car_type_oil']) && $car['car_type_oil'] == 'Гибрид') ? 'selected' : ''; ?>>Гибрид</option>
                 </select>
             </div>
 
             <div class="mb-6">
                 <label for="equipment_text" class="block text-lg font-semibold mb-2">Описание автомобиля</label>
-                <textarea id="equipment_text" name="equipment_text" class="w-full p-2 border border-gray-300 rounded" rows="4" required><?php echo isset($car['cars_descriptions']) ? $car['cars_descriptions'] : ''; ?></textarea>
+                <textarea id="equipment_text" name="equipment_text" class="w-full p-2 border border-gray-300 rounded" rows="4" required><?php echo isset($car['car_descriptions']) ? $car['car_descriptions'] : ''; ?></textarea>
             </div>
 
             <!-- Новые поля для редактирования -->
@@ -151,7 +153,7 @@
                 <label for="car_link_to_report" class="block text-lg font-semibold mb-2">Ссылка на отчет</label>
                 <input type="text" id="car_link_to_report" name="car_link_to_report" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_link_to_report']) ? $car['car_link_to_report'] : ''; ?>" maxlength="100">
             </div>
-
+           
             <!-- Загрузка изображений автомобиля -->
             <div class="mb-6">
                 <h2 class="text-xl font-semibold mb-4">Фотографии автомобиля</h2>
@@ -160,7 +162,11 @@
                         <div class="photo-item mb-4">
                             <img src="http://localhost/cites/php/<?php echo $photo['image_patch']; ?>" alt="Фото" class="mb-2" style="max-width: 100px;">
                             <input type="hidden" name="existing_photos[]" value="<?php echo $photo['image_patch']; ?>">
+
+                            <input type="hidden" name="existing_photos[]" value="<?php echo $photo['image_patch']; ?>">
                             <button type="button" class="delete-photo bg-red-500 text-white p-1 rounded" onclick="deletePhoto('<?php echo $photo['image_patch']; ?>')">Удалить</button>
+                            <input type="hidden" name="existing_photos[]" value="<?php echo $photo['image_patch']; ?>">
+
                         </div>
                     <?php endwhile; ?>
                 </div>
@@ -168,16 +174,34 @@
                 <button type="button" id="addPhoto" class="bg-blue-500 text-white p-2 rounded">Добавить фото</button>
             </div>
 
+            <div class="mt-4">
+                    <h2 class="text-xl font-semibold mb-2">Описание комплектации</h2>
+                    <p class="text-gray-700"><?php echo isset($car['equipment_text']) ? $car['equipment_text'] : 'Описание комплектации отсутствует'; ?></p>
+                </div>
+                <h3 class="text-lg font-semibold mt-2">
+                    В комплектацию входит:
+                </h3>
+                <ul class="list-disc list-inside text-gray-700">
+                    <?php
+                    if (isset($car['id_equipment'])) {
+                        $query = "SELECT * FROM car_equipment_element WHERE car_equipment_id = " . $car['id_equipment'];
+                        $res_comp = $conn->query($query);
+                        if ($res_comp->num_rows)
+                            while ($comp = $res_comp->fetch_assoc()) {
+                                echo '<li>' . $comp['car_equipment_text'] . '</li>';
+                            }
+                    }
+                    ?>
+                </ul>
+
             <!-- Комплектация -->
             <div class="mb-6">
                 <h2 class="text-xl font-semibold mb-4">Комплектация</h2>
                 <div id="complectationContainer">
-                    <?php while ($equipment = $equipmentResult->fetch_assoc()): ?>
-                        <div class="complectation-item mb-4">
-                            <input type="text" name="complectation[]" class="w-3/4 p-2 border border-gray-300 rounded mb-2" value="<?php echo $equipment['car_equipment_text']; ?>" required>
-                            <input type="hidden" name="complectation_ids[]" value="<?php echo $equipment['id']; ?>">
-                            <button type="button" class="delete-complectation bg-red-500 text-white p-1 rounded" onclick="deleteComplectation('<?php echo $equipment['id']; ?>')">Удалить</button>
-                        </div>
+                    <?php 
+                    
+                    while ($equipment = $equipmentResult->fetch_assoc()): ?>
+                    <!----> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
                     <?php endwhile; ?>
                 </div>
                 <button type="button" id="addComplectation" class="bg-blue-500 text-white p-2 rounded">Добавить элемент комплектации</button>

@@ -34,11 +34,11 @@
                 <select id="brand" name="brand" class="w-full p-2 border border-gray-300 rounded" required>
                     <option value="">Выберите марку</option>
                     <?php
-                    $marksQuery = "SELECT * FROM marks";
+                    $marksQuery = "SELECT * FROM brand";
                     $marksResult = $conn->query($marksQuery);
                     if ($marksResult->num_rows > 0) {
                         while($row = $marksResult->fetch_assoc()) {
-                            echo '<option value="' . $row['id_marks'] . '">' . $row['name_marks'] . '</option>';
+                            echo '<option value="' . $row['brand_id'] . '">' . $row['brand_name'] . '</option>';
                         }
                     } else {
                         echo '<option value="">Нет доступных марок</option>';

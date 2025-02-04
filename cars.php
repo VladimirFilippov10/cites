@@ -20,7 +20,7 @@
         $year_to = isset($_GET['year_to']) ? intval($_GET['year_to']) : null;
 
         // Запрос для получения всех марок
-        $marksQuery = "SELECT * FROM marks";
+        $marksQuery = "SELECT * FROM brand";
         $marksResult = $conn->query($marksQuery);
     ?>
     <main class="flex-grow">
@@ -81,29 +81,29 @@
             <div class="flex flex-col w-full p-5 space-y-5">
                 <?php
                 // Запрос для получения всех автомобилей с марками и моделями
-                $query = "SELECT cars.*, model.name_model, marks.name_marks FROM cars 
-                          JOIN model ON cars.model_id = model.id_model
-                          JOIN marks ON model.id_marks = marks.id_marks
-                          WHERE cars.cars_in_price = true";
+                $query = "SELECT car.*, model.model_name, brand.name_marks FROM car 
+                          JOIN model ON car.model_id = model.id_model
+                          JOIN brand ON model.brand_id = brand.brand_id
+                          WHERE car.car_in_price = true";
 
                 // Добавление фильтров к запросу
                 if ($brand_id) {
-                    $query .= " AND marks.id_marks = $brand_id";
+                    $query .= " AND brand.id_marks = $brand_id";
                 }
                 if ($model_id) {
                     $query .= " AND model.id_model = $model_id";
                 }
                 if ($price_from) {
-                    $query .= " AND cars.cars_price >= $price_from";
+                    $query .= " AND car.cars_price >= $price_from";
                 }
                 if ($price_to) {
-                    $query .= " AND cars.cars_price <= $price_to";
+                    $query .= " AND car.cars_price <= $price_to";
                 }
                 if ($year_from) {
-                    $query .= " AND cars.cars_year_made >= $year_from";
+                    $query .= " AND car.cars_year_made >= $year_from";
                 }
                 if ($year_to) {
-                    $query .= " AND cars.cars_year_made <= $year_to";
+                    $query .= " AND car.cars_year_made <= $year_to";
                 }
 
                 $result = $conn->query($query);
@@ -122,9 +122,9 @@
                             echo '</div>';
                             echo '<div class="w-2/3 pl-4 flex flex-col justify-between">';
                             echo '<div>';
-                            echo '<h2 class="text-xl font-bold">' . $row['name_marks'] . ' ' . $row['name_model'] . '</h2>'; // Объединение марки и модели
+                            echo '<h2 class="text-xl font-bold">' . $row['name_marks'] . ' ' . $row['model_name'] . '</h2>'; // Объединение марки и модели
                             echo '<p class="text-gray-600 text-sm">' . ($row['cars_volume'] ?? 'Неизвестно') . ' л/' . ($row['cars_power'] ?? 'Неизвестно') . ' л.с./' . ($row['cars_type_oil'] ?? 'Неизвестно') . '</p>';
-                            echo '<p class="text-gray-600 text-sm">' . ($row['cars_drive'] ?? 'Неизвестно') . ' владельцев</p>';
+                            echo '<p class="text-gray-600 text-sm">' . ($row['car_onwers'] ?? 'Неизвестно') . ' владельцев</p>';
                             echo '<p class="text-gray-600 text-sm">' . ($row['cars_bodywork'] ?? 'Неизвестно') . '</p>';
                             echo '<div class="flex items-center mt-2">';
                             echo '<span class="text-green-600 text-lg font-bold">' . ($row['cars_price'] ?? 'Неизвестно') . ' ₽</span>';
@@ -135,7 +135,7 @@
                             echo '</div>';
                             echo '<div class="flex items-center mt-2">';
                             echo '<span class="text-gray-600 text-sm">' . ($row['cars_drive_num'] ?? 'Неизвестно') . '</span>';
-                            echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['cars_color'] ?? 'Неизвестно') . '</span>';
+                            echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['car_color'] ?? 'Неизвестно') . '</span>';
                             echo '</div>';
                             echo '</div>';
                             echo '</div>';
@@ -165,7 +165,7 @@
                     data.forEach(function(model) {
                         var option = document.createElement('option');
                         option.value = model.id_model;
-                        option.textContent = model.name_model;
+                        option.textContent = model.model_name;
                         modelSelect.appendChild(option);
                     });
                 })
