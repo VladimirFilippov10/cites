@@ -77,7 +77,7 @@
                 <input type="text" id="car_state_number" name="car_state_number" class="w-full p-2 border border-gray-300 rounded" maxlength="9" required>
             </div>
             <div class="mb-6">
-                <label for="car_link_specifications" class="block text-lg font-semibold mb-2">Ссылка на спецификации</label>
+                <label for="car_link_specifications" class="block text-lg font-semibold mb-2">Ссылка на характеристики</label>
                 <input type="text" id="car_link_specifications" name="car_link_specifications" class="w-full p-2 border border-gray-300 rounded" maxlength="100" required>
             </div>
             <div class="mb-6">
@@ -137,9 +137,9 @@
                     <div>
                         <label for="drive" class="block text-lg font-semibold mb-2">Привод</label>
                         <select id="drive" name="drive" class="w-full p-2 border border-gray-300 rounded" required>
-                            <option value="front">Передний</option>
-                            <option value="rear">Задний</option>
-                            <option value="all">Полный</option>
+                            <option value="передний">Передний</option>
+                            <option value="задний">Задний</option>
+                            <option value="полный">Полный</option>
                         </select>
                     </div>
                 </div>
@@ -194,7 +194,7 @@
                 </div>
                 <button type="button" id="addComplectation" class="bg-blue-500 text-white p-2 rounded">Добавить элемент комплектации</button>
             </div>
-            <!-- Ограничения -->
+            <!-- Ограничения
             <div class="mb-6">
                 <h2 class="text-xl font-semibold mb-4">Ограничения и обременения</h2>
                 <div id="limitationContainer">
@@ -204,7 +204,7 @@
                     </div>
                 </div>
                 <button type="button" id="addLimitation" class="bg-blue-500 text-white p-2 rounded">Добавить ограничения</button>
-            </div>                                      
+            </div>      -->                                 
 
             <button type="submit" class="bg-green-500 text-white p-2 rounded">Сохранить</button>
         </form>

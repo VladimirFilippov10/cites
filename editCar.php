@@ -11,21 +11,30 @@
         include 'template/nav_employees.php';
         include 'php/dbconnect.php'; // Подключение к базе данных
 
+        // Проверка ID автомобиля
+        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+            die("Ошибка: некорректный ID автомобиля.");
+        }
+
         // Получение ID автомобиля из URL
         $car_id = intval($_GET['id']);
 
         // Запрос для получения данных автомобиля
         $carQuery = "SELECT * FROM car WHERE car_id = ?";
         $stmt = $conn->prepare($carQuery);
+        if (!$stmt) {
+            die("Ошибка: не удалось подготовить запрос.");
+        }
         $stmt->bind_param("i", $car_id);
         $stmt->execute();
         $carResult = $stmt->get_result();
+        if ($carResult->num_rows === 0) {
+            die("Ошибка: автомобиль не найден.");
+        }
         $car = $carResult->fetch_assoc();
 
         // Запрос для получения фотографий
         $photoQuery = "SELECT * FROM car_photo WHERE car_id = ?";
-        $photoStmt = $conn->prepare($photoQuery);
-
         $photoStmt = $conn->prepare($photoQuery);
         $photoStmt->bind_param("i", $car_id);
         $photoStmt->execute();
@@ -83,8 +92,8 @@
             </div>
 
             <div class="mb-6">
-                <label for="melage" class="block text-lg font-semibold mb-2">Пробег (км)</label>
-                <input type="number" id="melage" name="melage" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_melage']) ? $car['car_melage'] : ''; ?>" required>
+                <label for="mileage" class="block text-lg font-semibold mb-2">Пробег (км)</label>
+                <input type="number" id="mileage" name="mileage" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_mileage']) ? $car['car_mileage'] : ''; ?>" required>
             </div>
 
             <div class="mb-6">
@@ -106,17 +115,13 @@
                 <label for="power" class="block text-lg font-semibold mb-2">Мощность (л.с.)</label>
                 <input type="number" id="power" name="power" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_power']) ? $car['car_power'] : ''; ?>" required>
             </div>
-
-            <div class="mb-6">
-                <label for="drive" class="block text-lg font-semibold mb-2">Привод</label>
-                <select id="drive" name="drive" class="w-full p-2 border border-gray-300 rounded" required>
-                    <option value="front" <?php echo (isset($car['car_drive']) && $car['car_drive'] == 'front') ? 'selected' : ''; ?>>Передний</option>
-                    <option value="rear" <?php echo (isset($car['car_drive']) && $car['car_drive'] == 'rear') ? 'selected' : ''; ?>>Задний</option>
-                    <option value="all" <?php echo (isset($car['car_drive']) && $car['car_drive'] == 'all') ? 'selected' : ''; ?>>Полный</option>
-                </select>
-            </div>
-
-            <div class="mb-6">
+                        <label for="drive" class="block text-lg font-semibold mb-2">Привод</label>
+                        <select id="drive" name="drive" class="w-full p-2 border border-gray-300 rounded" required>
+                            <option value="передний" <?php echo (isset($car['drive']) && $car['drive'] == 'передний') ? 'selected' : ''; ?>>Передний</option>
+                            <option value="задний" <?php echo (isset($car['drive']) && $car['drive'] == 'задний') ? 'selected' : ''; ?>>Задний</option>
+                            <option value="полный" <?php echo (isset($car['drive']) && $car['drive'] == 'полный') ? 'selected' : ''; ?>>Полный</option>
+                        </select>
+                    <div class="mb-6">
                 <label for="transmission" class="block text-lg font-semibold mb-2">Коробка передач</label>
                 <select id="transmission" name="transmission" class="w-full p-2 border border-gray-300 rounded" required>
                     <option value="Механическая" <?php echo (isset($car['car_transmission_box']) && $car['car_transmission_box'] == 'Механическая') ? 'selected' : ''; ?>>Механическая</option>
@@ -160,12 +165,12 @@
                 <div id="photoContainer">
                     <?php while ($photo = $photoResult->fetch_assoc()): ?>
                         <div class="photo-item mb-4">
-                            <img src="http://localhost/cites/php/<?php echo $photo['image_patch']; ?>" alt="Фото" class="mb-2" style="max-width: 100px;">
-                            <input type="hidden" name="existing_photos[]" value="<?php echo $photo['image_patch']; ?>">
+                            <img src="http://localhost/cites/img/cars/<?php echo $photo['car_photo_image_patch']; ?>" alt="Фото" class="mb-2" style="max-width: 100px;">
+                            <input type="hidden" name="existing_photos[]" value="<?php echo $photo['car_photo_image_patch']; ?>">
 
-                            <input type="hidden" name="existing_photos[]" value="<?php echo $photo['image_patch']; ?>">
-                            <button type="button" class="delete-photo bg-red-500 text-white p-1 rounded" onclick="deletePhoto('<?php echo $photo['image_patch']; ?>')">Удалить</button>
-                            <input type="hidden" name="existing_photos[]" value="<?php echo $photo['image_patch']; ?>">
+                            <input type="hidden" name="existing_photos[]" value="<?php echo $photo['car_photo_image_patch']; ?>">
+                            <button type="button" class="delete-photo bg-red-500 text-white p-1 rounded" onclick="deletePhoto('<?php echo $photo['car_photo_image_patch']; ?>')">Удалить</button>
+                            <input type="hidden" name="existing_photos[]" value="<?php echo $photo['car_photo_image_patch']; ?>">
 
                         </div>
                     <?php endwhile; ?>
@@ -174,44 +179,21 @@
                 <button type="button" id="addPhoto" class="bg-blue-500 text-white p-2 rounded">Добавить фото</button>
             </div>
 
-            <div class="mt-4">
-                    <h2 class="text-xl font-semibold mb-2">Описание комплектации</h2>
-                    <p class="text-gray-700"><?php echo isset($car['equipment_text']) ? $car['equipment_text'] : 'Описание комплектации отсутствует'; ?></p>
-                </div>
-                <h3 class="text-lg font-semibold mt-2">
-                    В комплектацию входит:
-                </h3>
-                <ul class="list-disc list-inside text-gray-700">
-                    <?php
-                    if (isset($car['id_equipment'])) {
-                        $query = "SELECT * FROM car_equipment_element WHERE car_equipment_id = " . $car['id_equipment'];
-                        $res_comp = $conn->query($query);
-                        if ($res_comp->num_rows)
-                            while ($comp = $res_comp->fetch_assoc()) {
-                                echo '<li>' . $comp['car_equipment_text'] . '</li>';
-                            }
-                    }
-                    ?>
-                </ul>
-
-            <!-- Комплектация -->
-            <div class="mb-6">
-                <h2 class="text-xl font-semibold mb-4">Комплектация</h2>
-                <div id="complectationContainer">
-                    <?php 
-                    
-                    while ($equipment = $equipmentResult->fetch_assoc()): ?>
-                    <!----> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-                    <?php endwhile; ?>
-                </div>
-                <button type="button" id="addComplectation" class="bg-blue-500 text-white p-2 rounded">Добавить элемент комплектации</button>
-            </div>
-
             <button type="submit" class="bg-green-500 text-white p-2 rounded">Сохранить изменения</button>
         </form>
-    </div>
+
 
     <script>
+    document.getElementById('addPhoto').addEventListener('click', function() {
+        const photoContainer = document.getElementById('photoContainer');
+        const newPhotoItem = document.createElement('div');
+        newPhotoItem.className = 'photo-item mb-4';
+        newPhotoItem.innerHTML = `
+            <input type="file" name="car_photos[]" class="mb-2">
+        `;
+        photoContainer.appendChild(newPhotoItem);
+    });
+
     function deletePhoto(photoPath) {
         if (confirm('Вы уверены, что хотите удалить это фото?')) {
             const xhr = new XMLHttpRequest();

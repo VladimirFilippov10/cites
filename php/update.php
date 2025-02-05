@@ -3,28 +3,47 @@ include 'dbconnect.php'; // Подключение к базе данных
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $car_id = intval($_POST['car_id']);
-    $price = floatval($_POST['price']);
-    // Получение других данных из формы
-    $title = mysqli_real_escape_string($conn, $_POST['title']);
-    $year = intval($_POST['year']);
-    $bodywork = mysqli_real_escape_string($conn, $_POST['bodywork']);
-    $generation = mysqli_real_escape_string($conn, $_POST['generation']);
-    $melage = intval($_POST['melage']);
-    $color = mysqli_real_escape_string($conn, $_POST['color']);
-    $owners = intval($_POST['owners']);
-    $engine_volume = floatval($_POST['engine_volume']);
-    $power = intval($_POST['power']);
-    $drive = mysqli_real_escape_string($conn, $_POST['drive']);
-    $transmission = mysqli_real_escape_string($conn, $_POST['transmission']);
-    $fuel_type = mysqli_real_escape_string($conn, $_POST['fuel_type']);
-    $equipment_text = mysqli_real_escape_string($conn, $_POST['equipment_text']);
+    $car_win_code = mysqli_real_escape_string($conn, $_POST['title']);
+    $car_year_made = intval($_POST['year']);
+    $car_generation = mysqli_real_escape_string($conn, $_POST['generation']);
+    $car_mileage = intval($_POST['mileage']);
+    $car_color = mysqli_real_escape_string($conn, $_POST['color']);
+    $car_drive = mysqli_real_escape_string($conn, $_POST['drive']);
+    $car_volume = floatval(str_replace(',', '.', $_POST['engine_volume']));
+    $car_power = intval($_POST['power']);
+    $car_transmission_box = mysqli_real_escape_string($conn, $_POST['transmission']);
+    $car_type_oil = mysqli_real_escape_string($conn, $_POST['fuel_type']);
+    $car_description = mysqli_real_escape_string($conn, $_POST['equipment_text']);
+    $car_price = floatval($_POST['price']);
+    $car_onwers = intval($_POST['owners']);
+    $car_bodywork = mysqli_real_escape_string($conn, $_POST['bodywork']);
+    $car_in_price = isset($_POST['for_sale']) ? 1 : 0;
     $car_state_number = mysqli_real_escape_string($conn, $_POST['car_state_number']);
     $car_link_specifications = mysqli_real_escape_string($conn, $_POST['car_link_specifications']);
     $car_link_to_report = mysqli_real_escape_string($conn, $_POST['car_link_to_report']);
 
     // Обновление данных автомобиля
-    $updateQuery = "UPDATE cars SET cars_price = $price, cars_win = '$title', cars_year_made = $year, cars_bodywork = '$bodywork', cars_generation = '$generation', cars_melage = $melage, cars_color = '$color', cars_drive = $owners, cars_volume = $engine_volume, cars_power = $power, cars_transmission_box = '$transmission', cars_type_oil = '$fuel_type', cars_descriptions = '$equipment_text', car_state_number = '$car_state_number', car_link_specifications = '$car_link_specifications', car_link_to_report = '$car_link_to_report' WHERE cars_id = $car_id";
-    
+    $updateQuery = "UPDATE car SET 
+    car_onwers = '$car_onwers', 
+    car_win_code = '$car_win_code', 
+    car_year_made = $car_year_made, 
+    car_generation = '$car_generation', 
+    car_mileage = $car_mileage, 
+    car_color = '$car_color', 
+    car_volume = $car_volume, 
+    car_power = $car_power, 
+    car_transmission_box = '$car_transmission_box', 
+    car_type_oil = '$car_type_oil', 
+    car_descriptions = '$car_description', 
+    car_bodywork = '$car_bodywork', 
+    car_in_price = $car_in_price, 
+    car_price = $car_price, 
+    car_state_number = '$car_state_number', 
+    car_link_specifications = '$car_link_specifications', 
+    car_link_to_report = '$car_link_to_report', 
+    car_drive = '$car_drive' 
+    WHERE car_id = $car_id";
+
     if ($conn->query($updateQuery) === TRUE) {
         // Обработка загрузки новых фотографий
         if (!empty($_FILES['car_photos'])) {
@@ -39,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $photoName = $_FILES['car_photos']['name'][$i];
                 $photoTmpName = $_FILES['car_photos']['tmp_name'][$i];
 
+                // Форматирование имени файла
                 $photoPath = $targetDir . $car_id . "_" . ($i + 1) . ".png";
 
                 if ($_FILES['car_photos']['error'][$i] === UPLOAD_ERR_OK) {
@@ -46,7 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $allowedTypes = ['jpg', 'jpeg', 'png'];
                     if (in_array($fileType, $allowedTypes)) {
                         if (move_uploaded_file($photoTmpName, $photoPath)) {
-                            $insertPhotoQuery = "INSERT INTO car_photo (image_patch, car_id) VALUES ('$photoPath', $car_id)";
+                            // Сохранение пути в формате /1_1.png
+                            $insertPhotoQuery = "INSERT INTO car_photo (car_photo_image_patch, car_id) VALUES ('/" . $car_id . "_" . ($i + 1) . ".png', $car_id)";
                             $conn->query($insertPhotoQuery);
                         } else {
                             echo "Ошибка при загрузке файла: " . $photoName;
@@ -56,30 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                 } else {
                     echo "Ошибка загрузки файла: " . $photoName;
-                }
-            }
-        }
-
-        // Обработка комплектаций
-        if (isset($_POST['complectation'])) {
-            $complectationTexts = $_POST['complectation'];
-            $complectationDescriptions = $_POST['complectation_descriptions'];
-            $complectationIds = $_POST['complectation_ids'];
-
-            // Обновление существующих комплектаций
-            foreach ($complectationIds as $index => $id) {
-                $text = mysqli_real_escape_string($conn, $complectationTexts[$index]);
-                $description = mysqli_real_escape_string($conn, $complectationDescriptions[$index]);
-                $updateComplectationQuery = "UPDATE car_equipment SET car_equipment_text = '$text', description = '$description' WHERE id = $id AND car_id = $car_id";
-                $conn->query($updateComplectationQuery);
-            }
-
-            // Добавление новых комплектаций
-            foreach ($complectationTexts as $index => $text) {
-                if (empty($complectationIds[$index])) { // Если ID отсутствует, значит это новая комплектация
-                    $description = mysqli_real_escape_string($conn, $complectationDescriptions[$index]);
-                    $insertComplectationQuery = "INSERT INTO car_equipment (car_equipment_text, description, car_id) VALUES ('$text', '$description', $car_id)";
-                    $conn->query($insertComplectationQuery);
                 }
             }
         }

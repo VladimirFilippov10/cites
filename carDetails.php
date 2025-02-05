@@ -38,7 +38,7 @@
         $car_id = intval($_GET['id']);
 
         // Запрос данных о конкретном автомобиле
-        $query = "SELECT car.*, model.name_model, brand.brand_name, car_equipment.* FROM car 
+        $query = "SELECT car.*, model.model_name, brand.brand_name, car_equipment.* FROM car 
                   JOIN model ON car.model_id = model.model_id
                   JOIN brand ON model.brand_id = brand.brand_id
                   LEFT JOIN car_equipment ON car_equipment.car_id = car.car_id 
@@ -54,7 +54,7 @@
     <div class="max-w-5xl mx-auto p-4 bg-white shadow-md">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold"><?php echo $car['brand_name'] . ' ' . $car['name_model']; ?>, <?php echo $car['car_year_made']; ?></h1>
+                <h1 class="text-2xl font-bold"><?php echo $car['brand_name'] . ' ' . $car['model_name']; ?>, <?php echo $car['car_year_made']; ?></h1>
             </div>
             <div class="text-3xl font-bold text-gray-800"><?php echo number_format($car['car_price'], 0, ',', ' '); ?> ₽</div>
         </div>
@@ -68,7 +68,7 @@
                     <li class="flex items-center space-x-2"><i class="fas fa-car"></i><span><?php echo $car['car_bodywork']; ?></span></li>
                     <li class="flex items-center space-x-2"><i class="fas fa-cogs"></i><span><?php echo $car['car_transmission_box']; ?></span></span></li>
                     <li class="flex items-center space-x-2"><i class="fas fa-tachometer-alt"></i><span><?php echo $car['car_volume']; ?> л / <?php echo $car['car_power']; ?> л.с. / бензин</span></li>
-                    <li class="flex items-center space-x-2"><i class="fas fa-road"></i><span><?php echo $car['car_melage']; ?> км</span></li>
+                    <li class="flex items-center space-x-2"><i class="fas fa-road"></i><span><?php echo $car['car_mileage']; ?> км</span></li>
                     <li class="flex items-center space-x-2"><i class="fas fa-tint"></i><span><?php echo $car['car_color']; ?></span></li>
                     <li class="flex items-center space-x-2"><i class="fas fa-id-card"></i><span><?php echo $car['car_onwers']; ?> владельцев по ПТС</span></li>
                 </ul>
@@ -83,7 +83,7 @@
                     $res_photo = $conn->query($query_photo);
                     if ($res_photo->num_rows > 0) {
                         while ($photo = $res_photo->fetch_assoc()) {
-                            echo '<img  class="w-full h-auto rounded" height="100" alt="Изображение автомобиля" src="http://localhost/cites/php/' . $photo['image_patch'] . '" />';
+                            echo '<img  class="w-full h-auto rounded" height="100" alt="Изображение автомобиля" src="img/cars' . $photo['car_photo_image_patch'] . '" />';
                         }
                             echo '</div><div class="flex justify-between mt-2">
                         <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded" id="prev">
@@ -98,7 +98,7 @@
                        <div class="grid grid-cols-5 gap-2 mt-4 thumbnail justify-center">';
                        $res_photo = $conn->query($query_photo);
                         while ($photo = $res_photo->fetch_assoc()) {
-                            echo '<img alt="Изображение автомобиля" class="w-full h-auto rounded" height="100" width="150" src="http://localhost/cites/php/' . $photo['image_patch'] . '" />';
+                            echo '<img alt="Изображение автомобиля" class="w-full h-auto rounded" height="100" width="150" src="img/cars' . $photo['car_photo_image_patch'] . '" />';
                         }
                         echo '</div>';
                     } else {

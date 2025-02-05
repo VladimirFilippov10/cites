@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $car_generation = mysqli_real_escape_string($conn, $_POST['generation']);
     $car_mileage = intval($_POST['mileage']);
     $car_color = mysqli_real_escape_string($conn, $_POST['color']);
-    $car_onwers = intval($_POST['drive']);
+    $car_drive = intval($_POST['drive']);
     $car_volume = floatval(str_replace(',', '.', $_POST['engine_volume']));
     $car_power = intval($_POST['power']);
     $car_transmission_box = mysqli_real_escape_string($conn, $_POST['transmission']);
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $car_owners = intval($_POST['owners']);
     $car_bodywork = mysqli_real_escape_string($conn, $_POST['bodywork']);
     $car_in_price = isset($_POST['for_sale']) ? 1 : 0;
-
+    $equipment_text = mysqli_real_escape_string($conn, $_POST['equipment_text']);
     // Новые поля
     $car_state_number = mysqli_real_escape_string($conn, $_POST['car_state_number']);
     $car_link_specifications = mysqli_real_escape_string($conn, $_POST['car_link_specifications']);
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $conn->query($updateQuery);
     } else {
         // Создание новой записи
-        $insertQuery = "INSERT INTO car (car_onwers, model_id, car_win_code, car_year_made, car_generation, car_mileage, car_color, car_volume, car_power, car_transmission_box, car_type_oil, car_descriptions, car_bodywork, car_in_price, car_price, car_state_number, car_link_specifications, car_link_to_report) VALUES ('$car_onwers', $model_id, '$car_win_code', $car_year_made, '$car_generation', $car_mileage, '$car_color', $car_volume, $car_power, '$car_transmission_box', '$car_type_oil', '$car_description', '$car_bodywork', $car_in_price, $car_price, '$car_state_number', '$car_link_specifications', '$car_link_to_report')";
+        $insertQuery = "INSERT INTO car (car_onwers, model_id, car_win_code, car_year_made, car_generation, car_mileage, car_color, car_volume, car_power, car_transmission_box, car_type_oil, car_descriptions, car_bodywork, car_in_price, car_price, car_state_number, car_link_specifications, car_link_to_report, car_drive) VALUES ('$car_onwers', $model_id, '$car_win_code', $car_year_made, '$car_generation', $car_mileage, '$car_color', $car_volume, $car_power, '$car_transmission_box', '$car_type_oil', '$car_description', '$car_bodywork', $car_in_price, $car_price, '$car_state_number', '$car_link_specifications', '$car_link_to_report', '$car_drive')";
         
         $stmt = $conn->query($insertQuery);
         $car_id = $conn->insert_id; // Получаем ID добавленной записи
@@ -42,7 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Обработка загрузки фотографий
     if (!empty($_FILES['car_photos'])) {
-        $targetDir = "../img/cars/";
+        $targetDir = "../cars/img/";
+
 
         if (!file_exists($targetDir)) {
             mkdir($targetDir, 0777, true);
@@ -54,16 +55,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $photoTmpName = $_FILES['car_photos']['tmp_name'][$i];
 
             $photoPath = $targetDir . $car_id . "_" . ($i + 1) . ".png";
+            $photoPathSQL =  "/".$car_id . "_" . ($i + 1) . ".png";
 
             if ($_FILES['car_photos']['error'][$i] === UPLOAD_ERR_OK) {
                 $fileType = strtolower(pathinfo($photoName, PATHINFO_EXTENSION));
                 $allowedTypes = ['jpg', 'jpeg', 'png'];
                 if (in_array($fileType, $allowedTypes)) {
                     if (move_uploaded_file($photoTmpName, $photoPath)) {
-                        $insertPhotoQuery = "INSERT INTO car_photo (image_patch, car_id) VALUES ('$photoPath', $car_id)";
+                        $insertPhotoQuery = "INSERT INTO car_photo (car_photo_image_patch, car_id) VALUES (?, ?)";
                         $photoStmt = $conn->prepare($insertPhotoQuery);
-                        $photoStmt->bind_param("si", $photoPath, $car_id);
-                        $photoStmt->execute();
+                        
+                        // Проверка на наличие значений перед привязкой
+                        if ($photoPath && $car_id) {
+                            $photoStmt->bind_param("si", $photoPathSQL, $car_id);
+                            $photoStmt->execute();
+                        } else {
+                            echo "Ошибка: некорректные данные для привязки.";
+                        }
                     } else {
                         echo "Ошибка при загрузке файла: " . $photoName;
                     }
@@ -78,14 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Обработка комплектации
     if (!empty($_POST['complectation'])) {
-        $insertEquipmentQuery = "INSERT INTO car_equipment (car_id) VALUES (?)";
-        $equipmentStmt = $conn->prepare($insertEquipmentQuery);
-        $equipmentStmt->bind_param("i", $car_id);
+        $insertEquipmentQuery = "INSERT INTO car_equipment (car_id, car_equipment_descriptions) VALUES (?,?)";
+        $equipmentStmt = $conn->prepare($insertEquipmentQuery); // Исправлено
+        $equipmentStmt->bind_param("is", $car_id, $equipment_text);
         $equipmentStmt->execute();
         $equipment_id = $equipmentStmt->insert_id;
 
         foreach ($_POST['complectation'] as $equipment) {
-            $insertEquipmentElementQuery = "INSERT INTO car_equipment_element (car_equipment_id, car_equipment_text) VALUES (?, ?)";
+            $insertEquipmentElementQuery = "INSERT INTO car_equipment_element (car_equipment_id, car_equipment_element_text) VALUES (?, ?)";
             $equipmentElementStmt = $conn->prepare($insertEquipmentElementQuery);
             $equipmentElementStmt->bind_param("is", $equipment_id, $equipment);
             $equipmentElementStmt->execute();

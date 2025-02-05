@@ -34,7 +34,7 @@
                         <?php
                         if ($marksResult->num_rows > 0) {
                             while($row = $marksResult->fetch_assoc()) {
-                                echo '<option value="' . $row['id_marks'] . '">' . $row['name_marks'] . '</option>';
+                                echo '<option value="' . $row['id_marks'] . '">' . $row['brand_name'] . '</option>';
                             }
                         } else {
                             echo '<option value="">Нет доступных марок</option>';
@@ -81,8 +81,8 @@
             <div class="flex flex-col w-full p-5 space-y-5">
                 <?php
                 // Запрос для получения всех автомобилей с марками и моделями
-                $query = "SELECT car.*, model.model_name, brand.name_marks FROM car 
-                          JOIN model ON car.model_id = model.id_model
+                $query = "SELECT car.*, model.model_name, brand.brand_name FROM car 
+                          JOIN model ON car.model_id = model.model_id
                           JOIN brand ON model.brand_id = brand.brand_id
                           WHERE car.car_in_price = true";
 
@@ -111,35 +111,37 @@
                 // Проверка наличия автомобилей и их отображение
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                        $car_id = $row['cars_id'] ?? null; // Проверка на существование ключа
+                        $car_id = $row['car_id'] ?? null; // Проверка на существование ключа
                         if ($car_id) {
                             $query_photo = "SELECT * FROM car_photo WHERE car_id = " . $car_id . " LIMIT 1;";
                             $res_photo= $conn->query($query_photo);
                             $photo = $res_photo->fetch_assoc();
                             echo '<a href="carDetails.php?id=' . $car_id . '" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">';
                             echo '<div class="w-1/5">';
-                            echo '<img alt="' . $car_id . '1" class="h-full w-full object-cover" wight="250px" height="150px" src="php/' . ($photo["image_patch"] ?? '') . '" />'; // Проверка на существование ключа
+                            echo '<img alt="' . $car_id . '1" class="h-full w-full object-cover" wight="250px" height="150px" src="img/cars/' . ($photo["car_photo_image_patch"] ?? '') . '" />'; // Проверка на существование ключа
                             echo '</div>';
                             echo '<div class="w-2/3 pl-4 flex flex-col justify-between">';
                             echo '<div>';
-                            echo '<h2 class="text-xl font-bold">' . $row['name_marks'] . ' ' . $row['model_name'] . '</h2>'; // Объединение марки и модели
-                            echo '<p class="text-gray-600 text-sm">' . ($row['cars_volume'] ?? 'Неизвестно') . ' л/' . ($row['cars_power'] ?? 'Неизвестно') . ' л.с./' . ($row['cars_type_oil'] ?? 'Неизвестно') . '</p>';
+                            echo '<h2 class="text-xl font-bold">' . $row['brand_name'] . ' ' . $row['model_name'] . '</h2>'; // Объединение марки и модели
+                            echo '<p class="text-gray-600 text-sm">' . ($row['car_volume'] ?? 'Неизвестно') . ' л/' . ($row['car_power'] ?? 'Неизвестно') . ' л.с./' . ($row['car_type_oil'] ?? 'Неизвестно') . '</p>';
                             echo '<p class="text-gray-600 text-sm">' . ($row['car_onwers'] ?? 'Неизвестно') . ' владельцев</p>';
-                            echo '<p class="text-gray-600 text-sm">' . ($row['cars_bodywork'] ?? 'Неизвестно') . '</p>';
+                            echo '<p class="text-gray-600 text-sm">' . ($row['car_bodywork'] ?? 'Неизвестно') . '</p>';
                             echo '<div class="flex items-center mt-2">';
-                            echo '<span class="text-green-600 text-lg font-bold">' . ($row['cars_price'] ?? 'Неизвестно') . ' ₽</span>';
+                            echo '<span class="text-green-600 text-lg font-bold">' . ($row['car_price'] ?? 'Неизвестно') . ' ₽</span>';
                             echo '</div>';
                             echo '<div class="flex items-center mt-2">';
-                            echo '<span class="text-gray-600 text-sm">' . ($row['cars_year_made'] ?? 'Неизвестно') . '</span>';
-                            echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['cars_melage'] ?? 'Неизвестно') . ' км</span>';
+                            echo '<span class="text-gray-600 text-sm">' . ($row['car_year_made'] ?? 'Неизвестно') . '</span>';
+                            echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['car_mileage'] ?? 'Неизвестно') . ' км</span>';
                             echo '</div>';
                             echo '<div class="flex items-center mt-2">';
-                            echo '<span class="text-gray-600 text-sm">' . ($row['cars_drive_num'] ?? 'Неизвестно') . '</span>';
+                            echo '<span class="text-gray-600 text-sm">' . ($row['car_drive'] ?? 'Неизвестно') . '</span>';
                             echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['car_color'] ?? 'Неизвестно') . '</span>';
                             echo '</div>';
                             echo '</div>';
                             echo '</div>';
                             echo '</a>';
+                        } else {
+                            echo '<p class="text-center">Ошибка: ID автомобиля не найден.</p>';
                         }
                     }
                 } else {
