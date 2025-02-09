@@ -18,6 +18,13 @@ if (isset($_GET['id_marks'])) {
         ];
     }
 
+    // Отладочное сообщение
+    if (empty($models)) {
+        error_log("No models found for brand ID: " . $brand_id);
+    } else {
+        error_log("Models found: " . json_encode($models));
+    }
+
     echo json_encode($models);
 }
 ?>

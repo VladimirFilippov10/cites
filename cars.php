@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -18,6 +18,10 @@
         $price_to = isset($_GET['price_to']) ? floatval($_GET['price_to']) : null;
         $year_from = isset($_GET['year_from']) ? intval($_GET['year_from']) : null;
         $year_to = isset($_GET['year_to']) ? intval($_GET['year_to']) : null;
+        $power_from = isset($_GET['power_from']) ? intval($_GET['power_from']) : null; // Новое поле для минимальной мощности
+        $power_to = isset($_GET['power_to']) ? intval($_GET['power_to']) : null; // Новое поле для максимальной мощности
+        $drive_type = isset($_GET['drive_type']) ? $_GET['drive_type'] : null; // Новое поле для привода
+        $transmission = isset($_GET['transmission']) ? $_GET['transmission'] : null; // Новое поле для коробки передач
 
         // Запрос для получения всех марок
         $marksQuery = "SELECT * FROM brand";
@@ -68,14 +72,36 @@
                         </select>
                     </div>
                 </div>
+                <div id="advanced-search" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                        <input type="text" name="power_from" placeholder="Мощность от, л.с." class="border border-gray-300 rounded-lg p-2 w-full">
+                        <input type="text" name="power_to" placeholder="Мощность до, л.с." class="border border-gray-300 rounded-lg p-2 w-full">
+                        <select name="drive_type" class="border border-gray-300 rounded-lg p-2">
+                            <option value="">Тип привода</option>
+                            <option value="front">Передний</option>
+                            <option value="rear">Задний</option>
+                            <option value="all">Полный</option>
+                        </select>
+                        <select name="transmission" class="border border-gray-300 rounded-lg p-2">
+                            <option value="">Коробка передач</option>
+                            <option value="manual">Механическая</option>
+                            <option value="automatic">Автоматическая</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="mt-4 flex justify-between items-center">
                     <button type="button" id="toggle-button" class="text-blue-500" onclick="toggleAdvancedSearch()">Расширенный поиск</button>
                     <div class="flex space-x-2">
-                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg" onclick="resetFilters()">Сбросить фильтры</button>
+                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg" onclick="resetFilters(); window.location.href='cars.php';">Сбросить фильтры</button>
+
                         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Показать результаты</button>
                     </div>
                 </div>
             </form>
+            <div id="advanced-search" class="hidden">
+                <!-- Здесь можно добавить дополнительные поля для расширенного поиска -->
+                <input type="text" placeholder="Дополнительный фильтр" class="border border-gray-300 rounded-lg p-2 w-full">
+            </div>
         </div>
         <div class="container mx-auto py-20 px-20">
             <div class="flex flex-col w-full p-5 space-y-5">
@@ -85,6 +111,15 @@
                           JOIN model ON car.model_id = model.model_id
                           JOIN brand ON model.brand_id = brand.brand_id
                           WHERE car.car_in_price = true";
+
+                // Если фильтры не заданы, выполняем запрос для получения всех автомобилей
+                if (!$brand_id && !$model_id && !$price_from && !$price_to && !$year_from && !$year_to && !$power_from && !$power_to && !$drive_type && !$transmission) {
+                    $query = "SELECT car.*, model.model_name, brand.brand_name FROM car 
+                              JOIN model ON car.model_id = model.model_id
+                              JOIN brand ON model.brand_id = brand.brand_id
+                              WHERE car.car_in_price = true";
+                }
+
 
                 // Добавление фильтров к запросу
                 if ($brand_id) {
@@ -104,6 +139,18 @@
                 }
                 if ($year_to) {
                     $query .= " AND car.cars_year_made <= $year_to";
+                }
+                if ($power_from) {
+                    $query .= " AND car.car_power >= $power_from";
+                }
+                if ($power_to) {
+                    $query .= " AND car.car_power <= $power_to";
+                }
+                if ($drive_type) {
+                    $query .= " AND car.car_drive = '$drive_type'";
+                }
+                if ($transmission) {
+                    $query .= " AND car.car_transmission = '$transmission'";
                 }
 
                 $result = $conn->query($query);
@@ -155,25 +202,29 @@
     include 'template/footer.php';
     ?>
     <script>
-    function loadModels() {
-        var brandId = document.getElementById('brand').value;
-        var modelSelect = document.getElementById('model');
-        modelSelect.innerHTML = '<option value="">Выберите модель</option>'; // Очистить предыдущие модели
+function loadModels() {
+    var brandId = document.getElementById('brand').value;
+    var modelSelect = document.getElementById('model');
+    modelSelect.innerHTML = '<option value="">Выберите модель</option>'; // Очистить предыдущие модели
 
-        if (brandId) {
-            fetch('php/getModels.php?id_marks=' + brandId)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(function(model) {
-                        var option = document.createElement('option');
-                        option.value = model.id_model;
-                        option.textContent = model.model_name;
-                        modelSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Ошибка:', error));
-        }
+    console.log("Selected brand ID:", brandId); // Отладочное сообщение
+
+    if (brandId) {
+        fetch('php/getModels.php?id_marks=' + brandId)
+            .then(response => response.json())
+            .then(data => {
+                console.log("Models data received:", data); // Отладочное сообщение
+                data.forEach(function(model) {
+                    var option = document.createElement('option');
+                    option.value = model.id_model;
+                    option.textContent = model.model_name;
+                    modelSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Ошибка:', error));
     }
+}
+
     </script>
 </body>
 </html>

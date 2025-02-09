@@ -4,192 +4,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Заявки на выкуп</title>
     <script src="js/messageRansomCars.js"></script>
+    <style>
+        th {
+            position: relative;
+        }
+        th:hover {
+            cursor: col-resize;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-roboto">
     <?php
-        include 'template\header.php';
-        include 'template\nav_employees.php';
+        include 'template/header.php';
+        include 'template/nav_employees.php';
+        include 'php/dbconnect.php'; // Подключение к базе данных
+
+        // Получение данных из таблицы redemption_request
+        $query = "SELECT * FROM redemption_request";
+        $result = mysqli_query($conn, $query);
     ?>
-    <body class="bg-gray-100 font-roboto">
     <div class="container mx-auto p-4">
         <h1 class="text-3xl font-bold mb-4">Заявки на выкуп авто</h1>
         <div class="bg-white shadow-md rounded-lg p-6">
-            <table class="min-w-full bg-white">
-                <thead>
-                    <tr>
-                        <th class="py-2 px-4 border-b">ФИО заявителя</th>
-                        <th class="py-2 px-4 border-b">Номер телефона</th>
-                        <th class="py-2 px-4 border-b">Модель автомобиля</th>
-                        <th class="py-2 px-4 border-b">Дата подачи</th>
-                        <th class="py-2 px-4 border-b">Ответственный</th>
-                        <th class="py-2 px-4 border-b">Время осмотра</th>
-                        <th class="py-2 px-4 border-b">Место осмотра</th>
-                        <th class="py-2 px-4 border-b">Статус заявки</th>
-                        <th class="py-2 px-4 border-b">Закрыта</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="py-2 px-4 border-b">Иванов Иван Иванович</td>
-                        <td class="py-2 px-4 border-b">+7 123 456 78 90</td>
-                        <td class="py-2 px-4 border-b">Toyota Camry</td>
-                        <td class="py-2 px-4 border-b">2023-10-01</td>
-                        <td class="py-2 px-4 border-b">
-                            <select class="border rounded p-2">
-                                <option>Сотрудник 1</option>
-                                <option>Сотрудник 2</option>
-                                <option>Сотрудник 3</option>
-                            </select>
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <input type="time" class="border rounded p-2">
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <input type="text" class="border rounded p-2" placeholder="Введите место осмотра">
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <select class="border rounded p-2">
-                                <option>Открыта</option>
-                                <option>Специалист на осмотре</option>
-                                <option>Принятие решения</option>
-                                <option>Автомобиль готов к выкупу</option>
-                                <option>Отказ</option>
-                            </select>
-                        </td>
-                        <td class="py-2 px-4 border-b text-center">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-green-600">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 px-4 border-b">Петров Петр Петрович</td>
-                        <td class="py-2 px-4 border-b">+7 987 654 32 10</td>
-                        <td class="py-2 px-4 border-b">Honda Accord</td>
-                        <td class="py-2 px-4 border-b">2023-10-02</td>
-                        <td class="py-2 px-4 border-b">
-                            <select class="border rounded p-2">
-                                <option>Сотрудник 1</option>
-                                <option>Сотрудник 2</option>
-                                <option>Сотрудник 3</option>
-                            </select>
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <input type="time" class="border rounded p-2">
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <input type="text" class="border rounded p-2" placeholder="Введите место осмотра">
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <select class="border rounded p-2">
-                                <option>Открыта</option>
-                                <option>Специалист на осмотре</option>
-                                <option>Принятие решения</option>
-                                <option>Автомобиль готов к выкупу</option>
-                                <option>Отказ</option>
-                            </select>
-                        </td>
-                        <td class="py-2 px-4 border-b text-center">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-green-600">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 px-4 border-b">Сидоров Сидор Сидорович</td>
-                        <td class="py-2 px-4 border-b">+7 555 666 77 88</td>
-                        <td class="py-2 px-4 border-b">BMW X5</td>
-                        <td class="py-2 px-4 border-b">2023-10-03</td>
-                        <td class="py-2 px-4 border-b">
-                            <select class="border rounded p-2">
-                                <option>Сотрудник 1</option>
-                                <option>Сотрудник 2</option>
-                                <option>Сотрудник 3</option>
-                            </select>
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <input type="time" class="border rounded p-2">
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <input type="text" class="border rounded p-2" placeholder="Введите место осмотра">
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <select class="border rounded p-2">
-                                <option>Открыта</option>
-                                <option>Специалист на осмотре</option>
-                                <option>Принятие решения</option>
-                                <option>Автомобиль готов к выкупу</option>
-                                <option>Отказ</option>
-                            </select>
-                        </td>
-                        <td class="py-2 px-4 border-b text-center">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-green-600">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 px-4 border-b">Кузнецов Кузьма Кузьмич</td>
-                        <td class="py-2 px-4 border-b">+7 444 333 22 11</td>
-                        <td class="py-2 px-4 border-b">Mercedes-Benz C-Class</td>
-                        <td class="py-2 px-4 border-b">2023-10-04</td>
-                        <td class="py-2 px-4 border-b">
-                            <select class="border rounded p-2">
-                                <option>Сотрудник 1</option>
-                                <option>Сотрудник 2</option>
-                                <option>Сотрудник 3</option>
-                            </select>
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <input type="time" class="border rounded p-2">
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <input type="text" class="border rounded p-2" placeholder="Введите место осмотра">
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <select class="border rounded p-2">
-                                <option>Открыта</option>
-                                <option>Специалист на осмотре</option>
-                                <option>Принятие решения</option>
-                                <option>Автомобиль готов к выкупу</option>
-                                <option>Отказ</option>
-                            </select>
-                        </td>
-                        <td class="py-2 px-4 border-b text-center">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-green-600">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 px-4 border-b">Смирнов Сергей Сергеевич</td>
-                        <td class="py-2 px-4 border-b">+7 222 111 00 99</td>
-                        <td class="py-2 px-4 border-b">Audi A6</td>
-                        <td class="py-2 px-4 border-b">2023-10-05</td>
-                        <td class="py-2 px-4 border-b">
-                            <select class="border rounded p-2">
-                                <option>Сотрудник 1</option>
-                                <option>Сотрудник 2</option>
-                                <option>Сотрудник 3</option>
-                            </select>
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <input type="time" class="border rounded p-2">
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <input type="text" class="border rounded p-2" placeholder="Введите место осмотра">
-                        </td>
-                        <td class="py-2 px-4 border-b">
-                            <select class="border rounded p-2">
-                                <option>Открыта</option>
-                                <option>Специалист на осмотре</option>
-                                <option>Принятие решения</option>
-                                <option>Автомобиль готов к выкупу</option>
-                                <option>Отказ</option>
-                            </select>
-                        </td>
-                        <td class="py-2 px-4 border-b text-center">
-                            <input type="checkbox" class="form-checkbox h-5 w-5 text-green-600">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <form action="php/update_redemption_request.php" method="POST">
+                <table class="min-w-full bg-white" id="applications">
+                    <thead>
+                        <tr>
+                            <th class="py-2 px-4 border-b">ФИО заявителя</th>
+                            <th class="py-2 px-4 border-b">Номер телефона</th>
+                            <th class="py-2 px-4 border-b">Модель автомобиля</th>
+                            <th class="py-2 px-4 border-b">Дата подачи</th>
+                            <th class="py-2 px-4 border-b">Ответственный</th>
+                            <th class="py-2 px-4 border-b">Время осмотра</th>
+                            <th class="py-2 px-4 border-b">Место осмотра</th>
+                            <th class="py-2 px-4 border-b">Статус заявки</th>
+                            <th class="py-2 px-4 border-b">Закрыта</th>
+                            <th class="py-2 px-4 border-b">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($request = mysqli_fetch_assoc($result)): ?>
+                        <tr>
+                            <td class="py-2 px-4 border-b"><?php echo $request['redemption_request_name_client']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $request['redemption_request_name_client']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $request['redemption_request_model_car']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $request['redemption_request_date']; ?></td>
+                            <td class="py-2 px-4 border-b">
+                                <select class="border rounded p-2" name="employee[<?php echo $request['redemption_request_id']; ?>]">
+                                    <?php
+                                    $query_employees = "SELECT * FROM `employee` WHERE employee_role = 3";
+                                    $result_employees = mysqli_query($conn, $query_employees);
+                                    while ($employee = mysqli_fetch_assoc($result_employees)): ?>
+                                        <option value="<?php echo $employee['employee_id']; ?>"><?php echo $employee['employee_name']; ?></option>
+                                    <?php endwhile; ?>
+                                </select>
+                            </td>
+                            <td class="py-2 px-4 border-b">
+                                <input type="date" class="border rounded p-2" name="inspection_date[<?php echo $request['redemption_request_id']; ?>]">
+                                <input type="time" class="border rounded p-2" name="inspection_time[<?php echo $request['redemption_request_id']; ?>]">
+                            </td>
+                            <td class="py-2 px-4 border-b">
+                                <input type="text" class="border rounded p-2" name="inspection_place[<?php echo $request['redemption_request_id']; ?>]" placeholder="Введите место осмотра">
+                            </td>
+                            <td class="py-2 px-4 border-b">
+                                <select class="border rounded p-2" name="status[<?php echo $request['redemption_request_id']; ?>]">
+                                    <option>Открыта</option>
+                                    <option>Специалист на осмотре</option>
+                                    <option>Принятие решения</option>
+                                    <option>Автомобиль готов к выкупу</option>
+                                    <option>Отказ</option>
+                                </select>
+                            </td>
+                            <td class="py-2 px-4 border-b text-center">
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-green-600" name="closed[<?php echo $request['redemption_request_id']; ?>]">
+                            </td>
+                            <td class="py-2 px-4 border-b text-center">
+                                <input type="hidden" name="id" value="<?php echo $request['redemption_request_id']; ?>">
+                                <button type="submit" class="bg-blue-500 text-white rounded px-4 py-2">Сохранить</button>
+                            </td>
+                        </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </form>
         </div>
     </div>
     <?php
-include 'template/footer.php'
-?>
+    include 'template/footer.php';
+    ?>
+    <script>
+        const thElements = document.querySelectorAll('th');
+        thElements.forEach(th => {
+            th.addEventListener('mousedown', function(e) {
+                const startX = e.pageX;
+                const startWidth = th.offsetWidth;
+
+                const mouseMoveHandler = (e) => {
+                    const newWidth = startWidth + (e.pageX - startX);
+                    th.style.width = `${newWidth}px`;
+                };
+
+                const mouseUpHandler = () => {
+                    document.removeEventListener('mousemove', mouseMoveHandler);
+                    document.removeEventListener('mouseup', mouseUpHandler);
+                };
+
+                document.addEventListener('mousemove', mouseMoveHandler);
+                document.addEventListener('mouseup', mouseUpHandler);
+            });
+        });
+    </script>
 </body>
 </html>

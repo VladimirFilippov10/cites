@@ -2,24 +2,39 @@
 include 'dbconnect.php'; // Подключение к базе данных
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Получение пути к фотографии из POST-запроса
-    $photoPath = $_POST['photoPath'];
+    // Получение ID фотографии из POST-запроса
+    $photoID = intval($_POST['car_photo_id']);
 
-    // Удаление файла с сервера
-    if (file_exists($photoPath)) {
-        unlink($photoPath);
-    }
+    // Получение пути к фотографии из базы данных
+    $select = "SELECT * FROM car_photo WHERE car_photo_id = ?";
+    $stmt = $conn->prepare($select);
+    $stmt->bind_param("i", $photoID); // Привязка параметра
+    $stmt->execute(); // Выполнение запроса
+    $result = $stmt->get_result(); // Получаем результат запроса
+    $row = $result->fetch_assoc();
 
-    // Удаление записи о фотографии из базы данных
-    $deleteQuery = "DELETE FROM car_photo WHERE image_patch = ?";
-    $stmt = $conn->prepare($deleteQuery);
-    $stmt->bind_param("s", $photoPath);
-    $stmt->execute();
+    if ($row) {
+$photoPath = '../img/cars/' . $row['car_photo_image_patch']; // Исправленный путь к фотографии
 
-    if ($stmt->affected_rows > 0) {
-        echo 'Фото успешно удалено.';
+
+        // Удаление файла с сервера
+        if (file_exists($photoPath)) {
+            unlink($photoPath);
+        }
+
+        // Удаление записи о фотографии из базы данных
+        $deleteQuery = "DELETE FROM car_photo WHERE car_photo_id = ?";
+        $stmt = $conn->prepare($deleteQuery);
+        $stmt->bind_param("i", $photoID);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            echo 'Фото успешно удалено.';
+        } else {
+            echo 'Ошибка при удалении фото из базы данных.';
+        }
     } else {
-        echo 'Ошибка при удалении фото из базы данных.';
+        echo 'Фото не найдено.';
     }
 } else {
     echo 'Неверный метод запроса.';

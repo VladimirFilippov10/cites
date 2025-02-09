@@ -1,62 +1,24 @@
-.border-gray-400 {
-    border-color: #A0AEC0; /* Серый цвет */
+/* Add your custom styles here */
+#applications td {
+    font-size: 10px; /* Уменьшение размера шрифта для ячеек таблицы */
 }
 
-.border-2 {
-    border-width: 2px; /* Толщина окантовки */
+.container {
+    max-width: 100svw; /* Ограничение ширины контейнера */
+    margin: 0 auto; /* Центрирование контейнера */
+    overflow: hidden; /* Предотвращение выхода содержимого за пределы блока */
 }
 
-.shadow-lg {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Эффект объемности */
+#applications table {
+    width: 100%; /* Устанавливаем ширину таблицы на 100% */
+    table-layout: auto; /* Автоматическое распределение ширины столбцов */
+    overflow-x: auto; /* Добавляем горизонтальную прокрутку, если необходимо */
 }
-#body_cars{
-        height: 90; /* Высота на весь экран */
-        display: flex;
-        justify-content: center; /* Горизонтальное центрирование */
-        align-items: center; /* Вертикальное центрирование */
-        background-color: #f7fafc; /* Цвет фона для лучшего контраста */
+
+#applications th, td {
+    overflow: hidden; /* Убираем переполнение в ячейках */
+    text-overflow: ellipsis; /* Добавляем многоточие для переполненных ячеек */
+    white-space: nowrap; /* Запрещаем перенос строк в ячейках */
+    resize: horizontal; /* Позволяем растягивать ячейки по горизонтали */
+    min-width: 50px; /* Минимальная ширина ячейки */
 }
-.carousel {
-    position: relative;
-  }
-  .carousel img {
-    display: none;
-  }
-  .carousel img.active {
-    display: block;
-  }
-  .thumbnail img {
-    cursor: pointer;
-  }
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 50;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-  .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-    border-radius: 8px;
-  }
-  .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-  }
-  .close:hover,
-  .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-  }

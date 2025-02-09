@@ -71,7 +71,7 @@
                 <div class="mt-4 flex justify-between items-center">
                     <button type="button" id="toggle-button" class="text-blue-500" onclick="toggleAdvancedSearch()">Расширенный поиск</button>
                     <div class="flex space-x-2">
-                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg" onclick="resetFilters()">Сбросить фильтры</button>
+                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg" onclick="resetFilters(); window.location.href='cars_modified.php';">Сбросить фильтры</button>
                         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Показать результаты</button>
                     </div>
                 </div>
@@ -85,27 +85,12 @@
                           JOIN marks ON cars.model_id = marks.id_marks 
                           JOIN model ON cars.model_id = model.id_model";
 
-                // Закомментировал фильтры для проверки
-                /*
-                if ($brand_id) {
-                    $query .= " AND marks.id_marks = $brand_id";
+                // Если фильтры не заданы, выполняем запрос для получения всех автомобилей
+                if (!$brand_id && !$model_id && !$price_from && !$price_to && !$year_from && !$year_to) {
+                    $query = "SELECT cars.*, marks.name_marks, model.name_model FROM cars 
+                              JOIN marks ON cars.model_id = marks.id_marks 
+                              JOIN model ON cars.model_id = model.id_model";
                 }
-                if ($model_id) {
-                    $query .= " AND model.id_model = $model_id";
-                }
-                if ($price_from) {
-                    $query .= " AND cars.cars_price >= $price_from";
-                }
-                if ($price_to) {
-                    $query .= " AND cars.cars_price <= $price_to";
-                }
-                if ($year_from) {
-                    $query .= " AND cars.cars_year_made >= $year_from";
-                }
-                if ($year_to) {
-                    $query .= " AND cars.cars_year_made <= $year_to";
-                }
-                */
 
                 $result = $conn->query($query);
 

@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/newCarComplect.js"></script>
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Редактировать авто</title>
@@ -115,13 +119,20 @@
                 <label for="power" class="block text-lg font-semibold mb-2">Мощность (л.с.)</label>
                 <input type="number" id="power" name="power" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_power']) ? $car['car_power'] : ''; ?>" required>
             </div>
-                        <label for="drive" class="block text-lg font-semibold mb-2">Привод</label>
-                        <select id="drive" name="drive" class="w-full p-2 border border-gray-300 rounded" required>
-                            <option value="передний" <?php echo (isset($car['drive']) && $car['drive'] == 'передний') ? 'selected' : ''; ?>>Передний</option>
-                            <option value="задний" <?php echo (isset($car['drive']) && $car['drive'] == 'задний') ? 'selected' : ''; ?>>Задний</option>
-                            <option value="полный" <?php echo (isset($car['drive']) && $car['drive'] == 'полный') ? 'selected' : ''; ?>>Полный</option>
-                        </select>
-                    <div class="mb-6">
+
+            <div class="mb-6">
+                <label for="car_in_price" class="block text-lg font-semibold mb-2">На продаже</label>
+                <input type="checkbox" id="car_in_price" name="for_sale" value="1" <?php echo $car['car_in_price'] ? 'checked' : ''; ?>>
+            </div>
+
+            <label for="drive" class="block text-lg font-semibold mb-2">Привод</label>
+            <select id="drive" name="drive" class="w-full p-2 border border-gray-300 rounded" required>
+                <option value="передний" <?php echo (isset($car['drive']) && $car['drive'] == 'передний') ? 'selected' : ''; ?>>Передний</option>
+                <option value="задний" <?php echo (isset($car['drive']) && $car['drive'] == 'задний') ? 'selected' : ''; ?>>Задний</option>
+                <option value="полный" <?php echo (isset($car['drive']) && $car['drive'] == 'полный') ? 'selected' : ''; ?>>Полный</option>
+            </select>
+
+            <div class="mb-6">
                 <label for="transmission" class="block text-lg font-semibold mb-2">Коробка передач</label>
                 <select id="transmission" name="transmission" class="w-full p-2 border border-gray-300 rounded" required>
                     <option value="Механическая" <?php echo (isset($car['car_transmission_box']) && $car['car_transmission_box'] == 'Механическая') ? 'selected' : ''; ?>>Механическая</option>
@@ -167,17 +178,33 @@
                         <div class="photo-item mb-4">
                             <img src="http://localhost/cites/img/cars/<?php echo $photo['car_photo_image_patch']; ?>" alt="Фото" class="mb-2" style="max-width: 100px;">
                             <input type="hidden" name="existing_photos[]" value="<?php echo $photo['car_photo_image_patch']; ?>">
-
-                            <input type="hidden" name="existing_photos[]" value="<?php echo $photo['car_photo_image_patch']; ?>">
-                            <button type="button" class="delete-photo bg-red-500 text-white p-1 rounded" onclick="deletePhoto('<?php echo $photo['car_photo_image_patch']; ?>')">Удалить</button>
-                            <input type="hidden" name="existing_photos[]" value="<?php echo $photo['car_photo_image_patch']; ?>">
-
+                            <input type="hidden" name="car_photo_id" value="<?php echo $photo['car_photo_id']; ?>">
+                            <button type="button" class="delete-photo bg-red-500 text-white p-1 rounded" onclick="deletePhoto('<?php echo $photo['car_photo_id']; ?>')">Удалить</button>
                         </div>
                     <?php endwhile; ?>
                 </div>
                 <input type="file" name="car_photos[]" multiple class="mb-4">
                 <button type="button" id="addPhoto" class="bg-blue-500 text-white p-2 rounded">Добавить фото</button>
             </div>
+            <?php          
+            $equipment = $equipmentResult->fetch_assoc();
+            
+            ?>
+            <div class="mb-6">
+                <label for="car_equipment_descriptions" class="block text-lg font-semibold mb-2">Описание комплектации</label>
+                <textarea id="car_equipment_descriptions" name="car_equipment_descriptions" class="w-full p-2 border border-gray-300 rounded" rows="4" required><?php echo isset($equipment['car_equipment_descriptions']) ? $equipment['car_equipment_descriptions'] : '';?></textarea>
+            </div>
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-4">Комплектация</h2>
+                <div id="complectationContainer">
+                    <div class="complectation-item mb-4">
+                        <input type="text" name="complectation[]" class="w-3/4 p-2 border border-gray-300 rounded mb-2" placeholder="Элемент комплектации" required>
+                        <button type="button" class="delete-complectation bg-red-500 text-white p-1 rounded">Удалить</button>
+                    </div>
+                </div>
+                <button type="button" id="addComplectation" class="bg-blue-500 text-white p-2 rounded">Добавить элемент комплектации</button>
+            </div>
+
 
             <button type="submit" class="bg-green-500 text-white p-2 rounded">Сохранить изменения</button>
         </form>
@@ -188,13 +215,13 @@
         const photoContainer = document.getElementById('photoContainer');
         const newPhotoItem = document.createElement('div');
         newPhotoItem.className = 'photo-item mb-4';
-        newPhotoItem.innerHTML = `
+        newPhotoItem.innerHTML = ` 
             <input type="file" name="car_photos[]" class="mb-2">
         `;
         photoContainer.appendChild(newPhotoItem);
     });
 
-    function deletePhoto(photoPath) {
+    function deletePhoto(photoID) {
         if (confirm('Вы уверены, что хотите удалить это фото?')) {
             const xhr = new XMLHttpRequest();
             xhr.open('POST', 'php/deletePhoto.php', true);
@@ -207,7 +234,7 @@
                     alert('Ошибка при удалении фото.');
                 }
             };
-            xhr.send('photoPath=' + encodeURIComponent(photoPath));
+            xhr.send('car_photo_id=' + encodeURIComponent(photoID)); // Передача ID фотографии
         }
     }
 

@@ -71,32 +71,31 @@
    <p class="text-center mb-6">
     Здесь вы можете подать заявку на выкуп вашего автомобиля или оставить заявку на предоставление вашего автомобиля на комиссию. В данном случае мы гарантируем частоту сделку с оформлением договора, продажа и передача автомобиля происходит при участии вас или вашего представителя.
    </p>
-   <div class="bg-white p-6 rounded-lg shadow-lg">
-    <form action="#" class="space-y-4" method="POST">
-     <div>
-      <label class="block text-sm font-medium text-gray-700" for="name">
-       ФИО
-      </label>
-      <input class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" id="name" name="name" required="" type="text"/>
-     </div>
-     <div>
-      <label class="block text-sm font-medium text-gray-700" for="phone">
-       Номер телефона
-      </label>
-      <input class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" id="phone" name="phone" required="" type="tel"/>
-     </div>
-     <div>
-      <label class="block text-sm font-medium text-gray-700" for="car-model">
-       Модель авто
-      </label>
-      <input class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" id="car-model" name="car-model" required="" type="text"/>
-     </div>
-     <div class="text-center">
-     <button class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" type="submit">
-       Отправить заявку
-      </button>
-     </div>
-    </form>
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+<form action="php/redemption_request_submit.php" class="space-y-4" method="POST">
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700" for="name">ФИО</label>
+                <input class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" id="name" name="name" required="" type="text"/>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700" for="phone">Номер телефона</label>
+                <input class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" id="phone" name="phone" required="" type="tel"/>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700" for="car-model">Модель авто</label>
+                <input class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" id="car-model" name="car-model" required="" type="text"/>
+            </div>
+            <div class="text-center">
+                <button class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" type="submit">Отправить заявку</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    </div>
+</div>
+
    </div>
   </div>
  <?php
