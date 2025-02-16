@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Детали автомобиля</title>
-    <script src="js/carFotoSelect.js"></script>
     <style>
         .image-container {
             position: relative;
@@ -16,12 +15,64 @@
             align-items: center;
             background: rgba(0, 0, 0, 0.1); /* Размытый фон */
         }
+        .carousel img {
+            height: 400px; /* Фиксированная высота для основной картинки */
+            object-fit: cover; /* Обеспечиваем сохранение пропорций */
+        }
+
         .image-container img {
             max-height: 100%; /* Ограничиваем максимальную высоту */
             width: auto; /* Автоматическая ширина для сохранения пропорций */
             object-fit: cover; /* Обеспечиваем сохранение пропорций */
         }
+        .carousel {
+            position: relative;
+        }
+        .carousel img {
+            display: none;
+        }
+        .carousel img.active {
+            display: block;
+        }
+        .thumbnail img {
+            width: 150px; /* Фиксированная ширина для миниатюр */
+            height: 100px; /* Фиксированная высота для миниатюр */
+            object-fit: cover; /* Обеспечиваем сохранение пропорций */
+            cursor: pointer;
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const images = document.querySelectorAll('.carousel img');
+            const thumbnails = document.querySelectorAll('.thumbnail img');
+            let currentIndex = 0;
+
+            function showImage(index) {
+                images.forEach((img, i) => {
+                    img.classList.toggle('active', i === index);
+                });
+            }
+
+            document.getElementById('prev').addEventListener('click', function () {
+                currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
+                showImage(currentIndex);
+            });
+
+            document.getElementById('next').addEventListener('click', function () {
+                currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
+                showImage(currentIndex);
+            });
+
+            thumbnails.forEach((thumbnail, index) => {
+                thumbnail.addEventListener('click', function () {
+                    currentIndex = index;
+                    showImage(currentIndex);
+                });
+            });
+
+            showImage(currentIndex);
+        });
+    </script>
 </head>
 <body class="bg-gray-100 text-gray-800">
     <?php
@@ -48,6 +99,12 @@
         $stmt->execute();
         $result = $stmt->get_result();
         $car = $result->fetch_assoc();
+        $queryEquipment = "SELECT * FROM car_equipment WHERE car_id =?";
+        $stmtEquipment = $conn->prepare($queryEquipment);
+        $stmtEquipment->bind_param("i", $car_id);
+        $stmtEquipment->execute();
+        $carEquipment = $stmtEquipment->get_result();
+        $equipment = $carEquipment->fetch_assoc();
 
         if ($car) {
     ?>
@@ -83,7 +140,8 @@
                     $res_photo = $conn->query($query_photo);
                     if ($res_photo->num_rows > 0) {
                         while ($photo = $res_photo->fetch_assoc()) {
-                            echo '<img  class="w-full h-auto rounded" height="100" alt="Изображение автомобиля" src="img/cars' . $photo['car_photo_image_patch'] . '" />';
+                            echo '<img  class="w-full rounded" height="100" alt="Изображение автомобиля" src="img/cars' . $photo['car_photo_image_patch'] . '" />';
+
                         }
                             echo '</div><div class="flex justify-between mt-2">
                         <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded" id="prev">
@@ -96,9 +154,10 @@
                         </button>
                        </div>
                        <div class="grid grid-cols-5 gap-2 mt-4 thumbnail justify-center">';
+
                        $res_photo = $conn->query($query_photo);
                         while ($photo = $res_photo->fetch_assoc()) {
-                            echo '<img alt="Изображение автомобиля" class="w-full h-auto rounded" height="100" width="150" src="img/cars' . $photo['car_photo_image_patch'] . '" />';
+                            echo '<img alt="Изображение автомобиля" class="rounded" height="100" width="150" style="object-fit: cover;" src="img/cars' . $photo['car_photo_image_patch'] . '" />';
                         }
                         echo '</div>';
                     } else {
@@ -111,24 +170,32 @@
                 </div>
                 <div class="mt-4">
                     <h2 class="text-xl font-semibold mb-2">Описание комплектации</h2>
-                    <p class="text-gray-700"><?php echo isset($car['equipment_text']) ? $car['equipment_text'] : 'Описание комплектации отсутствует'; ?></p>
+                    <p class="text-gray-700"><?php echo isset($equipment['car_equipment_descriptions']) ? $equipment['car_equipment_descriptions'] : 'Описание комплектации отсутствует'; ?></p>
                 </div>
-                <h3 class="text-lg font-semibold mt-2">
-                    В комплектацию входит:
-                </h3>
+                <h3 class="text-lg font-semibold mt-2">В комплектацию входит:</h3>
                 <ul class="list-disc list-inside text-gray-700">
                     <?php
-                    if (isset($car['id_equipment'])) {
-                        $query = "SELECT * FROM car_equipment_element WHERE car_equipment_id = " . $car['id_equipment'];
+                    if (isset($equipment['car_equipment_id'])) {
+                        $query = "SELECT * FROM car_equipment_element WHERE car_equipment_id = " . $equipment['car_equipment_id'];
+                        echo "<script>console.log('Executing query: " . $query . "');</script>";
+
                         $res_comp = $conn->query($query);
-                        if ($res_comp->num_rows)
-                            while ($comp = $res_comp->fetch_assoc()) {
-                                echo '<li>' . $comp['car_equipment_text'] . '</li>';
+                        if (!$res_comp) {
+                            echo "<script>console.log('Query error: " . $conn->error . "');</script>";
+                        } else {
+                            if ($res_comp->num_rows > 0) {
+                                while ($comp = $res_comp->fetch_assoc()) {
+                                    echo '<li>' . $comp['car_equipment_element_text'] . '</li>';
+                                }
+                            } else {
+                                echo '<li>Нет элементов комплектации.</li>';
                             }
+                        }
+                    } else {
+                        echo '<li>Нет информации о комплектации.</li>';
                     }
                     ?>
                 </ul>
-
                 <div class="mt-4 flex items-center space-x-4">
                     <a class="bg-blue-500 text-white px-4 py-2 rounded" href="TG:+71234567890">Связаться в Telergam</a>
                     <div class="text-lg font-semibold text-gray-700">Телефон для связи: +7 (123) 456-78-90</div>
@@ -145,4 +212,3 @@
 <?php
 include 'template/footer.php';
 ?>
-</html>

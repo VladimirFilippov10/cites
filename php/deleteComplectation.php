@@ -6,7 +6,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $complectationId = $_POST['complectationId'];
 
     // Удаление записи о комплектации из базы данных
-    $deleteQuery = "DELETE FROM car_equipment_element WHERE id = ?";
+    $deleteQuery = "DELETE FROM car_equipment_element WHERE car_equipment_element_id = ?";
+
     $stmt = $conn->prepare($deleteQuery);
     $stmt->bind_param("i", $complectationId);
     $stmt->execute();

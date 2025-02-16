@@ -46,18 +46,26 @@
                         <?php while ($request = mysqli_fetch_assoc($result)): ?>
                         <tr>
                             <td class="py-2 px-4 border-b"><?php echo $request['redemption_request_name_client']; ?></td>
-                            <td class="py-2 px-4 border-b"><?php echo $request['redemption_request_name_client']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $request['redemption_request_number_phone']; ?></td>
                             <td class="py-2 px-4 border-b"><?php echo $request['redemption_request_model_car']; ?></td>
                             <td class="py-2 px-4 border-b"><?php echo $request['redemption_request_date']; ?></td>
                             <td class="py-2 px-4 border-b">
-                                <select class="border rounded p-2" name="employee[<?php echo $request['redemption_request_id']; ?>]">
+                                <select class="border rounded p-2" name="employee">
+
                                     <?php
                                     $query_employees = "SELECT * FROM `employee` WHERE employee_role = 3";
                                     $result_employees = mysqli_query($conn, $query_employees);
+                                    $current_employee = $request['redemption_request_employee'] ?? 0;
                                     while ($employee = mysqli_fetch_assoc($result_employees)): ?>
-                                        <option value="<?php echo $employee['employee_id']; ?>"><?php echo $employee['employee_name']; ?></option>
+                                        <option value="<?php echo $employee['employee_id']; ?>" <?php echo ($employee['employee_id'] == $current_employee) ? 'selected' : ''; ?>>
+                                            <?php echo $employee['employee_name']; ?>
+                                        </option>
                                     <?php endwhile; ?>
+                                    <?php if ($current_employee == 0): ?>
+                                        <option value="0" selected>Не назначен</option>
+                                    <?php endif; ?>
                                 </select>
+
                             </td>
                             <td class="py-2 px-4 border-b">
                                 <input type="date" class="border rounded p-2" name="inspection_date[<?php echo $request['redemption_request_id']; ?>]">

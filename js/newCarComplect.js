@@ -11,6 +11,45 @@ $(document).ready(function() {
 
     // Удаление элемента комплектации
     $(document).on('click', '.delete-complectation', function() {
-        $(this).closest('.complectation-item').remove();
+        const complectationItem = $(this).closest('.complectation-item');
+        const complectationId = complectationItem.data('id'); // Предполагается, что ID элемента хранится в data-id
+
+        if (complectationId) {
+            $.ajax({
+                type: 'POST',
+                url: 'php/deleteComplectation.php',
+                data: { complectationId: complectationId },
+                success: function(response) {
+                    alert(response);
+                    complectationItem.remove(); // Удаляем элемент из интерфейса
+                },
+                error: function() {
+                    alert('Ошибка при удалении элемента комплектации.');
+                }
+            });
+        } else {
+            complectationItem.remove(); // Удаляем элемент из интерфейса, если ID не задан
+        }
     });
+
+    // Обработка отправки формы
+    $('form').on('submit', function(e) {
+        e.preventDefault(); // Предотвращаем стандартное поведение формы
+
+        const formData = $(this).serialize(); // Сериализуем данные формы
+
+        $.ajax({
+            type: 'POST',
+            url: 'php/update.php',
+            data: formData,
+            success: function(response) {
+                alert('Данные успешно сохранены!');
+                window.location.href = 'viewAllCars.php'; // Перенаправление на страницу со списком автомобилей
+            },
+            error: function() {
+                alert('Ошибка при сохранении данных.');
+            }
+        });
+    });
+
 });

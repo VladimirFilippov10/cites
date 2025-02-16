@@ -1,39 +1,37 @@
 <?php
 include 'dbconnect.php'; // Подключение к базе данных
+  
+// Получение данных из формы
+$id = intval($_POST['id']);
+$inspection_time =  mysqli_real_escape_string($conn, $_POST['inspection_time']);
+$inspection_date = mysqli_real_escape_string($_POST['inspection_date']) ? $_POST['inspection_date'] : null;
+$inspection_place = mysqli_real_escape_string($_POST['inspection_place']) ? $_POST['inspection_place'] : null;
+$status = mysqli_real_escape_string($_POST['status']) ? $_POST['status'] : null;
+$closed = mysqli_real_escape_string($_POST['closed']) ? 1 : 0;
+$employee_id = ($_POST['employee'] ?? null) ? true : false;
 
-// Получение данных из формы с проверкой на существование ключей
-$id = isset($_POST['id']) ? $_POST['id'] : null;
-$name_client = isset($_POST['name_client']) ? $_POST['name_client'] : null;
-$model_car = isset($_POST['model_car']) ? $_POST['model_car'] : null;
-$date = isset($_POST['date']) ? $_POST['date'] : null;
-$inspection_time = isset($_POST['inspection_time']) ? $_POST['inspection_time'] : null;
-$inspection_date = isset($_POST['inspection_date']) ? $_POST['inspection_date'] : null;
-$inspection_place = isset($_POST['inspection_place']) ? $_POST['inspection_place'] : null;
-$status = isset($_POST['status']) ? $_POST['status'] : null;
-$closed = isset($_POST['closed']) ? 1 : 0;
-$employee_id = isset($_POST['employee']) ? $_POST['employee'] : null;
-
-// Проверка на наличие всех необходимых данных
-if ($id && $name_client && $model_car && $date && $inspection_time && $inspection_place && $status) {
-    // Обновление данных заявки
-    $query = "UPDATE redemption_request SET 
-        redemption_request_name_client = '$name_client', 
-        redemption_request_employee = '$employee_id', 
-        redemption_request_model_car = '$model_car', 
-        redemption_request_date = '$date', 
-        redemption_request_inspection_time = '$inspection_time', 
-        redemption_request_inspection_place = '$inspection_place', 
-        redemption_request_status = '$status', 
-        redemption_request_closed = '$closed' 
-        WHERE redemption_request_id = '$id'";
-
-    if (mysqli_query($conn, $query)) {
-        echo "Запись успешно обновлена.";
-    } else {
-        echo "Ошибка обновления записи: " . mysqli_error($conn);
-    }
+// Объединение даты и времени в одну строку
+if ($inspection_date && $inspection_time) {
+    $inspection_datetime = $inspection_date . ' ' . $inspection_time; // Формат: 'YYYY-MM-DD HH:MM'
 } else {
-    echo "Ошибка: Не все необходимые данные были предоставлены.";
+    $inspection_datetime = null; // Или установите значение по умолчанию
+}
+
+// Экранирование объединенной строки
+$inspection_datetime = mysqli_real_escape_string($conn, $inspection_datetime);
+
+// Обновление данных заявки
+$query = "UPDATE redemption_request SET 
+    redemption_request_inspection_time = '$inspection_datetime', 
+    redemption_request_place = '$inspection_place', 
+    redemption_request_status = '$status', 
+    redemption_request_closed = '$closed' 
+    WHERE redemption_request_id = '$id'";
+
+if (mysqli_query($conn, $query)) {
+    echo "Запись успешно обновлена.";
+} else {
+    echo "Ошибка обновления записи: " . mysqli_error($conn);
 }
 
 mysqli_close($conn);

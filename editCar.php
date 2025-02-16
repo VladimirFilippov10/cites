@@ -3,8 +3,6 @@
 <head>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/newCarComplect.js"></script>
-
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Редактировать авто</title>
@@ -50,6 +48,27 @@
         $equipmentStmt->bind_param("i", $car_id);
         $equipmentStmt->execute();
         $equipmentResult = $equipmentStmt->get_result();
+        $equipment = $equipmentResult->fetch_assoc();
+
+        // Проверка наличия car_equipment_id
+        if (isset($equipment['car_equipment_id'])) {
+            $car_equipment_id = $equipment['car_equipment_id']; // Получаем car_equipment_id
+
+            // Отладка: вывод car_equipment_id в консоль браузера
+
+            
+            // Запрос для получения элементов комплектации
+            $equipmentElementQuery = "SELECT * FROM car_equipment_element WHERE car_equipment_id = ?";
+            $equipmentElementStmt = $conn->prepare($equipmentElementQuery);
+            $equipmentElementStmt->bind_param("i", $car_equipment_id);
+            $equipmentElementStmt->execute();
+            $equipmentElementResult = $equipmentElementStmt->get_result();
+
+        } else {
+            $car_equipment_id = null; // Если нет записи, устанавливаем в null
+            $equipmentElementResult = null; // Устанавливаем результат в null
+        }
+
     ?>
     <div class="max-w-7xl w-2/4 mx-auto p-4 bg-white shadow-md mt-10">
         <h1 class="text-2xl font-bold mb-6">Редактировать запись</h1>
@@ -186,29 +205,30 @@
                 <input type="file" name="car_photos[]" multiple class="mb-4">
                 <button type="button" id="addPhoto" class="bg-blue-500 text-white p-2 rounded">Добавить фото</button>
             </div>
-            <?php          
-            $equipment = $equipmentResult->fetch_assoc();
-            
-            ?>
+
             <div class="mb-6">
                 <label for="car_equipment_descriptions" class="block text-lg font-semibold mb-2">Описание комплектации</label>
-                <textarea id="car_equipment_descriptions" name="car_equipment_descriptions" class="w-full p-2 border border-gray-300 rounded" rows="4" required><?php echo isset($equipment['car_equipment_descriptions']) ? $equipment['car_equipment_descriptions'] : '';?></textarea>
+                <textarea id="car_equipment_descriptions" name="car_equipment_descriptions" class="w-full p-2 border border-gray-300 rounded" rows="4" required><?php echo isset($equipment['car_equipment_descriptions']) && !empty($equipment['car_equipment_descriptions']) ? $equipment['car_equipment_descriptions'] : ''; ?></textarea>
+
             </div>
             <div class="mb-6">
-                <h2 class="text-xl font-semibold mb-4">Комплектация</h2>
+                <h2 class="text-xl font-semibold mb-4">Элементы комплектации</h2>
                 <div id="complectationContainer">
-                    <div class="complectation-item mb-4">
-                        <input type="text" name="complectation[]" class="w-3/4 p-2 border border-gray-300 rounded mb-2" placeholder="Элемент комплектации" required>
-                        <button type="button" class="delete-complectation bg-red-500 text-white p-1 rounded">Удалить</button>
-                    </div>
+                    <?php if (isset($equipmentElementResult) && $equipmentElementResult): ?>
+
+                        <?php while ($element = $equipmentElementResult->fetch_assoc()): ?>
+                            <div class="complectation-item mb-4">
+                                <input type="text" name="complectation[]" class="w-3/4 p-2 border border-gray-300 rounded mb-2" value="<?php echo $element['car_equipment_element_text']; ?>" required>
+                                <button type="button" class="delete-complectation bg-red-500 text-white p-1 rounded">Удалить</button>
+                            </div>
+                        <?php endwhile; ?>
+                    <?php endif; ?>
                 </div>
                 <button type="button" id="addComplectation" class="bg-blue-500 text-white p-2 rounded">Добавить элемент комплектации</button>
             </div>
 
-
             <button type="submit" class="bg-green-500 text-white p-2 rounded">Сохранить изменения</button>
         </form>
-
 
     <script>
     document.getElementById('addPhoto').addEventListener('click', function() {

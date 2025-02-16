@@ -23,17 +23,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $car_link_to_report = mysqli_real_escape_string($conn, $_POST['car_link_to_report']);
     $car_equipment_descriptions = mysqli_real_escape_string($conn, $_POST['car_equipment_descriptions']);
 
-// Пытаемся обновить существующую запись
-    $updateEquipment = $conn->prepare("UPDATE car_equipment SET car_equipment_descriptions = ? WHERE car_id = ?");
-    $updateEquipment->bind_param("si", $car_equipment_descriptions, $car_id);
-    $updateEquipment->execute();
+    // Проверка наличия записи в таблице car_equipment
+    $equipmentCheckQuery = "SELECT * FROM car_equipment WHERE car_id = ?";
+    $equipmentCheckStmt = $conn->prepare($equipmentCheckQuery);
+    $equipmentCheckStmt->bind_param("i", $car_id);
+    $equipmentCheckStmt->execute();
+    $equipmentCheckResult = $equipmentCheckStmt->get_result();
 
-    // Проверяем, была ли обновлена какая-либо запись
-    if ($updateEquipment->affected_rows === 0) {
-        // Если запись не была обновлена, вставляем новую запись
+    if ($equipmentCheckResult->num_rows > 0) {
+        // Если запись существует, обновляем её
+        $updateEquipment = $conn->prepare("UPDATE car_equipment SET car_equipment_descriptions = ? WHERE car_id = ?");
+        $updateEquipment->bind_param("si", $car_equipment_descriptions, $car_id);
+        $updateEquipment->execute();
+        $car_equipment_id = $equipmentCheckResult->fetch_assoc()['car_equipment_id']; // Получаем car_equipment_id
+    } else {
+        // Если записи нет, создаем новую
         $insertEquipment = $conn->prepare("INSERT INTO car_equipment (car_id, car_equipment_descriptions) VALUES (?, ?)");
         $insertEquipment->bind_param("is", $car_id, $car_equipment_descriptions);
         $insertEquipment->execute();
+        $car_equipment_id = $conn->insert_id; // Получаем ID новой записи
+    }
+
+    $equipmentCheckStmt = $conn->prepare($equipmentCheckQuery);
+    $equipmentCheckStmt->bind_param("i", $car_id);
+    $equipmentCheckStmt->execute();
+    $equipmentCheckResult = $equipmentCheckStmt->get_result();
+
+    if ($equipmentCheckResult->num_rows > 0) {
+        // Если запись существует, обновляем её
+        $updateEquipment = $conn->prepare("UPDATE car_equipment SET car_equipment_descriptions = ? WHERE car_id = ?");
+        $updateEquipment->bind_param("si", $car_equipment_descriptions, $car_id);
+        $updateEquipment->execute();
+        $car_equipment_id = $equipmentCheckResult->fetch_assoc()['car_equipment_id']; // Получаем car_equipment_id
+    } else {
+        // Если записи нет, создаем новую
+        $insertEquipment = $conn->prepare("INSERT INTO car_equipment (car_id, car_equipment_descriptions) VALUES (?, ?)");
+        $insertEquipment->bind_param("is", $car_id, $car_equipment_descriptions);
+        $insertEquipment->execute();
+        $car_equipment_id = $conn->insert_id; // Получаем ID новой записи
+    }
+
+    // Получаем массив элементов комплектации
+    $equipmentElementTexts = $_POST['complectation'];
+
+    // Удаляем существующие элементы комплектации для данного car_equipment_id
+    $deleteQuery = "DELETE FROM car_equipment_element WHERE car_equipment_id = ?";
+    $deleteStmt = $conn->prepare($deleteQuery);
+    $deleteStmt->bind_param("i", $car_equipment_id);
+    $deleteStmt->execute();
+
+    $deleteStmt = $conn->prepare($deleteQuery);
+    $deleteStmt->bind_param("i", $car_equipment_id);
+    $deleteStmt->execute();
+
+    // Вставляем новые элементы комплектации
+    foreach ($equipmentElementTexts as $text) {
+        $insertElementQuery = "INSERT INTO car_equipment_element (car_equipment_element_text, car_equipment_id) VALUES (?, ?)";
+        $insertElementStmt = $conn->prepare($insertElementQuery);
+        $insertElementStmt->bind_param("si", $text, $car_equipment_id);
+        $insertElementStmt->execute();
     }
 
 
@@ -51,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     car_type_oil = '$car_type_oil', 
     car_descriptions = '$car_description', 
     car_bodywork = '$car_bodywork', 
-   /* car_in_price = $car_in_price, */
+    car_in_price = $car_in_price, 
     car_price = $car_price, 
     car_state_number = '$car_state_number', 
     car_link_specifications = '$car_link_specifications', 
@@ -60,55 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     WHERE car_id = $car_id";
 
     if ($conn->query($updateQuery) === TRUE) {
-        // Обработка загрузки новых фотографий
-        // Обработка загрузки новых фотографий
-    if (!empty($_FILES['car_photos'])) {
-        $targetDir = "../img/cars/";
-
-    // Создаем директорию, если она не существует
-    if (!file_exists($targetDir)) {
-        mkdir($targetDir, 0777, true);
-    }
-
-    // Получаем текущее количество фотографий для этого автомобиля
-    $photoCountQuery = "SELECT COUNT(*) as count FROM car_photo WHERE car_id = $car_id";
-    $countResult = $conn->query($photoCountQuery);
-    $countRow = $countResult->fetch_assoc();
-    $currentPhotoCount = $countRow['count'];
-
-    // Обрабатываем каждое загруженное фото
-    foreach ($_FILES['car_photos']['name'] as $i => $photoName) {
-        $photoTmpName = $_FILES['car_photos']['tmp_name'][$i];
-
-        // Проверяем, нет ли ошибок при загрузке файла
-        if ($_FILES['car_photos']['error'][$i] === UPLOAD_ERR_OK) {
-            // Проверяем допустимый тип файла
-            $fileType = strtolower(pathinfo($photoName, PATHINFO_EXTENSION));
-            $allowedTypes = ['jpg', 'jpeg', 'png'];
-            if (in_array($fileType, $allowedTypes)) {
-                // Формируем уникальное имя файла
-                $newPhotoName = $car_id . "_" . ($currentPhotoCount + $i + 1) . ".png";
-                $photoPath = $targetDir . $newPhotoName;
-
-                // Перемещаем файл в целевую директорию
-                if (move_uploaded_file($photoTmpName, $photoPath)) {
-                    // Сохраняем путь к фото в базе данных
-                    $insertPhotoQuery = "INSERT INTO car_photo (car_photo_image_patch, car_id) VALUES ('/$newPhotoName', $car_id)";
-                    if ($conn->query($insertPhotoQuery) !== TRUE) {
-                        echo "Ошибка при сохранении пути к фото в базе данных: " . $conn->error;
-                    }
-                } else {
-                    echo "Ошибка при загрузке файла: " . $photoName;
-                }
-            } else {
-                echo "Недопустимый формат файла: " . $photoName;
-            }
-        } else {
-            echo "Ошибка загрузки файла: " . $photoName;
-        }
-    }
-}
-
         // Перенаправление на страницу со списком автомобилей
         header("Location: ../viewAllCars.php");
         exit();

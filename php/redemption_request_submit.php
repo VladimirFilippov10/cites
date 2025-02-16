@@ -7,12 +7,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Получение данных из формы
     $name = $_POST['name'];
     $carModel = $_POST['car-model'];
+    $phone = $_POST['phone'];
 
     // Подготовка SQL-запроса для вставки данных
-$sql = "INSERT INTO redemption_request (redemption_request_name_client, redemption_request_model_car, redemption_request_date, redemption_request_employee) VALUES (?, ?, NOW(), 2)";
+$sql = "INSERT INTO redemption_request (redemption_request_name_client, redemption_request_model_car, redemption_request_date, redemption_request_employee, redemption_request_number_phone) VALUES (?, ?, NOW(), 2, ?)";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $name, $carModel);
+    $stmt->bind_param("ss", $name, $carModel, $phone);
 
     // Выполнение запроса и проверка на ошибки
     if ($stmt->execute()) {

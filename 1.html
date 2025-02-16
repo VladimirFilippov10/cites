@@ -1,0 +1,131 @@
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TechSolve</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <header class="bg-blue-800 text-white">
+      <div
+        class="container mx-auto flex justify-between items-center py-4 px-6"
+      >
+        <div class="text-lg font-bold">TechSolve Logo</div>
+        <nav class="flex-1 text-center">
+          <a href="#" class="mx-4 hover:underline">Главная</a>
+          <a href="#" class="mx-4 hover:underline">Услуги</a>
+          <a href="#" class="mx-4 hover:underline">О компании</a>
+          <a href="#" class="mx-4 hover:underline">Контакты</a>
+        </nav>
+      </div>
+    </header>
+    <section class="bg-gray-400 text-center py-16">
+      <h1 class="text-4xl font-bold text-white">
+        Инновационные IT-решения для вашего бизнеса
+      </h1>
+      <p class="text-lg text-white mt-4">
+        Мы предоставляем услуги по автоматизации бизнес-процессов и разработке
+        программного обеспечения, чтобы ваш бизнес рос и развивался.
+      </p>
+      <button
+        class="mt-8 bg-orange-500 text-white py-2 px-6 rounded hover:bg-orange-600"
+      >
+        Связаться с нами
+      </button>
+    </section>
+    <section class="container mx-auto py-16">
+      <h2 class="text-2xl font-bold text-center mb-8">Наши услуги</h2>
+      <div
+        class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4"
+      >
+        <div class="bg-white p-6 rounded shadow-md text-center">
+          <h3 class="text-xl font-bold mb-2">Автоматизация процессов</h3>
+          <p>
+            Мы помогаем бизнесам автоматизировать рутинные задачи, улучшая
+            эффективность и снижая затраты.
+          </p>
+        </div>
+        <div class="bg-white p-6 rounded shadow-md text-center">
+          <h3 class="text-xl font-bold mb-2">Разработка ПО</h3>
+          <p>
+            Создаем уникальные программные решения, которые полностью
+            соответствуют нуждам вашего бизнеса.
+          </p>
+        </div>
+        <div class="bg-white p-6 rounded shadow-md text-center">
+          <h3 class="text-xl font-bold mb-2">Консалтинг</h3>
+          <p>
+            Наши эксперты помогут оптимизировать IT-инфраструктуру и внедрить
+            передовые технологические решения.
+          </p>
+        </div>
+      </div>
+    </section>
+    <section class="bg-gray-100 py-16">
+      <div class="container mx-auto text-center">
+        <h2 class="text-2xl font-bold mb-4">О компании</h2>
+        <p>
+          TechSolve — это команда профессионалов, которая помогает бизнесам
+          внедрять передовые технологии и оптимизировать рабочие процессы с
+          помощью IT-решений.
+        </p>
+      </div>
+    </section>
+    <section class="container mx-auto py-16">
+      <h2 class="text-2xl font-bold text-center mb-8">Контакты</h2>
+      <div class="max-w-md mx-auto bg-white p-6 rounded shadow-md">
+        <form>
+          <div class="mb-4">
+            <label for="name" class="block text-gray-700">Ваше имя:</label>
+            <input
+              type="text"
+              id="name"
+              class="w-full px-3 py-2 border rounded"
+              placeholder="Введите ваше имя"
+            />
+          </div>
+          <div class="mb-4">
+            <label for="email" class="block text-gray-700">Ваш email:</label>
+            <input
+              type="email"
+              id="email"
+              class="w-full px-3 py-2 border rounded"
+              placeholder="Введите ваш email"
+            />
+          </div>
+          <div class="mb-4">
+            <label for="message" class="block text-gray-700">Сообщение:</label>
+            <textarea
+              id="message"
+              class="w-full px-3 py-2 border rounded"
+              rows="4"
+              placeholder="Введите ваше сообщение"
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-800 text-white py-2 rounded hover:bg-blue-900"
+          >
+            Отправить
+          </button>
+        </form>
+      </div>
+    </section>
+    <footer class="bg-blue-800 text-white text-center py-4">
+      <p>&copy; 2025 TechSolve. Все права защищены.</p>
+    </footer>
+  </body>
+</html>
