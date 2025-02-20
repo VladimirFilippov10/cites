@@ -84,11 +84,11 @@
                                 </select>
                             </td>
                             <td class="py-2 px-4 border-b text-center">
-                                <input type="checkbox" class="form-checkbox h-5 w-5 text-green-600" name="closed[<?php echo $request['redemption_request_id']; ?>]">
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-green-600" name="closed">
                             </td>
                             <td class="py-2 px-4 border-b text-center">
-                                <input type="hidden" name="id" value="<?php echo $request['redemption_request_id']; ?>">
-                                <button type="submit" class="bg-blue-500 text-white rounded px-4 py-2">Сохранить</button>
+                                <button type="submit" class="bg-blue-500 text-white rounded px-4 py-2" name="id" value="<?php echo $request['redemption_request_id']; ?>">Сохранить</button>
+
                             </td>
                         </tr>
                         <?php endwhile; ?>
