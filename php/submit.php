@@ -2,9 +2,19 @@
 include 'php/dbconnect.php'; // Подключение к базе данных
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
+    $car_id = isset($_POST['car_id']) ? intval($_POST['car_id']) : 0;
+
+    // Если car_id больше 0, это обновление, иначе добавление
+    if ($car_id > 0) {
+        // Логика обновления автомобиля
+        // Здесь должна быть ваша логика обновления
+    } else {
+
 
     // Получение данных из формы
-    $car_id = intval($_POST['car_id']);
+    // Убедимся, что car_id не передается для новой записи
+    $car_id = isset($_POST['car_id']) ? intval($_POST['car_id']) : 0;
+
     $car_win_code = mysqli_real_escape_string($conn, $_POST['title']);
     $car_year_made = intval($_POST['year']);
     $car_generation = mysqli_real_escape_string($conn, $_POST['generation']);
@@ -25,7 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
     $car_link_to_report = mysqli_real_escape_string($conn, $_POST['car_link_to_report']);
     $car_equipment_descriptions = mysqli_real_escape_string($conn, $_POST['car_equipment_descriptions']);
 
-    // Проверка на дублирование VIN-кода
+    // Проверка на дублирование VIN-кода и отладка
+
     $checkVinQuery = "SELECT * FROM car WHERE car_win_code = ?";
     $checkStmt = $conn->prepare($checkVinQuery);
     $checkStmt->bind_param("s", $car_win_code);
@@ -38,8 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
         exit();
     }
 
-    // Вставка данных в таблицу car
+        // Вставка данных в таблицу car
+
+
     $insertQuery = "INSERT INTO car (model_id, car_win_code, car_year_made, car_generation, car_mileage, car_color, car_drive, car_volume, car_power, car_transmission_box, car_type_oil, car_descriptions, car_price, car_onwers, car_bodywork, car_in_price, car_state_number, car_link_specifications, car_link_to_report) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    // Убедимся, что мы добавляем новую запись
+
     
     $stmt = $conn->prepare($insertQuery);
     $stmt->bind_param("ississdissss", $model_id, $car_win_code, $car_year_made, $car_generation, $car_mileage, $car_color, $car_drive, $car_volume, $car_power, $car_transmission_box, $car_type_oil, $car_description);
@@ -54,7 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
     
     $car_id = $stmt->insert_id;
 
-    // Обработка загрузки фотографий
+    // Обработка загрузки фотографий и отладка
+
     if (!empty($_FILES['car_photos'])) {
         $photoCount = count($_FILES['car_photos']['name']);
         for ($i = 0; $i < $photoCount; $i++) {
@@ -93,7 +110,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
         }
     }
 
-    // Перенаправление на newCar.php с сообщением об успешном добавлении
+        // Перенаправление на newCar.php с сообщением об успешном добавлении
+
+
     header("Location: ../newCar.php");
     exit();
 

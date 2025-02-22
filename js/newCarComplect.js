@@ -52,6 +52,7 @@ $(document).ready(function() {
                 alert('Данные успешно сохранены!'); // Уведомление об успешном сохранении
                 window.location.href = 'newCar.php'; // Перенаправление на newCar.php для дальнейшей комплектации
 
+
             },
             error: function() {
                 alert('Ошибка при сохранении данных.');
@@ -60,5 +61,4 @@ $(document).ready(function() {
     });
 
 });
-
 });
