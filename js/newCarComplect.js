@@ -36,20 +36,29 @@ $(document).ready(function() {
     $('form').on('submit', function(e) {
         e.preventDefault(); // Предотвращаем стандартное поведение формы
 
-        const formData = $(this).serialize(); // Сериализуем данные формы
+        const formData = $(this).serialize() + '&save=1'; // Сериализуем данные формы и добавляем поле save
+
 
         $.ajax({
             type: 'POST',
-            url: 'php/update.php',
+            url: 'php/submit.php', // Отправка на submit.php для добавления нового автомобиля
+            data: formData, // Сериализованные данные формы
+
+            data: formData,
+
+
             data: formData,
             success: function(response) {
-                alert('Данные успешно сохранены!');
-                window.location.href = 'viewAllCars.php'; // Перенаправление на страницу со списком автомобилей
+                alert('Данные успешно сохранены!'); // Уведомление об успешном сохранении
+                window.location.href = 'newCar.php'; // Перенаправление на newCar.php для дальнейшей комплектации
+
             },
             error: function() {
                 alert('Ошибка при сохранении данных.');
             }
         });
     });
+
+});
 
 });

@@ -13,7 +13,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $sql = "INSERT INTO redemption_request (redemption_request_name_client, redemption_request_model_car, redemption_request_date, redemption_request_employee, redemption_request_number_phone) VALUES (?, ?, NOW(), 2, ?)";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $name, $carModel, $phone);
+    $stmt->bind_param("sss", $name, $carModel, $phone);
+
 
     // Выполнение запроса и проверка на ошибки
     if ($stmt->execute()) {

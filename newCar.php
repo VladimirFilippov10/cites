@@ -206,7 +206,7 @@
                 <button type="button" id="addLimitation" class="bg-blue-500 text-white p-2 rounded">Добавить ограничения</button>
             </div>      -->                                 
 
-            <button type="submit" class="bg-green-500 text-white p-2 rounded">Сохранить</button>
+            <button type="submit" name="save" class="bg-green-500 text-white p-2 rounded">Сохранить</button>
         </form>
     </div>
 

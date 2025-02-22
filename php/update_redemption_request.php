@@ -40,14 +40,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         trim($_POST['inspection_time']) : '00:00:00';
     $inspection_datetime = "$inspection_date $inspection_time";
 
-    $inspection_place = isset($_POST['inspection_place']) && is_string($_POST['inspection_place']) ? 
-        trim($_POST['inspection_place']) : '';
-    $status = isset($_POST['status']) && is_string($_POST['status']) ? 
-        trim($_POST['status']) : 'Открыта';
+    $inspection_place = isset($_POST['inspection_place'][$id]) && is_string($_POST['inspection_place'][$id]) ? 
+        trim($_POST['inspection_place'][$id]) : '';
+    $status = isset($_POST['status'][$id]) && is_string($_POST['status'][$id]) ? 
+        trim($_POST['status'][$id]) : 'Открыта';
     $closed = isset($_POST['closed']) ? 1 : 0;
+
     $employee_id = isset($_POST['employee']) ? intval($_POST['employee']) : 0;
 
-    // Подготавливаем SQL запрос
+
+    // Подготавливаем SQL запрос с проверкой изменений
     $updateQuery = $conn->prepare("UPDATE redemption_request SET 
         redemption_request_inspection_time = ?,
         redemption_request_place = ?,
@@ -55,6 +57,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         redemption_request_closed = ?,
         redemption_request_employee = ?
         WHERE redemption_request_id = ?");
+    error_log("Preparing to update ID $id with:
+        inspection_datetime: $inspection_datetime
+        place: $inspection_place
+        status: $status
+        closed: $closed
+        employee_id: $employee_id");
+
 
     // Привязываем параметры
     $updateQuery->bind_param("sssiii", 
@@ -79,13 +88,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 status: $status
                 closed: $closed
                 employee_id: $employee_id");
-            header("Location: ../applications.php?success=1&updated_id=$id");
+            header("Location: ../viewAllRedemptionRequests.php?success=1&updated_id=$id");
+
             exit();
         } else {
             error_log("No changes made for ID: $id. Possible reasons:
                 - Data was identical to existing values
                 - Record was not found");
-            header("Location: ../applications.php?success=1&no_changes=1&id=$id");
+            header("Location: ../viewAllRedemptionRequests.php?success=1&no_changes=1&id=$id");
+
             exit();
         }
     } else {
@@ -93,7 +104,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         error_log("Update failed for ID: $id. Error: " . $updateQuery->error);
         error_log("SQL State: " . $updateQuery->sqlstate);
         error_log("Error Code: " . $updateQuery->errno);
-        header("Location: ../applications.php?error=1&message=" . urlencode($error));
+        header("Location: ../viewAllRedemptionRequests.php?error=1&message=" . urlencode($error));
+
         exit();
     }
 
@@ -103,7 +115,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Логирование состояния соединения
     error_log("Database connection closed successfully");
 } else {
-    header("Location: ../applications.php?error=1&message=" . urlencode("Неверный метод запроса. Ожидается POST."));
+    header("Location: ../viewAllRedemptionRequests.php?error=1&message=" . urlencode("Неверный метод запроса. Ожидается POST."));
+
     exit();
 }
 ?>

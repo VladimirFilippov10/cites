@@ -4,7 +4,7 @@ include 'dbconnect.php'; // Подключение к базе данных
 if (isset($_GET['id_marks'])) {
     $brand_id = intval($_GET['id_marks']);
     
-    $query = "SELECT * FROM model WHERE brand_id = ?";
+    $query = "SELECT * FROM model WHERE brand_id = ? ORDER BY model_name ASC";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $brand_id);
     $stmt->execute();
@@ -18,7 +18,7 @@ if (isset($_GET['id_marks'])) {
         ];
     }
 
-    // Отладочное сообщение
+    // Отладочное сообщение для отладки
     if (empty($models)) {
         error_log("No models found for brand ID: " . $brand_id);
     } else {
