@@ -3,7 +3,7 @@ $(document).ready(function() {
     $('#addPhoto').click(function() {
         $('#photoContainer').append(`
             <div class="photo-item mb-4">
-                <input type="file" name="car_photos[]" class="mb-2" required>
+                <input type="file" name="existing_photos[]" class="mb-2" required>
                 <button type="button" class="delete-photo bg-red-500 text-white p-1 rounded">Удалить</button>
             </div>
         `);

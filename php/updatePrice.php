@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $updateStmt->execute();
         
         // Redirect back to the viewAllCars page
-        header("Location: ../viewAllCars.php");
+      //  header("Location: ../viewAllCars.php");
         exit();
     }
 }

@@ -54,9 +54,6 @@
         if (isset($equipment['car_equipment_id'])) {
             $car_equipment_id = $equipment['car_equipment_id']; // Получаем car_equipment_id
 
-            // Отладка: вывод car_equipment_id в консоль браузера
-
-            
             // Запрос для получения элементов комплектации
             $equipmentElementQuery = "SELECT * FROM car_equipment_element WHERE car_equipment_id = ?";
             $equipmentElementStmt = $conn->prepare($equipmentElementQuery);
@@ -196,14 +193,15 @@
                     <?php while ($photo = $photoResult->fetch_assoc()): ?>
                         <div class="photo-item mb-4">
                             <img src="http://localhost/cites/img/cars/<?php echo $photo['car_photo_image_patch']; ?>" alt="Фото" class="mb-2" style="max-width: 100px;">
-                            <input type="hidden" name="existing_photos[]" value="<?php echo $photo['car_photo_image_patch']; ?>">
-                            <input type="hidden" name="car_photo_id" value="<?php echo $photo['car_photo_id']; ?>">
-                            <button type="button" class="delete-photo bg-red-500 text-white p-1 rounded" onclick="deletePhoto('<?php echo $photo['car_photo_id']; ?>')">Удалить</button>
+                <input type="hidden" name="car_photo_id" value="<?php echo $photo['car_photo_id']; ?>">
+                <button type="button" class="delete-photo bg-red-500 text-white p-1 rounded" onclick="deletePhoto('<?php echo $photo['car_photo_id']; ?>')">Удалить</button>
                         </div>
                     <?php endwhile; ?>
                 </div>
-                <input type="file" name="car_photos[]" multiple class="mb-4">
-                <button type="button" id="addPhoto" class="bg-blue-500 text-white p-2 rounded">Добавить фото</button>
+                <input type="file" name="car_photos[]" multiple class="mb-2" accept="image/*">
+
+                <button type="button" id="addPhoto" class="bg-blue-500 text-white p-2 rounded hidden">Добавить фото</button>
+
             </div>
 
             <div class="mb-6">
@@ -227,18 +225,60 @@
                 <button type="button" id="addComplectation" class="bg-blue-500 text-white p-2 rounded">Добавить элемент комплектации</button>
             </div>
 
-            <button type="submit" class="bg-green-500 text-white p-2 rounded">Сохранить изменения</button>
+            <button type="submit" name="save" class="bg-green-500 text-white p-2 rounded">Сохранить изменения</button>
+
         </form>
 
     <script>
-    document.getElementById('addPhoto').addEventListener('click', function() {
+    // Обработка выбора файлов
+    document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+
+        const files = e.target.files;
         const photoContainer = document.getElementById('photoContainer');
-        const newPhotoItem = document.createElement('div');
-        newPhotoItem.className = 'photo-item mb-4';
-        newPhotoItem.innerHTML = ` 
-            <input type="file" name="car_photos[]" class="mb-2">
-        `;
-        photoContainer.appendChild(newPhotoItem);
+        
+        // Сохраняем существующие превью
+        const existingPreviews = photoContainer.innerHTML;
+        
+        // Очищаем контейнер и восстанавливаем существующие превью
+        photoContainer.innerHTML = existingPreviews;
+
+        // Добавляем новые превью
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.maxWidth = '100px';
+                img.className = 'mb-2';
+                
+                const div = document.createElement('div');
+                div.className = 'photo-item mb-4';
+                div.appendChild(img);
+                
+                photoContainer.appendChild(div);
+            }
+            
+            reader.readAsDataURL(file);
+        }
+
+        // Валидация файлов
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (!file.type.match('image.*')) {
+                alert('Пожалуйста, выберите только изображения');
+                e.target.value = '';
+                photoContainer.innerHTML = existingPreviews;
+                return;
+            }
+            if (file.size > 2 * 1024 * 1024) { // 2MB
+                alert('Размер файла не должен превышать 2MB');
+                e.target.value = '';
+                photoContainer.innerHTML = existingPreviews;
+                return;
+            }
+        }
     });
 
     function deletePhoto(photoID) {

@@ -84,35 +84,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $insertElementStmt->execute();
     }
 
+    // Обработка фотографий
+    if (!empty($_FILES['car_photos']) && $_FILES['car_photos']['error'][0] !== UPLOAD_ERR_NO_FILE) {
+        echo "<script>alert('Checking files: ' + JSON.stringify(" . json_encode($_FILES) . "));</script>";
 
-    // Обновление данных автомобиля
-    $updateQuery = "UPDATE car SET 
-    car_onwers = '$car_onwers', 
-    car_win_code = '$car_win_code', 
-    car_year_made = $car_year_made, 
-    car_generation = '$car_generation', 
-    car_mileage = $car_mileage, 
-    car_color = '$car_color', 
-    car_volume = $car_volume, 
-    car_power = $car_power, 
-    car_transmission_box = '$car_transmission_box', 
-    car_type_oil = '$car_type_oil', 
-    car_descriptions = '$car_description', 
-    car_bodywork = '$car_bodywork', 
-    car_in_price = $car_in_price, 
-    car_price = $car_price, 
-    car_state_number = '$car_state_number', 
-    car_link_specifications = '$car_link_specifications', 
-    car_link_to_report = '$car_link_to_report', 
-    car_drive = '$car_drive' 
-    WHERE car_id = $car_id";
 
-    if ($conn->query($updateQuery) === TRUE) {
-        // Перенаправление на страницу со списком автомобилей
-        header("Location: ../viewAllCars.php");
-        exit();
-    } else {
-        echo "Ошибка при обновлении данных: " . $conn->error;
+
+
+    if (!empty($_FILES['car_photos']) && $_FILES['car_photos']['error'][0] !== UPLOAD_ERR_NO_FILE) {
+        // Создаем папку для фотографий, если ее нет
+        $uploadDir = '../img/cars/';
+        echo "<script>alert('Upload directory: $uploadDir');</script>";
+
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        // Получаем максимальный номер существующего фото
+        $maxNumberQuery = "SELECT MAX(CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(car_photo_image_patch, '_', -1), '.', 1) AS UNSIGNED)) as max_num 
+                          FROM car_photo WHERE car_id = ?";
+        $maxNumberStmt = $conn->prepare($maxNumberQuery);
+        $maxNumberStmt->bind_param("i", $car_id);
+        $maxNumberStmt->execute();
+        $maxNumberResult = $maxNumberStmt->get_result();
+        $maxNumber = $maxNumberResult->fetch_assoc()['max_num'] ?? 0;
+
+        foreach ($_FILES['car_photos']['tmp_name'] as $index => $tmpName) {
+            if ($_FILES['car_photos']['error'][$index] === UPLOAD_ERR_OK) {
+                $maxNumber++;
+                $fileName = $car_id . '_' . $maxNumber . '.png';
+                $filePath = $uploadDir . $fileName;
+                
+                if (move_uploaded_file($tmpName, $filePath)) {
+                    // Отладка: файл успешно перемещен
+                    echo "<script>alert('Debug: File moved successfully: $fileName');</script>";
+                } else {
+                    echo "<script>alert('Ошибка перемещения файла: $fileName');</script>";
+
+                } else {
+                    echo "<script>alert('Ошибка перемещения файла: $fileName');</script>";
+
+
+
+                    $insertPhotoQuery = "INSERT INTO car_photo (car_photo_image_patch, car_id) VALUES (?, ?)";
+                    $photoStmt = $conn->prepare($insertPhotoQuery);
+                    $photoPath = '/' . $fileName;
+                    $photoStmt->bind_param("si", $photoPath, $car_id);
+                    $photoStmt->execute();
+                }
+            }
+        }
     }
+
+    // Закомментирую перенаправление на viewAllCars.php
+    // header("Location: ../viewAllCars.php");
+    // exit();
+    
+    echo "<script>alert('Данные успешно обновлены!');</script>";
 }
 ?>
