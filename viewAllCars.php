@@ -57,7 +57,11 @@
                 <tr>
                     <th class="border border-gray-300 p-2">Модель</th>
                     <th class="border border-gray-300 p-2">WinCod</th>
+                    <th class="border border-gray-300 p-2">Цена</th>
                     <th class="border border-gray-300 p-2">Фото</th>
+
+
+
                     <th class="border border-gray-300 p-2">Действия</th>
                 </tr>
             </thead>
@@ -72,12 +76,20 @@
                         ?>
                         <td class="border border-gray-300 p-2"><?php echo $car['model_name']; ?></td>
                         <td class="border border-gray-300 p-2"><?php echo $car['car_win_code']; ?></td>
+                        <form action="php/updatePrice.php" method="POST" style="display:inline;">
+                        <td>
+                            <input type="text" name="new_price" placeholder="Новая цена" value="<?php echo $car['car_price'];?>">
+
+                            </td>
                         <td class="border border-gray-300 p-2">
                             <img src="img/cars<?php echo $photo["car_photo_image_patch"]; ?>" alt="Фото" style="max-width: 150px;">
                         </td>
                         <td class="border border-gray-300 p-2">
-                            <form action="php/updatePrice.php" method="POST" style="display:inline;">
                                 <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
+                                <button type="submit" name="edit_price" class="bg-blue-500 text-white p-1 rounded">
+                                    Изменить цену
+                                </button>
+
                                 <button type="submit" name="toggle_price" class="bg-blue-500 text-white p-1 rounded">
                                     <?php echo $car['car_in_price'] ? 'Снять с продажи' : 'Выставить на продажу'; ?>
                                 </button>

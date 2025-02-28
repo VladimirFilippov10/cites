@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -208,21 +208,28 @@ function loadModels() {
     modelSelect.innerHTML = '<option value="">Выберите модель</option>'; // Очистить предыдущие модели
 
     console.log("Selected brand ID:", brandId); // Отладочное сообщение
-
-    if (brandId) {
-        fetch('php/getModels.php?id_marks=' + brandId)
-            .then(response => response.json())
-            .then(data => {
-                console.log("Models data received:", data); // Отладочное сообщение
-                data.forEach(function(model) {
-                    var option = document.createElement('option');
-                    option.value = model.id_model;
-                    option.textContent = model.model_name;
-                    modelSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Ошибка:', error));
+    if (!brandId) {
+        console.error("No brand ID selected.");
+        return;
     }
+
+    fetch('php/getModels.php?id_marks=' + brandId)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Models data received:", data); // Отладочное сообщение
+            if (data.error) {
+                console.error("Error received from server:", data.error);
+                return;
+            }
+
+            data.forEach(function(model) {
+                var option = document.createElement('option');
+                option.value = model.id_model;
+                option.textContent = model.model_name;
+                modelSelect.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Ошибка:', error));
 }
 
     </script>

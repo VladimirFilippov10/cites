@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $row = $result->fetch_assoc();
 
     if ($row) {
-$photoPath = 'img/cars/' . $row['car_photo_image_patch']; // Исправленный путь к фотографии
+$photoPath = 'img/cars' . $row['car_photo_image_patch']; // Исправленный путь к фотографии
 
 
 
