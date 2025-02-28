@@ -2,6 +2,7 @@
 include 'dbconnect.php'; // Подключение к базе данных
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+ //   echo "<script>alert('Debug: Code reached the POST request.');</script>"; // Отладочное сообщение
     $car_id = intval($_POST['car_id']);
     $car_win_code = mysqli_real_escape_string($conn, $_POST['title']);
     $car_year_made = intval($_POST['year']);
@@ -67,35 +68,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $equipmentElementTexts = $_POST['complectation'];
 
     // Удаляем существующие элементы комплектации для данного car_equipment_id
-    $deleteQuery = "DELETE FROM car_equipment_element WHERE car_equipment_id = ?";
-    $deleteStmt = $conn->prepare($deleteQuery);
-    $deleteStmt->bind_param("i", $car_equipment_id);
-    $deleteStmt->execute();
+    // $deleteQuery = "DELETE FROM car_equipment_element WHERE car_equipment_id = ?";
+    // $deleteStmt = $conn->prepare($deleteQuery);
+    // $deleteStmt->bind_param("i", $car_equipment_id);
+    // $deleteStmt->execute();
 
-    $deleteStmt = $conn->prepare($deleteQuery);
-    $deleteStmt->bind_param("i", $car_equipment_id);
-    $deleteStmt->execute();
 
-    // Вставляем новые элементы комплектации
+    // Вставляем новые элементы комплектации, если они не существуют
     foreach ($equipmentElementTexts as $text) {
         $insertElementQuery = "INSERT INTO car_equipment_element (car_equipment_element_text, car_equipment_id) VALUES (?, ?)";
         $insertElementStmt = $conn->prepare($insertElementQuery);
         $insertElementStmt->bind_param("si", $text, $car_equipment_id);
         $insertElementStmt->execute();
     }
+    
+    // Обновляем существующие элементы комплектации
+    foreach ($equipmentElementTexts as $text) {
+        $updateElementQuery = "UPDATE car_equipment_element SET car_equipment_element_text = ? WHERE car_equipment_id = ? AND car_equipment_element_text = ?";
+        $updateElementStmt = $conn->prepare($updateElementQuery);
+        $updateElementStmt->bind_param("sis", $text, $car_equipment_id, $text);
+        $updateElementStmt->execute();
+    }
 
     // Обработка фотографий
-    if (!empty($_FILES['car_photos']) && $_FILES['car_photos']['error'][0] !== UPLOAD_ERR_NO_FILE) {
-        echo "<script>alert('Checking files: ' + JSON.stringify(" . json_encode($_FILES) . "));</script>";
+    if (!empty($_FILES['car_photos'])) {
+        $fileCount = count($_FILES['car_photos']['name']);
+        for ($i = 0; $i < $fileCount; $i++) {
+            if ($_FILES['car_photos']['error'][$i] !== UPLOAD_ERR_OK) {
+                echo "<script>alert('Ошибка загрузки файла: " . $_FILES['car_photos']['error'][$i] . "');</script>";
+                return; // Прерываем выполнение, если есть ошибка
+            }
+        }
 
 
-
-
-    if (!empty($_FILES['car_photos']) && $_FILES['car_photos']['error'][0] !== UPLOAD_ERR_NO_FILE) {
         // Создаем папку для фотографий, если ее нет
         $uploadDir = '../img/cars/';
-        echo "<script>alert('Upload directory: $uploadDir');</script>";
-
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
@@ -109,37 +116,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $maxNumberResult = $maxNumberStmt->get_result();
         $maxNumber = $maxNumberResult->fetch_assoc()['max_num'] ?? 0;
 
-        foreach ($_FILES['car_photos']['tmp_name'] as $index => $tmpName) {
-            if ($_FILES['car_photos']['error'][$index] === UPLOAD_ERR_OK) {
+        for ($i = 0; $i < $fileCount; $i++) {
+            if ($_FILES['car_photos']['error'][$i] === UPLOAD_ERR_OK) {
+                $tmpName = $_FILES['car_photos']['tmp_name'][$i];
                 $maxNumber++;
                 $fileName = $car_id . '_' . $maxNumber . '.png';
                 $filePath = $uploadDir . $fileName;
                 
                 if (move_uploaded_file($tmpName, $filePath)) {
-                    // Отладка: файл успешно перемещен
-                    echo "<script>alert('Debug: File moved successfully: $fileName');</script>";
-                } else {
-                    echo "<script>alert('Ошибка перемещения файла: $fileName');</script>";
-
-                } else {
-                    echo "<script>alert('Ошибка перемещения файла: $fileName');</script>";
-
-
-
+                    // Файл успешно перемещен
                     $insertPhotoQuery = "INSERT INTO car_photo (car_photo_image_patch, car_id) VALUES (?, ?)";
                     $photoStmt = $conn->prepare($insertPhotoQuery);
                     $photoPath = '/' . $fileName;
                     $photoStmt->bind_param("si", $photoPath, $car_id);
                     $photoStmt->execute();
+                } else {
+                    echo "<script>alert('Ошибка перемещения файла: $fileName');</script>";
                 }
             }
         }
     }
 
     // Закомментирую перенаправление на viewAllCars.php
-    // header("Location: ../viewAllCars.php");
-    // exit();
-    
+    echo "<script>alert('Данные успешно обновлены!');</script>";
+    header("Location: ../viewAllCars.php");
+    exit();
+
+     exit();
+
     echo "<script>alert('Данные успешно обновлены!');</script>";
 }
 ?>

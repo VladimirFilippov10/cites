@@ -12,46 +12,31 @@ $(document).ready(function() {
     // Удаление элемента комплектации
     $(document).on('click', '.delete-complectation', function() {
         const complectationItem = $(this).closest('.complectation-item');
-        const complectationId = complectationItem.data('id'); // Предполагается, что ID элемента хранится в data-id
-
-        if (complectationId) {
-            $.ajax({
-                type: 'POST',
-                url: 'php/deleteComplectation.php',
-                data: { complectationId: complectationId },
-                success: function(response) {
-                    alert(response);
-                    complectationItem.remove(); // Удаляем элемент из интерфейса
-                },
-                error: function() {
-                    alert('Ошибка при удалении элемента комплектации.');
-                }
-            });
-        } else {
-            complectationItem.remove(); // Удаляем элемент из интерфейса, если ID не задан
-        }
+        complectationItem.remove(); // Удаляем элемент из интерфейса
     });
 
     // Обработка отправки формы
     $('form').on('submit', function(e) {
         e.preventDefault(); // Предотвращаем стандартное поведение формы
 
-        const formData = $(this).serialize(); // Сериализуем данные формы
+        const formData = new FormData(this); // Используем FormData для отправки данных формы, включая файлы
+
+        console.log('Form data being sent:', formData); // Отладочное сообщение
 
         $.ajax({
             type: 'POST',
             url: 'php/update.php', // Отправка на update.php для редактирования автомобиля
-
             data: formData,
+            processData: false, // Не обрабатываем данные
+            contentType: false, // Не устанавливаем заголовок contentType
             success: function(response) {
                 alert('Данные успешно сохранены!');
-             //   window.location.href = 'viewAllCars.php'; // Перенаправление на viewAllCars.php после редактирования
-
+                console.log('Response from server:', response); // Отладочное сообщение
+                window.location.href = 'viewAllCars.php'; // Перенаправление на viewAllCars.php после редактирования
             },
             error: function() {
                 alert('Ошибка при сохранении данных.');
             }
         });
     });
-
 });
