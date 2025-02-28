@@ -57,6 +57,7 @@
                 <tr>
                     <th class="border border-gray-300 p-2">Модель</th>
                     <th class="border border-gray-300 p-2">WinCod</th>
+                    <th class="border border-gray-300 p-2">Госномер</th>
                     <th class="border border-gray-300 p-2">Цена</th>
                     <th class="border border-gray-300 p-2">Фото</th>
 
@@ -76,8 +77,9 @@
                         ?>
                         <td class="border border-gray-300 p-2"><?php echo $car['model_name']; ?></td>
                         <td class="border border-gray-300 p-2"><?php echo $car['car_win_code']; ?></td>
+                        <td class="border border-gray-300 p-2"><?php echo $car['car_state_number']; ?></td>
                         <form action="php/updatePrice.php" method="POST" style="display:inline;">
-                        <td>
+                        <td class="border border-gray-300 p-2">
                             <input type="text" name="new_price" placeholder="Новая цена" value="<?php echo $car['car_price'];?>">
 
                             </td>

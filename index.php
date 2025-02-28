@@ -25,7 +25,41 @@
     Список автомобилей в продаже
    </h2>
    <div class="flex flex-col w-full p-5 space-y-5">
-    <a href="car.php?id=1" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">
+       <?php
+       // SQL-запрос для получения трех самых дорогих автомобилей
+       include 'php/dbconnect.php'; // Подключение к базе данных
+       $query = "SELECT car.*, model.model_name, brand.brand_name FROM car 
+                 JOIN model ON car.model_id = model.model_id
+                 JOIN brand ON model.brand_id = brand.brand_id
+                 ORDER BY car.car_price DESC LIMIT 3";
+       $result = $conn->query($query);
+       while ($car = $result->fetch_assoc()):
+       ?>
+       <a href="carDetails.php?id=<?php echo $car['car_id']; ?>" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">
+           <div class="w-1/3">
+               <img alt="<?php echo $car['car_win_code']; ?>" class="h-full w-full object-cover" src="img/cars/<?php echo $car['car_id']; ?>_1.png" />
+           </div>
+           <div class="w-2/3 pl-4 flex flex-col justify-between">
+               <div>
+<h2 class="text-2xl font-bold"><?php echo $car['brand_name'] . ' ' . $car['model_name']; ?></h2>
+<p class="text-gray-600 text-base"><?php echo $car['car_volume']; ?> л/<?php echo $car['car_power']; ?> л.с./<?php echo $car['car_type_oil']; ?></p>
+
+                   <div class="flex items-center mt-2">
+<span class="text-green-600 text-xl font-bold"><?php echo number_format($car['car_price'], 0, ',', ' '); ?> ₽</span>
+
+                   </div>
+                   <div class="flex items-center mt-2">
+<span class="text-gray-600 text-base"><?php echo $car['car_year_made']; ?></span>
+<span class="ml-4 text-gray-600 text-base"><?php echo number_format($car['car_mileage'], 0, ',', ' '); ?> км</span>
+
+                   </div>
+               </div>
+           </div>
+       </a>
+       <?php endwhile; ?>
+
+
+  <!--  <a href="car.php?id=1" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">
         <div class="w-1/3">
             <img alt="Silver Skoda Rapid I in a showroom" class="h-full w-full object-cover" src="img/cars/testBMW.png" />
         </div>
@@ -50,7 +84,7 @@
         </div>
     </a>
 
-    <!-- Добавьте дополнительные блоки аналогичным образом -->
+    <Добавьте дополнительные блоки аналогичным образом 
     <a href="car.php?id=2" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">
         <div class="w-1/3">
             <img alt="Another Car" class="h-full w-full object-cover" src="img/cars/testBMW.png" />
@@ -75,7 +109,7 @@
             </div>
         </div>
     </a>
-
+-->
     <!-- Добавьте больше блоков по мере необходимости -->
 </div>
   <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
