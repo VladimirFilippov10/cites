@@ -40,7 +40,8 @@
 
         $carsResult = $conn->query($carsQuery);
     ?>
-    <div class="max-w-7xl w-2/4 mx-auto p-4 bg-white shadow-md mt-10">
+<div class="max-w-full w-full mx-auto p-4 bg-white shadow-md mt-10">
+
         <h1 class="text-2xl font-bold mb-6">Список автомобилей</h1>
         <form method="POST" class="mb-4">
             <input type="text" name="searchWin" placeholder="Поиск по вину" value="<?php echo htmlspecialchars($searchWin); ?>" class="border p-2 mr-2">

@@ -71,16 +71,13 @@
     ?>
     <div class="max-w-7xl w-2/4 mx-auto p-4 bg-white shadow-md mt-10">
         <h1 class="text-2xl font-bold mb-6">Редактировать запись</h1>
-        <form action="php/update.php" method="POST" enctype="multipart/form-data">
+            <form action="php/update.php" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+
             <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
             <!-- Основная информация -->
             <div class="mb-6">
                 <label for="title" class="block text-lg font-semibold mb-2">WinCod</label>
                 <input type="text" id="title" name="title" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_win_code']) ? $car['car_win_code'] : ''; ?>" required>
-            </div>
-            <div class="mb-6">
-                <label for="price" class="block text-lg font-semibold mb-2">Цена</label>
-                <input type="number" id="price" name="price" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_price']) ? $car['car_price'] : ''; ?>" required>
             </div>
 
             <div class="mb-6">
@@ -104,6 +101,9 @@
                     <option value="Кроссовер" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Кроссовер') ? 'selected' : ''; ?>>Кроссовер</option>
                     <option value="Внедорожник" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Внедорожник') ? 'selected' : ''; ?>>Внедорожник</option>
                     <option value="Купе" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Купе') ? 'selected' : ''; ?>>Купе</option>
+                    <option value="Минивен" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Минивен') ? 'selected' : ''; ?>>Минивен</option>
+                    <option value="Фургон" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Фургон') ? 'selected' : ''; ?>>Фургон</option>
+
                     <option value="Кабриолет" <?php echo (isset($car['car_bodywork']) && $car['car_bodywork'] == 'Кабриолет') ? 'selected' : ''; ?>>Кабриолет</option>
                 </select>
             </div>
@@ -142,12 +142,16 @@
                 <label for="car_in_price" class="block text-lg font-semibold mb-2">На продаже</label>
                 <input type="checkbox" id="car_in_price" name="for_sale" value="1" <?php echo $car['car_in_price'] ? 'checked' : ''; ?>>
             </div>
-
+            <div class="mb-6">
+                <label for="price" class="block text-lg font-semibold mb-2">Цена</label>
+                <input type="number" id="price" name="price" class="w-full p-2 border border-gray-300 rounded" value="<?php echo isset($car['car_price']) ? $car['car_price'] : ''; ?>" required>
+            </div>
+           
             <label for="drive" class="block text-lg font-semibold mb-2">Привод</label>
-            <select id="drive" name="drive" class="w-full p-2 border border-gray-300 rounded" required>
-                <option value="передний" <?php echo (isset($car['drive']) && $car['drive'] == 'передний') ? 'selected' : ''; ?>>Передний</option>
-                <option value="задний" <?php echo (isset($car['drive']) && $car['drive'] == 'задний') ? 'selected' : ''; ?>>Задний</option>
-                <option value="полный" <?php echo (isset($car['drive']) && $car['drive'] == 'полный') ? 'selected' : ''; ?>>Полный</option>
+            <select id="car_drive" name="car_drive" class="w-full p-2 border border-gray-300 rounded" required>
+                <option value="передний" <?php echo (isset($car['car_drive']) && $car['car_drive'] == 'передний') ? 'selected' : ''; ?>>Передний</option>
+                <option value="задний" <?php echo (isset($car['car_drive']) && $car['car_drive'] == 'задний') ? 'selected' : ''; ?>>Задний</option>
+                <option value="полный" <?php echo (isset($car['car_drive']) && $car['car_drive'] == 'полный') ? 'selected' : ''; ?>>Полный</option>
             </select>
 
             <div class="mb-6">
@@ -235,7 +239,18 @@
         </form>
 
     <script>
-    // Обработка выбора файлов
+    function validateForm() {
+        // Проверка, что все обязательные поля заполнены
+        const requiredFields = ['title', 'year', 'bodywork', 'generation', 'mileage', 'color', 'owners', 'engine_volume', 'power', 'transmission', 'drive', 'fuel_type', 'equipment_text'];
+        for (let field of requiredFields) {
+            if (!document.getElementById(field).value) {
+                alert('Пожалуйста, заполните все обязательные поля.');
+                return false;
+            }
+        }
+        return true;
+    }
+
     document.querySelector('input[type="file"]').addEventListener('change', function(e) {
 
         const files = e.target.files;
@@ -291,15 +306,17 @@
             const xhr = new XMLHttpRequest();
             xhr.open('POST', 'php/deletePhoto.php', true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send('car_photo_id=' + encodeURIComponent(photoID)); // Передача ID фотографии
+            console.log('Отправка запроса на удаление фото с ID: ' + photoID); // Отладочное сообщение
             xhr.onload = function() {
                 if (xhr.status === 200) {
                     alert('Фото успешно удалено.');
+                    console.log('Ответ сервера: ' + xhr.responseText); // Отладочное сообщение
                     location.reload();
                 } else {
                     alert('Ошибка при удалении фото.');
                 }
             };
-            xhr.send('car_photo_id=' + encodeURIComponent(photoID)); // Передача ID фотографии
         }
     }
 

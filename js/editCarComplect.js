@@ -14,29 +14,8 @@ $(document).ready(function() {
         const complectationItem = $(this).closest('.complectation-item');
         complectationItem.remove(); // Удаляем элемент из интерфейса
     });
+    
+    // Удаление кода обработки отправки формы, так как он теперь находится в validateForm.js
 
-    // Обработка отправки формы
-    $('form').on('submit', function(e) {
-        e.preventDefault(); // Предотвращаем стандартное поведение формы
 
-        const formData = new FormData(this); // Используем FormData для отправки данных формы, включая файлы
-
-        console.log('Form data being sent:', formData); // Отладочное сообщение
-
-        $.ajax({
-            type: 'POST',
-            url: 'php/update.php', // Отправка на update.php для редактирования автомобиля
-            data: formData,
-            processData: false, // Не обрабатываем данные
-            contentType: false, // Не устанавливаем заголовок contentType
-            success: function(response) {
-                alert('Данные успешно сохранены!');
-                console.log('Response from server:', response); // Отладочное сообщение
-                window.location.href = 'viewAllCars.php'; // Перенаправление на viewAllCars.php после редактирования
-            },
-            error: function() {
-                alert('Ошибка при сохранении данных.');
-            }
-        });
-    });
 });

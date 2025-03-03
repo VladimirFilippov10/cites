@@ -14,31 +14,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $row = $result->fetch_assoc();
 
     if ($row) {
-$photoPath = 'img/cars' . $row['car_photo_image_patch']; // Исправленный путь к фотографии
-
-
-
+        $photoPath = '../img/cars' . $row['car_photo_image_patch']; // Исправленный путь к фотографии
 
         // Удаление файла с сервера
         if (file_exists($photoPath)) {
-            unlink($photoPath);
-        }
+            if (unlink($photoPath)) {
+                // Удаление записи о фотографии из базы данных
+                $deleteQuery = "DELETE FROM car_photo WHERE car_photo_id = ?";
+                $stmt = $conn->prepare($deleteQuery);
+                $stmt->bind_param("i", $photoID);
+                $stmt->execute();
 
-        // Удаление записи о фотографии из базы данных
-        $deleteQuery = "DELETE FROM car_photo WHERE car_photo_id = ?";
-        $stmt = $conn->prepare($deleteQuery);
-        $stmt->bind_param("i", $photoID);
-        $stmt->execute();
-
-        if ($stmt->affected_rows > 0) {
-            echo 'Фото успешно удалено.';
+                if ($stmt->affected_rows > 0) {
+                    echo json_encode(['success' => 'Фото успешно удалено из базы данных!']);
+                } else {
+                    echo json_encode(['error' => 'Ошибка при удалении фото из базы данных.']);
+                }
+            } else {
+                echo json_encode(['error' => 'Ошибка при удалении файла: ' . $photoPath]);
+            }
         } else {
-            echo 'Ошибка при удалении фото из базы данных.';
+            echo json_encode(['error' => 'Файл не существует: ' . $photoPath]);
         }
     } else {
-        echo 'Фото не найдено.';
+        echo json_encode(['error' => 'Фото не найдено.']);
     }
 } else {
-    echo 'Неверный метод запроса.';
+    echo json_encode(['error' => 'Неверный метод запроса.']);
 }
 ?>

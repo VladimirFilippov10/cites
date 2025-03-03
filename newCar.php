@@ -97,6 +97,9 @@
                     <option value="Внедорожник">Внедорожник</option>
                     <option value="Купе">Купе</option>
                     <option value="Кабриолет">Кабриолет</option>
+                    <option value="Минивен">Минивен</option>
+                    <option value="Фургон">Фургон</option>
+
                 </select>
             </div>
 
