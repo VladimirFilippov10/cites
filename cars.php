@@ -38,7 +38,7 @@
                         <?php
                         if ($marksResult->num_rows > 0) {
                             while($row = $marksResult->fetch_assoc()) {
-                                echo '<option value="' . $row['id_marks'] . '">' . $row['brand_name'] . '</option>';
+                                echo '<option value="' . $row['brand_id'] . '">' . $row['brand_name'] . '</option>';
                             }
                         } else {
                             echo '<option value="">Нет доступных марок</option>';
@@ -78,14 +78,15 @@
                         <input type="text" name="power_to" placeholder="Мощность до, л.с." class="border border-gray-300 rounded-lg p-2 w-full">
                         <select name="drive_type" class="border border-gray-300 rounded-lg p-2">
                             <option value="">Тип привода</option>
-                            <option value="front">Передний</option>
-                            <option value="rear">Задний</option>
-                            <option value="all">Полный</option>
+                            <option value="Передний">Передний</option>
+                            <option value="Задний">Задний</option>
+                            <option value="Полный">Полный</option>
                         </select>
                         <select name="transmission" class="border border-gray-300 rounded-lg p-2">
                             <option value="">Коробка передач</option>
-                            <option value="manual">Механическая</option>
-                            <option value="automatic">Автоматическая</option>
+                            <option value="Механическая">Механическая</option>
+                            <option value="Автоматическая">Автоматическая</option>
+                            <option value="Роботизированная">Роботизированная</option>
                         </select>
                     </div>
                 </div>
@@ -120,25 +121,24 @@
                               WHERE car.car_in_price = true";
                 }
 
-
                 // Добавление фильтров к запросу
                 if ($brand_id) {
-                    $query .= " AND brand.id_marks = $brand_id";
+                    $query .= " AND brand.brand_id = $brand_id";
                 }
                 if ($model_id) {
-                    $query .= " AND model.id_model = $model_id";
+                    $query .= " AND model.model_id = $model_id";
                 }
                 if ($price_from) {
-                    $query .= " AND car.cars_price >= $price_from";
+                    $query .= " AND car.car_price >= $price_from";
                 }
                 if ($price_to) {
-                    $query .= " AND car.cars_price <= $price_to";
+                    $query .= " AND car.car_price <= $price_to";
                 }
                 if ($year_from) {
-                    $query .= " AND car.cars_year_made >= $year_from";
+                    $query .= " AND car.car_year_made >= $year_from";
                 }
                 if ($year_to) {
-                    $query .= " AND car.cars_year_made <= $year_to";
+                    $query .= " AND car.car_year_made <= $year_to";
                 }
                 if ($power_from) {
                     $query .= " AND car.car_power >= $power_from";
@@ -150,7 +150,7 @@
                     $query .= " AND car.car_drive = '$drive_type'";
                 }
                 if ($transmission) {
-                    $query .= " AND car.car_transmission = '$transmission'";
+                    $query .= " AND car.car_transmission_box = '$transmission'";
                 }
 
                 $result = $conn->query($query);
@@ -209,7 +209,8 @@ function loadModels() {
 
     console.log("Selected brand ID:", brandId); // Отладочное сообщение
     if (!brandId) {
-        console.error("No brand ID selected.");
+    console.error("No brand ID selected. Selected brand ID:", brandId);
+
         return;
     }
 
@@ -225,7 +226,7 @@ function loadModels() {
             data.forEach(function(model) {
                 var option = document.createElement('option');
                 option.value = model.id_model;
-                option.textContent = model.model_name;
+                option.textContent = model.name_model;
                 modelSelect.appendChild(option);
             });
         })

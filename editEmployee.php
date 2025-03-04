@@ -1,3 +1,10 @@
+<?php
+session_start();
+include 'php/auth.php';
+checkAuth(); // Проверка аутентификации
+
+// Остальной код остается без изменений
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,7 +16,10 @@
 <body>
     <?php
     include 'template/header.php';
+    include 'template/nav_employees.php';
     include 'php/dbconnect.php'; // Подключение к базе данных
+    checkAuth(); // Проверка аутентификации
+
 
     // Получение ID сотрудника из URL
     $employee_id = isset($_GET['id']) ? intval($_GET['id']) : 0;

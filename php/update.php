@@ -73,7 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $car_link_to_report, 
         $car_id
     );
-    $updateCarStmt->execute();
+    if ($updateCarStmt->execute()) {
+        echo "<script>console.log('Запрос на обновление выполнен успешно.');</script>";
+    } else {
+        echo "<script>console.log('Ошибка выполнения запроса на обновление: " . $updateCarStmt->error . "');</script>";
+    }
+    header("Location:../viewAllCars.php");
 
     // Получаем массив элементов комплектации и удаляем дубликаты
     $equipmentElementTexts = isset($_POST['complectation']) && is_array($_POST['complectation']) ? array_unique($_POST['complectation']) : [];
@@ -114,6 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
+        echo "<script>console.log('Зобновление выполнен успешно.');</script>";
 
         // Получаем максимальный номер существующего фото
         $maxNumberQuery = "SELECT MAX(CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(car_photo_image_patch, '_', -1), '.', 1) AS UNSIGNED)) as max_num 

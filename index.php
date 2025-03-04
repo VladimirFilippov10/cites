@@ -57,6 +57,10 @@
            </div>
        </a>
        <?php endwhile; ?>
+<div class="text-center mt-4">
+    <a href="cars.php" class="text-blue-500 font-bold text-xl">Посмотрите и другие наши автомобили</a>
+</div>
+
 
 
   <!--  <a href="car.php?id=1" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">

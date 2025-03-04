@@ -1,3 +1,10 @@
+<?php
+session_start();
+include 'php/auth.php';
+checkAuth(); // Проверка аутентификации
+
+// Остальной код остается без изменений
+?>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -51,7 +58,6 @@
                             <td class="py-2 px-4 border-b"><?php echo $request['redemption_request_date']; ?></td>
                             <td class="py-2 px-4 border-b">
                                 <select class="border rounded p-2" name="employee">
-
                                     <?php
                                     $query_employees = "SELECT * FROM `employee` WHERE employee_role = 3";
                                     $result_employees = mysqli_query($conn, $query_employees);
@@ -65,7 +71,6 @@
                                         <option value="0" selected>Не назначен</option>
                                     <?php endif; ?>
                                 </select>
-
                             </td>
                             <td class="py-2 px-4 border-b">
                                 <input type="date" class="border rounded p-2" name="inspection_date[<?php echo $request['redemption_request_id']; ?>]">
@@ -88,7 +93,6 @@
                             </td>
                             <td class="py-2 px-4 border-b text-center">
                                 <button type="submit" class="bg-blue-500 text-white rounded px-4 py-2" name="id" value="<?php echo $request['redemption_request_id']; ?>">Сохранить</button>
-
                             </td>
                         </tr>
                         <?php endwhile; ?>
