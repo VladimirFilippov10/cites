@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['login'])) {
         $username = mysqli_real_escape_string($conn, $_POST['login']);
     } else {
-        echo "Username is required.";
+       // echo "Username is required.";
         exit();
     }
 
@@ -33,12 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: ../dashboard.php"); // Перенаправление на главную страницу
             exit(); // Завершение скрипта после перенаправления
         } else {
-            echo "Неверный пароль."; // Отладочное сообщение
+          //  echo "Неверный пароль."; // Отладочное сообщение
+          header("Location: ../auto.php");
             exit(); // Завершение скрипта
 
         }
     } else {
-        echo "Пользователь не найден.";
+      //  echo "Пользователь не найден.";
+      header("Location: ../auto.php");
+      exit(); 
     }
 }
 ?>

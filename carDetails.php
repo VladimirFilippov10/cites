@@ -84,10 +84,8 @@
             echo "<p>Ошибка: ID автомобиля не указан.</p>";
             exit();
         }
-
         // Получение ID автомобиля из параметров URL
         $car_id = intval($_GET['id']);
-
         // Запрос данных о конкретном автомобиле
         $query = "SELECT car.*, model.model_name, brand.brand_name, car_equipment.* FROM car 
                   JOIN model ON car.model_id = model.model_id
@@ -130,7 +128,12 @@
                     <li class="flex items-center space-x-2"><i class="fas fa-id-card"></i><span><?php echo $car['car_onwers']; ?> владельцев по ПТС</span></li>
                 </ul>
                 <br>  
-                <a href="<?php echo $car['car_link_specifications']; ?>" class="mt-6 bg-gray-200 text-gray-700 px-4 py-2 rounded">Характеристики модели</a>
+                <div class="mt-4">
+                    <a href="<?php echo $car['car_link_specifications']; ?>" class="bg-gray-200 text-gray-700 w-full text-center px-4 py-2 rounded">Характеристики модели</a>
+                </div>
+                <div class="mt-4">
+                    <a href="<?php echo $car['car_link_to_report']; ?>" class="bg-gray-200 text-gray-700 w-full text-center px-4 py-2 rounded">Отчёт автотеки</a>
+                </div>
             </div>
             <div class="w-2/3 pl-4">
                 <div class="carousel">

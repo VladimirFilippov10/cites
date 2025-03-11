@@ -8,12 +8,12 @@
 </head>
 <body class="bg-gray-100 font-roboto">
     <?php
-        include 'template\header.php';
+        include 'template/header.php';
     ?>
     <main class="flex-grow flex items-center justify-center py-12">
         <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
             <h2 class="text-2xl font-bold mb-6 text-center">Авторизация</h2>
-            <form action="php/login.php" method="POST" >
+            <form action="php/login.php" method="POST">
                 <div class="mb-4">
                     <label for="login" class="block text-gray-700 text-sm font-bold mb-2">Логин</label>
                     <input type="text" id="login" name="login" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Введите логин">
@@ -35,7 +35,7 @@
     </main>
 
 <?php
-include 'template/footer.php'
+include 'template/footer.php';
 ?>
 </body>
 </html>

@@ -48,7 +48,7 @@ checkAuth();
         $typeQuery = "SELECT DISTINCT client_type_client FROM client";
         $typeResult = $conn->query($typeQuery);
         while ($type = $typeResult->fetch_assoc()) {
-            $selected =ав ($type['client_type_client'] == $searchType) ? 'selected' : '';
+            $selected = ($type['client_type_client'] == $searchType) ? 'selected' : '';
             echo "<option value='" . htmlspecialchars($type['client_type_client']) . "' $selected>" . htmlspecialchars($type['client_type_client']) . "</option>";
         }
     ?>

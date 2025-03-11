@@ -1,7 +1,12 @@
 <?php
 include 'dbconnect.php'; // Подключение к базе данных
 
+session_start(); // Инициализация сессии
+
+$outputMessage = ""; // Переменная для хранения сообщений
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
     $fullname = mysqli_real_escape_string($conn, $_POST['fullname']);
     $username = mysqli_real_escape_string($conn, $_POST['username']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
@@ -12,17 +17,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usernameResult = $conn->query($checkUsernameQuery);
 
     if ($usernameResult->num_rows > 0) {
-        echo "Логин уже занят. Пожалуйста, выберите другой.";
+        $_SESSION['outputMessage'] = "Логин уже занят. Пожалуйста, выберите другой.<br>"; // Отладочное сообщение
+        header("Location: ../registr.php"); // Исправленный путь
         exit;
     }
 
     // Проверка кода регистрации
     $checkCodeQuery = "SELECT * FROM employee_code_registration WHERE employee_code_registration_value = '$registrationCode'";
     $codeResult = $conn->query($checkCodeQuery);
+    if (!$codeResult) {
+        $_SESSION['outputMessage'] = "Ошибка запроса: " . $conn->error . "<br>";
+        header("Location: ../registr.php"); // Исправленный путь
+        exit;
+    }
 
     if ($codeResult->num_rows == 0) {
-        echo "Недействительный код регистрации.";
+        $_SESSION['outputMessage'] = "Недействительный код регистрации. Пожалуйста, проверьте введенный код.<br>"; // Отладочное сообщение
+        header("Location: ../registr.php"); // Исправленный путь
         exit;
+    } else {
+        $registr = $codeResult->fetch_assoc();
+        if (!$registr) {
+            $_SESSION['outputMessage'] = "Недействительный код регистрации. Пожалуйста, проверьте введенный код.<br>";
+            header("Location: ../registr.php"); // Исправленный путь
+            exit;
+        }
+        $id = $registr['employee_code_registration_id'];
     }
 
     // Извлечение роли из кода
@@ -32,11 +52,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Вставка данных в таблицу employee
-    $insertQuery = "INSERT INTO employee (employee_name, employee_login, employee_password, employee_role) VALUES ('$fullname', '$username', '$hashedPassword', '$roleId')";
-    if ($conn->query($insertQuery) === TRUE) {
-        echo "Регистрация прошла успешно!";
-    } else {
-        echo "Ошибка: " . $conn->error;
+    if ($id > 0) {
+        $insertQuery = "INSERT INTO employee (employee_name, employee_login, employee_password, employee_role, employee_code_registaretion) VALUES ('$fullname', '$username', '$hashedPassword', '$roleId', '$id')"; // Исправлено имя столбца
+
+        if ($conn->query($insertQuery) === TRUE) {
+            $_SESSION['outputMessage'] = "Регистрация прошла успешно!";
+            header("Location: ../registr.php"); // Исправленный путь
+            exit();
+        }
     }
 }
 ?>

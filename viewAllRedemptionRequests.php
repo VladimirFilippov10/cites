@@ -66,6 +66,7 @@ checkAuth(); // Проверка аутентификации
         <table class="min-w-full border-collapse border border-gray-300">
             <thead>
                 <tr>
+                <th class="border border-gray-300 p-2">Код заявки</th>
                     <th class="border border-gray-300 p-2">Дата создания</th>
                     <th class="border border-gray-300 p-2">Имя клиента</th>
 
@@ -78,6 +79,7 @@ checkAuth(); // Проверка аутентификации
             <tbody>
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <tr class="<?php echo $row['redemption_request_closed'] ? 'bg-gray-200' : ''; ?>">
+                    <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($row['redemption_request_id']); ?></td>
                         <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($row['formatted_created_at']); ?></td>
 
                         <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($row['redemption_request_name_client']); ?></td>
