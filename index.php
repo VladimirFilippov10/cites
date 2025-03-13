@@ -7,136 +7,60 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
     <?php
-        include 'template\header.php';
+        include 'template/header.php';
     ?>
-     <div class="relative">
-   <img alt="Фоновое изображение с автомобилями" class="w-full h-96 object-cover" height="400" src="img/dop/header.png"/>
-   <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white">
-    <h1 class="text-4xl md:text-6xl font-bold">
-     Добро пожаловать в наш автосалон
-    </h1>
-    <p class="text-xl md:text-2xl mt-4">
-     Лучшие автомобили по лучшим ценам
-    </p>
-   </div>
-  </div>
-  <div class="container mx-auto py-12 px-6">
-   <h2 class="text-3xl font-bold mb-8 text-center">
-    Список автомобилей в продаже
-   </h2>
-   <div class="flex flex-col w-full p-5 space-y-5">
-       <?php
-       // SQL-запрос для получения трех самых дорогих автомобилей
-       include 'php/dbconnect.php'; // Подключение к базе данных
-       $query = "SELECT car.*, model.model_name, brand.brand_name FROM car 
-                 JOIN model ON car.model_id = model.model_id
-                 JOIN brand ON model.brand_id = brand.brand_id
-                 ORDER BY car.car_price DESC LIMIT 3";
-       $result = $conn->query($query);
-       while ($car = $result->fetch_assoc()):
-       ?>
-       <a href="carDetails.php?id=<?php echo $car['car_id']; ?>" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">
-           <div class="w-1/3">
-               <img alt="<?php echo $car['car_win_code']; ?>" class="h-full w-full object-cover" src="img/cars/<?php echo $car['car_id']; ?>_1.png" />
-           </div>
-           <div class="w-2/3 pl-4 flex flex-col justify-between">
-               <div>
-<h2 class="text-2xl font-bold"><?php echo $car['brand_name'] . ' ' . $car['model_name']; ?></h2>
-<p class="text-gray-600 text-base"><?php echo $car['car_volume']; ?> л/<?php echo $car['car_power']; ?> л.с./<?php echo $car['car_type_oil']; ?></p>
-
-                   <div class="flex items-center mt-2">
-<span class="text-green-600 text-xl font-bold"><?php echo number_format($car['car_price'], 0, ',', ' '); ?> ₽</span>
-
-                   </div>
-                   <div class="flex items-center mt-2">
-<span class="text-gray-600 text-base"><?php echo $car['car_year_made']; ?></span>
-<span class="ml-4 text-gray-600 text-base"><?php echo number_format($car['car_mileage'], 0, ',', ' '); ?> км</span>
-
-                   </div>
-               </div>
-           </div>
-       </a>
-       <?php endwhile; ?>
-<div class="text-center mt-4">
-    <a href="cars.php" class="text-blue-500 font-bold text-xl">Посмотрите и другие наши автомобили</a>
-</div>
-
-
-
-  <!--  <a href="car.php?id=1" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">
-        <div class="w-1/3">
-            <img alt="Silver Skoda Rapid I in a showroom" class="h-full w-full object-cover" src="img/cars/testBMW.png" />
+    <div class="relative">
+        <img alt="Фоновое изображение с автомобилями" class="w-full h-96 object-cover" height="400" src="img/dop/header.png"/>
+        <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white">
+            <h1 class="text-4xl md:text-6xl font-bold">
+                Добро пожаловать в наш автосалон
+            </h1>
+            <p class="text-xl md:text-2xl mt-4">
+                Лучшие автомобили по лучшим ценам
+            </p>
         </div>
-        <div class="w-2/3 pl-4 flex flex-col justify-between">
-            <div>
-                <h2 class="text-xl font-bold">Skoda Rapid I</h2>
-                <p class="text-gray-600 text-sm">1.4 л/125 л.с./Бензин</p>
-                <p class="text-gray-600 text-sm">Робот</p>
-                <p class="text-gray-600 text-sm">Лифтбек</p>
-                <div class="flex items-center mt-2">
-                    <span class="text-green-600 text-lg font-bold">1 098 000 ₽</span>
+    </div>
+    <div class="container mx-auto py-12 px-6">
+        <h2 class="text-3xl font-bold mb-8 text-center">
+            Список автомобилей в продаже
+        </h2>
+        <div class="flex flex-col w-full p-5 space-y-5">
+            <?php
+            // SQL-запрос для получения трех самых дорогих автомобилей
+            include 'php/dbconnect.php'; // Подключение к базе данных
+            $query = "SELECT car.*, model.model_name, brand.brand_name FROM car 
+                      JOIN model ON car.model_id = model.model_id
+                      JOIN brand ON model.brand_id = brand.brand_id
+                      ORDER BY car.car_price DESC LIMIT 3";
+            $result = $conn->query($query);
+            while ($car = $result->fetch_assoc()):
+            ?>
+            <a href="carDetails.php?id=<?php echo $car['car_id']; ?>" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">
+                <div class="w-1/3">
+                    <img alt="<?php echo $car['car_win_code']; ?>" class="h-full w-full object-cover" src="img/cars/<?php echo $car['car_id']; ?>_1.png" />
                 </div>
-                <div class="flex items-center mt-2">
-                    <span class="text-gray-600 text-sm">2016</span>
-                    <span class="ml-4 text-gray-600 text-sm">205 433 км</span>
+                <div class="w-2/3 pl-4 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold"><?php echo $car['brand_name'] . ' ' . $car['model_name']; ?></h2>
+                        <p class="text-gray-600 text-base"><?php echo $car['car_volume']; ?> л/<?php echo $car['car_power']; ?> л.с./<?php echo $car['car_type_oil']; ?></p>
+                        <div class="flex items-center mt-2">
+                            <span class="text-green-600 text-xl font-bold"><?php echo number_format($car['car_price'], 0, ',', ' '); ?> ₽</span>
+                        </div>
+                        <div class="flex items-center mt-2">
+                            <span class="text-gray-600 text-base"><?php echo $car['car_year_made']; ?></span>
+                            <span class="ml-4 text-gray-600 text-base"><?php echo number_format($car['car_mileage'], 0, ',', ' '); ?> км</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex items-center mt-2">
-                    <span class="text-gray-600 text-sm">Передний</span>
-                    <span class="ml-4 text-gray-600 text-sm">Серебристый</span>
-                </div>
+            </a>
+            <?php endwhile; ?>
+            <div class="text-center mt-4">
+                <a href="cars.php" class="text-blue-500 font-bold text-xl">Посмотрите и другие наши автомобили</a>
             </div>
         </div>
-    </a>
-
-    <Добавьте дополнительные блоки аналогичным образом 
-    <a href="car.php?id=2" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">
-        <div class="w-1/3">
-            <img alt="Another Car" class="h-full w-full object-cover" src="img/cars/testBMW.png" />
-        </div>
-        <div class="w-2/3 pl-4 flex flex-col justify-between">
-            <div>
-                <h2 class="text-xl font-bold">Another Car</h2>
-                <p class="text-gray-600 text-sm">1.6 л/150 л.с./Бензин</p>
-                <p class="text-gray-600 text-sm">Механика</p>
-                <p class="text-gray-600 text-sm">Седан</p>
-                <div class="flex items-center mt-2">
-                    <span class="text-green-600 text-lg font-bold">1 200 000 ₽</span>
-                </div>
-                <div class="flex items-center mt-2">
-                    <span class="text-gray-600 text-sm">2018</span>
-                    <span class="ml-4 text-gray-600 text-sm">150 000 км</span>
-                </div>
-                <div class="flex items-center mt-2">
-                    <span class="text-gray-600 text-sm">Передний</span>
-                    <span class="ml-4 text-gray-600 text-sm">Черный</span>
-                </div>
-            </div>
-        </div>
-    </a>
--->
-    <!-- Добавьте больше блоков по мере необходимости -->
-</div>
-  <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-    <a href="#">
-    <img alt="" class="w-full h-48 object-cover" src="img/cars/testBMW.png"/>
-    
-    <div class="p-6">
-    <h3 class="text-xl font-bold mb-2">
-       BMW M5 540d
-      </h3>
-      <p class="text-gray-600 mb-4">
-       Мощный и стильный автомобиль для любителей скорости.
-      </p>
-      <div class="text-lg font-bold text-blue-900">
-      <p class = "sale"> 2 500 000 ₽ </p>
-      </div>
-     </div>
-     </a> -->
+    </div>
+    <?php
+        include 'template/footer.php';
+    ?>
 </body>
-<?php
-include 'template/footer.php'
-?>
 </html>
-
-<!--добавь цену напротив названия, добавь больше информации о комплектации, сделай чуть больше текст, а так же после описания добавь блок, где отдельно описывается комплектация, например пневмоподвеска, подушки безопасности,

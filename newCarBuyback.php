@@ -19,7 +19,7 @@ checkAuth(); // Проверка аутентификации
     ?>
     <div class="max-w-7xl w-2/4 mx-auto p-4 bg-white shadow-md mt-10">
         <h1 class="text-2xl font-bold mb-6">Добавить запись о выкупе автомобиля</h1>
-        <form action="php/car_buyback_update.php?action=add" method="POST">
+        <form action="php/carBuybackSubmit.php?action=add" method="POST">
             <div class="mb-6">
                 <label for="car_buyback_car_id" class="block text-lg font-semibold mb-2">Автомобиль:</label>
                 <select id="car_buyback_car_id" name="car_buyback_car_id" class="w-full p-2 border border-gray-300 rounded" required>
@@ -28,6 +28,18 @@ checkAuth(); // Проверка аутентификации
                     $carsResult = $conn->query($carsQuery);
                     while ($car = $carsResult->fetch_assoc()) {
                         echo "<option value='" . $car['car_id'] . "'>" . htmlspecialchars($car['car_win_code']) . "</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="mb-6">
+                <label for="car_buyback_redemption_request" class="block text-lg font-semibold mb-2">Номер заявки:</label>
+                <select id="car_buyback_redemption_request" name="car_buyback_redemption_request" class="w-full p-2 border border-gray-300 rounded" required>
+                    <?php
+                    $reauestQuery = "SELECT * FROM `redemption_request` WHERE redemption_request_closed = 0";
+                    $recuestResult = $conn->query($reauestQuery);
+                    while ($request = $recuestResult->fetch_assoc()) {
+                        echo "<option value='" . $request['redemption_request_id'] . "'>" . htmlspecialchars($request['redemption_request_id']) . "</option>";
                     }
                     ?>
                 </select>

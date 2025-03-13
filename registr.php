@@ -1,9 +1,13 @@
+<?php
+session_start(); // Инициализация сессии
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация</title>
+
     <script>
         function validatePasswords() {
             var password = document.getElementById("password").value;
@@ -18,7 +22,7 @@
 </head>
 <body class="bg-gray-100 font-roboto">
     <?php
-        include 'template\header.php';
+        include 'template/header.php';
     ?>
     <main class="container mx-auto p-12">
         <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mx-auto">
@@ -53,16 +57,17 @@
                     <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500" onclick="return validatePasswords()">Зарегистрироваться</button>
                 </div>
             </form>
-            <?php if (!empty($outputMessage)) : ?>
+            <?php if (isset($_SESSION['outputMessage'])) : ?>
                 <div class="text-red-500 mt-4">
-                    <?php echo $outputMessage; ?>
+                    <?php echo $_SESSION['outputMessage']; ?>
+                    <?php unset($_SESSION['outputMessage']); ?>
                 </div>
             <?php endif; ?>
 
         </div>
     </main>
 <?php
-include 'template/footer.php'
+include 'template/footer.php';
 ?>
 </body>
 </html>
