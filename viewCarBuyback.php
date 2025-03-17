@@ -35,7 +35,6 @@ $result = $conn->query($query);
                     <th class="border border-gray-300 p-2">Сотрудник</th>
                     <th class="border border-gray-300 p-2">Дата и время</th>
                     <th class="border border-gray-300 p-2">Цена</th>
-                    <th class="border border-gray-300 p-2">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -47,9 +46,6 @@ $result = $conn->query($query);
                         <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($car_buyback['employee_name']); ?></td>
                         <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($car_buyback['car_buyback_datetime']); ?></td>
                         <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($car_buyback['car_buyback_price']); ?></td>
-                        <td class="border border-gray-300 p-2">
-                            <a href="edit_car_buyback.php?id=<?php echo $car_buyback['car_buyback_id']; ?>" class="bg-green-500 text-white p-1 rounded">Редактировать</a>
-                        </td>
                     </tr>
                 <?php endwhile; ?>
             </tbody>

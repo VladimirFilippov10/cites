@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
     // Вставка данных в таблицу car
     $insertQuery = "INSERT INTO car (model_id, car_win_code, car_year_made, car_generation, car_mileage, car_color, car_drive, car_volume, car_power, car_transmission_box, car_type_oil, car_descriptions, car_price, car_onwers, car_bodywork, car_in_price, car_state_number, car_link_specifications, car_link_to_report) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($insertQuery);
-    $stmt->bind_param("issssssddissssssiss", $model_id, $car_win_code, $car_year_made, $car_generation, $car_mileage, $car_color, $car_drive, $car_volume, $car_power, $car_transmission_box, $car_fuel_type, $car_description, $car_price, $car_onwers, $car_bodywork, $car_in_price, $car_state_number, $car_link_specifications, $car_link_to_report);
+    $stmt->bind_param("issssssddssssssssss", $model_id, $car_win_code, $car_year_made, $car_generation, $car_mileage, $car_color, $car_drive, $car_volume, $car_power, $car_transmission_box, $car_fuel_type, $car_description, $car_price, $car_onwers, $car_bodywork, $car_in_price, $car_state_number, $car_link_specifications, $car_link_to_report);
     if (!$stmt->execute()) {
         echo "<script>alert('Ошибка при добавлении автомобиля: " . $stmt->error . "'); window.location.href='../newCar.php';</script>"; // Добавление более детализированного сообщения об ошибке
         exit();
@@ -74,28 +74,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
     }
 
     // Обработка комплектации и элементов комплектации
-    if (!empty($_POST['complectation'])) {
-        foreach ($_POST['complectation'] as $equipment) {
-            $insertEquipmentQuery = "INSERT INTO car_equipment (car_equipment_descriptions, car_id) VALUES (?, ?)";
+    if (!empty($_POST['equipment_text'])) {
+            $insertEquipmentQuery = "INSERT INTO car_equipment (equipment_text, car_id) VALUES (?, ?)";
             $equipmentStmt = $conn->prepare($insertEquipmentQuery);
             $equipmentStmt->bind_param("si", $equipment, $car_id);
             $equipmentStmt->execute();
-        }
+
     }
 
     // Обработка элементов комплектации
-    if (!empty($_POST['complectation_elements'])) {
-        foreach ($_POST['complectation_elements'] as $element) {
+    $equipmentQuery = "SELECT * FROM car_equipment WHERE car_id = ?";
+    $equipmentStmt = $conn->prepare($equipmentQuery);
+    $equipmentStmt->bind_param("i", $car_id);
+    $equipmentStmt->execute();
+    $equipmentResult = $equipmentStmt->get_result();
+    $equipment = $equipmentResult->fetch_assoc();
+    $car_equipment_id = $equipment['car_equipment_id']; 
+
+    if (!empty($_POST['complectation'])) {
+        foreach ($_POST['complectation'] as $element) {
             $insertElementQuery = "INSERT INTO car_equipment_element (car_equipment_element_text, car_equipment_id) VALUES (?, (SELECT car_equipment_id FROM car_equipment WHERE car_id = ? LIMIT 1))";
             $elementStmt = $conn->prepare($insertElementQuery);
-            $elementStmt->bind_param("si", $element, $car_id);
+            $elementStmt->bind_param("si", $element, $car_equipment_id);
             $elementStmt->execute();
         }
     }
 
     // Возвращаем JSON-ответ с успешным добавлением
-    echo json_encode(['success' => true]);
+    //echo json_encode(['success' => true]);
     exit();
+
 }
 
 ?>

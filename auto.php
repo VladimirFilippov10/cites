@@ -1,3 +1,21 @@
+<?php
+session_start(); // Инициализация сессии
+
+// Проверка аутентификации
+if (isset($_SESSION['user_id'])) {
+    // Пользователь аутентифицирован, перенаправляем на dashboard
+    header("Location: dashboard.php");
+    exit();
+}
+
+include 'template/header.php';
+
+// Проверка и вывод сообщения
+if (isset($_SESSION['outputMessage'])) {
+    echo '<div class="bg-red-500 text-white p-4 rounded mb-4">' . $_SESSION['outputMessage'] . '</div>';
+    unset($_SESSION['outputMessage']); // Удаляем сообщение после отображения
+}
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -7,9 +25,6 @@
     <script src="js/messageRansomCars.js"></script>
 </head>
 <body class="bg-gray-100 font-roboto">
-    <?php
-        include 'template/header.php';
-    ?>
     <main class="flex-grow flex items-center justify-center py-12">
         <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
             <h2 class="text-2xl font-bold mb-6 text-center">Авторизация</h2>

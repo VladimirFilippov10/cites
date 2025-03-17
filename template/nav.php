@@ -31,17 +31,19 @@
         Вакансии
        </a>
       </li>
-      <li>
-       <a class="hover:text-gray-300" href="auto.php">
-        Вход
-       </a>
-      </li>
-      <li>
-       <a class="hover:text-gray-300" href="registr.php">
-        Регистрация
-       </a>
-      </li>
-   
+      <!-- Links for authenticated users will be replaced with nav_employees.php -->
+      <?php if (!isset($_SESSION['user_id'])): ?>
+        <li>
+         <a class="hover:text-gray-300" href="auto.php">
+          Вход
+         </a>
+        </li>
+        <li>
+         <a class="hover:text-gray-300" href="registr.php">
+          Регистрация
+         </a>
+        </li>
+      <?php endif; ?>
      </ul>
 </div>
 </nav>

@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $car_transmission_box = mysqli_real_escape_string($conn, $_POST['transmission']);
     $car_type_oil = mysqli_real_escape_string($conn, $_POST['fuel_type']);
     $car_description = mysqli_real_escape_string($conn, $_POST['equipment_text']);
+    $car_equipment_descriptions = mysqli_real_escape_string($conn, $_POST['car_equipment_descriptions']);
     $car_price = isset($_POST['price']) ? floatval($_POST['price']) : 0.0;
 
     $car_onwers = isset($_POST['owners']) ? intval($_POST['owners']) : null;
@@ -90,7 +91,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $equipmentStmt->execute();
     $equipmentResult = $equipmentStmt->get_result();
     $equipment = $equipmentResult->fetch_assoc();
+    $car_equipment_id = 0;
     $car_equipment_id = $equipment['car_equipment_id']; 
+
+    if ($car_equipment_id == 0) 
+    {
+        // Вставляем новую комплектацию
+        $insertEquipmentQuery = "INSERT INTO car_equipment (car_equipment_descriptions, car_id) VALUES (?, ?)";
+        $insertEquipmentStmt = $conn->prepare($insertEquipmentQuery);
+        $insertEquipmentStmt->bind_param("si",$car_equipment_descriptions, $car_id);
+        $insertEquipmentStmt->execute();
+    }
+    else
+    {
+        $insertElementQuery = "UPDATE car_equipment SET car_equipment_descriptions = ? WHERE car_id = ?";
+        $insertElementStmt = $conn->prepare($insertElementQuery);
+        $insertElementStmt->bind_param("si", $car_equipment_descriptions, $car_id);
+        $insertElementStmt->execute();
+    }
 
     $deleteElementsQuery = "DELETE FROM car_equipment_element WHERE car_equipment_id = ?";
     $deleteElementsStmt = $conn->prepare($deleteElementsQuery);

@@ -6,8 +6,16 @@
     <title>О нас</title>
 </head>
 <body class="bg-gray-100 font-roboto">
-    <?php
-        include 'template\header.php';
+<?php
+        session_start();
+        include 'template/header.php';
+        
+        // Проверка авторизации и подключение меню
+        if (isset($_SESSION['user_id'])) {
+            include 'template/nav_employees.php'; // Подключение навигации для аутентифицированных пользователей
+        }
+        include 'php/dbconnect.php'; // Подключение к базе данных
+
     ?>
  <main class="container mx-auto p-4">
    <section class="my-8">
@@ -60,4 +68,4 @@
 include 'template/footer.php'
 ?>
 </body>
-</html>    
+</html>

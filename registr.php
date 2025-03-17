@@ -1,5 +1,12 @@
 <?php
 session_start(); // Инициализация сессии
+
+// Проверка аутентификации
+if (isset($_SESSION['user_id'])) {
+    // Пользователь аутентифицирован, перенаправляем на dashboard
+    header("Location: dashboard.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">

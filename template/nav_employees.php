@@ -22,7 +22,13 @@
             <li><a href="newCarBuyback.php" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Выкупить авто</a></li>
         </ul>
     </li>
-    <li><a href="#" class="text-gray-700 hover:text-blue-700">Продажи</a></li>
+    <li class="group relative">
+        <a href="#" class="text-gray-700 hover:text-blue-700">Продажи</a>
+        <ul class="hidden absolute bg-white shadow-md rounded-lg mt-2 z-10">
+            <li><a href="viewCarSales.php" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Продажи</a></li>
+            <li><a href="newCarSales.php" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Продать авто</a></li>
+        </ul>
+    </li>
     <li><a href="#" class="text-gray-700 hover:text-blue-700">Склад</a></li>
     <li><a href="viewAllEmployees.php" class="text-gray-700 hover:text-blue-700">Сотрудники</a></li>
     <li><a href="addBrandsAndModels.php" class="text-gray-700 hover:text-blue-700">Марки и модели</a></li>

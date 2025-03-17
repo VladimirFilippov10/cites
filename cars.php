@@ -8,7 +8,14 @@
 </head>
 <body class="bg-white flex flex-col min-h-screen">
     <?php
+        session_start();
         include 'template/header.php';
+        
+        // Проверка авторизации и подключение меню
+        if (isset($_SESSION['user_id'])) {
+            include 'template/nav_employees.php'; // Подключение навигации для аутентифицированных пользователей
+        }
+
         include 'php/dbconnect.php'; // Подключение к базе данных
 
         // Обработка данных из формы поиска
@@ -24,7 +31,8 @@
         $transmission = isset($_GET['transmission']) ? $_GET['transmission'] : null; // Новое поле для коробки передач
 
         // Запрос для получения всех марок
-        $marksQuery = "SELECT * FROM brand";
+        $marksQuery = "SELECT b.* FROM brand b JOIN model m ON b.brand_id = m.brand_id GROUP BY b.brand_id;";
+
         $marksResult = $conn->query($marksQuery);
     ?>
     <main class="flex-grow">

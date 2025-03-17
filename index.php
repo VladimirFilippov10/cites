@@ -7,8 +7,17 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
     <?php
+        session_start();
         include 'template/header.php';
+        
+        // Проверка авторизации и подключение меню
+        if (isset($_SESSION['user_id'])) {
+            include 'template/nav_employees.php'; // Подключение навигации для аутентифицированных пользователей
+        }
+        include 'php/dbconnect.php'; // Подключение к базе данных
+
     ?>
+
     <div class="relative">
         <img alt="Фоновое изображение с автомобилями" class="w-full h-96 object-cover" height="400" src="img/dop/header.png"/>
         <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white">

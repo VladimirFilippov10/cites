@@ -103,6 +103,8 @@ checkAuth();
                                 </button>
                             </form>
                             <a href="editCar.php?id=<?php echo $car['car_id']; ?>" class="bg-green-500 text-white p-1 rounded">Редактировать</a>
+                            <a href="carReport.php?id=<?php echo $car['car_id']; ?>" class="bg-green-500 text-white p-1 rounded">Отчёт по автомобилю</a>
+
                         </td>
                     </tr>
                 <?php endwhile; ?>

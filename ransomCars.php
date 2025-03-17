@@ -7,8 +7,16 @@
     <script src="js/messageRansomCars.js"></script>
 </head>
 <body class="bg-white flex flex-col min-h-screen">
-    <?php
-        include 'template\header.php';
+<?php
+        session_start();
+        include 'template/header.php';
+        
+        // Проверка авторизации и подключение меню
+        if (isset($_SESSION['user_id'])) {
+            include 'template/nav_employees.php'; // Подключение навигации для аутентифицированных пользователей
+        }
+        include 'php/dbconnect.php'; // Подключение к базе данных
+
     ?>
 <body class="bg-gray-100 font-roboto">
 
