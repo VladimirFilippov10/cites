@@ -60,5 +60,7 @@ checkAuth(); // Проверка аутентификации
             </form>
         </div>
     </div>
+    <?php include 'template/footer.php'; ?>
+
 </body>
 </html>

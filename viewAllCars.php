@@ -22,8 +22,17 @@ checkAuth();
         $car_state_number = isset($_POST['car_state_number']) ? $_POST['car_state_number'] : ''; // Новое поле для гос номера
         $filterSale = isset($_POST['filterSale']) ? $_POST['filterSale'] : '';
 
+        // Обработка параметров сортировки
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : 'model_name';
+        $order = isset($_GET['order']) && $_GET['order'] === 'desc' ? 'asc' : 'desc'; // Изменение порядка сортировки
+        $valid_columns = ['model_name', 'car_win_code', 'car_state_number', 'car_price'];
+
+        if (!in_array($sort, $valid_columns)) {
+            $sort = 'model_name'; // Default sorting column
+        }
+
         // Запрос для получения всех автомобилей с именами моделей
-        $carsQuery = "SELECT car.*, model.model_name FROM car JOIN model ON car.model_id = model.model_id";
+        $carsQuery = "SELECT car.*, model.model_name FROM car JOIN model ON car.model_id = model.model_id ORDER BY $sort $order";
 
         if ($searchWin) {
             $carsQuery .= " AND car.car_win_code LIKE '%" . $conn->real_escape_string($searchWin) . "%'";
@@ -36,11 +45,6 @@ checkAuth();
         }
         if ($filterSale) {
             $carsQuery .= " AND car.car_in_price = 1"; // Предполагается, что 1 - это признак, что автомобиль на продаже
-        }
-
-        // Если фильтры не заданы, выполняем запрос для получения всех автомобилей
-        if (!$searchWin && !$searchModel && !$car_state_number && !$filterSale) {
-            $carsQuery = "SELECT car.*, model.model_name FROM car JOIN model ON car.model_id = model.model_id";
         }
 
         $carsResult = $conn->query($carsQuery);
@@ -61,14 +65,27 @@ checkAuth();
         <table class="min-w-full border-collapse border border-gray-300">
             <thead>
                 <tr>
-                    <th class="border border-gray-300 p-2">Модель</th>
-                    <th class="border border-gray-300 p-2">WinCod</th>
-                    <th class="border border-gray-300 p-2">Госномер</th>
-                    <th class="border border-gray-300 p-2">Цена</th>
+                    <th class="border border-gray-300 p-2">
+                        <a href="?sort=model_name&order=<?php echo $sort === 'model_name' ? $order : 'asc'; ?>">Модель 
+                            <?php echo $sort === 'model_name' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                        </a>
+                    </th>
+                    <th class="border border-gray-300 p-2">
+                        <a href="?sort=car_win_code&order=<?php echo $sort === 'car_win_code' ? $order : 'asc'; ?>">WinCod 
+                            <?php echo $sort === 'car_win_code' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                        </a>
+                    </th>
+                    <th class="border border-gray-300 p-2">
+                        <a href="?sort=car_state_number&order=<?php echo $sort === 'car_state_number' ? $order : 'asc'; ?>">Госномер 
+                            <?php echo $sort === 'car_state_number' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                        </a>
+                    </th>
+                    <th class="border border-gray-300 p-2">
+                        <a href="?sort=car_price&order=<?php echo $sort === 'car_price' ? $order : 'asc'; ?>">Цена 
+                            <?php echo $sort === 'car_price' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                        </a>
+                    </th>
                     <th class="border border-gray-300 p-2">Фото</th>
-
-
-
                     <th class="border border-gray-300 p-2">Действия</th>
                 </tr>
             </thead>

@@ -4,12 +4,20 @@ include 'php/auth.php';
 checkAuth(); // Проверка аутентификации
 include 'php/dbconnect.php'; // Подключение к базе данных
 
-// Запрос для получения всех записей о выкупе автомобилей
+// Обработка параметров сортировки
+$sort = isset($_GET['sort']) ? $_GET['sort'] : 'car_sales_datatime';
+$order = isset($_GET['order']) && $_GET['order'] === 'desc' ? 'asc' : 'desc'; // Изменение порядка сортировки
+$valid_columns = ['car_win_code', 'client_name', 'employee_name', 'car_sales_datatime', 'car_sales_price'];
+if (!in_array($sort, $valid_columns)) {
+    $sort = 'car_sales_datatime'; // Default sorting column
+}
+
+// Запрос для получения всех записей о выкупе автомобилей с сортировкой
 $query = "SELECT cb.*, c.client_name, car.car_win_code, e.employee_name FROM car_sales cb
           JOIN client c ON cb.car_sales_client_id = c.client_id
           JOIN employee e ON cb.car_sales_employee_id = e.employee_id
-
-          JOIN car ON cb.car_sales_car_id = car.car_id";
+          JOIN car ON cb.car_sales_car_id = car.car_id
+          ORDER BY $sort $order";
 $result = $conn->query($query);
 ?>
 <!DOCTYPE html>
@@ -30,20 +38,40 @@ $result = $conn->query($query);
         <table class="min-w-full border-collapse border border-gray-300">
             <thead>
                 <tr>
-                    <th class="border border-gray-300 p-2">Автомобиль</th>
-                    <th class="border border-gray-300 p-2">Клиент</th>
-                    <th class="border border-gray-300 p-2">Сотрудник</th>
-                    <th class="border border-gray-300 p-2">Дата и время</th>
-                    <th class="border border-gray-300 p-2">Цена</th>
+                    <th class="border border-gray-300 p-2">
+                        <a href="?sort=car_win_code&order=<?php echo $sort === 'car_win_code' ? $order : 'asc'; ?>">Автомобиль 
+                            <?php echo $sort === 'car_win_code' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                        </a>
+                    </th>
+                    <th class="border border-gray-300 p-2">
+                        <a href="?sort=client_name&order=<?php echo $sort === 'client_name' ? $order : 'asc'; ?>">Клиент 
+                            <?php echo $sort === 'client_name' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                        </a>
+                    </th>
+                    <th class="border border-gray-300 p-2">
+                        <a href="?sort=employee_name&order=<?php echo $sort === 'employee_name' ? $order : 'asc'; ?>">Сотрудник 
+                            <?php echo $sort === 'employee_name' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                        </a>
+                    </th>
+                    <th class="border border-gray-300 p-2">
+                        <a href="?sort=car_sales_datatime&order=<?php echo $sort === 'car_sales_datatime' ? $order : 'asc'; ?>">Дата и время 
+                            <?php echo $sort === 'car_sales_datatime' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                        </a>
+                    </th>
+                    <th class="border border-gray-300 p-2">
+                        <a href="?sort=car_sales_price&order=<?php echo $sort === 'car_sales_price' ? $order : 'asc'; ?>">Цена 
+                            <?php echo $sort === 'car_sales_price' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                        </a>
+                    </th>
                 </tr>
             </thead>
             <tbody>
                 <?php 
                 while ($car_buyback = $result->fetch_assoc()): ?>
                     <tr>
-                        <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($car_buyback['car_win_code']); ?></td>
-                        <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($car_buyback['client_name']); ?></td>
-                        <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($car_buyback['employee_name']); ?></td>
+                        <td class="border border-gray-300 p-2"><a href="editCar.php?id=<?php echo $car_buyback['car_sales_car_id']?>"><?php echo htmlspecialchars($car_buyback['car_win_code']); ?></a></td>
+                        <td class="border border-gray-300 p-2"><a class="link-button" href="editClient.php?id=<?php echo $car_buyback['car_sales_client_id']?>"><?php echo htmlspecialchars($car_buyback['client_name']); ?></a></td>
+                        <td class="border border-gray-300 p-2"><a class="link-button" href="editEmployee.php?id=<?php echo $car_buyback['car_sales_employee_id']?>"><?php echo htmlspecialchars($car_buyback['employee_name']); ?></a></td>
                         <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($car_buyback['car_sales_datatime']); ?></td>
                         <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($car_buyback['car_sales_price']); ?></td>
                     </tr>

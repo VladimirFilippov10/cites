@@ -80,6 +80,19 @@
                         </select>
                     </div>
                 </div>
+                <div class="flex space-x-2 mt-4">
+                    <label class="text-gray-700">Сортировать по:</label>
+                    <select name="sort_by" class="border border-gray-300 rounded-lg p-2" onchange="this.form.submit()">
+                        <option value="default">По умолчанию</option>
+                        <option value="price">Цена</option>
+                        <option value="year">Год</option>
+                        <option value="mileage">Пробег</option>
+                    </select>
+                    <select name="sort_order" class="border border-gray-300 rounded-lg p-2" onchange="this.form.submit()">
+                        <option value="asc">По возрастанию</option>
+                        <option value="desc">По убыванию</option>
+                    </select>
+                </div>
                 <div id="advanced-search" class="hidden">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
                         <input type="text" name="power_from" placeholder="Мощность от, л.с." class="border border-gray-300 rounded-lg p-2 w-full">
@@ -101,16 +114,12 @@
                 <div class="mt-4 flex justify-between items-center">
                     <button type="button" id="toggle-button" class="text-blue-500" onclick="toggleAdvancedSearch()">Расширенный поиск</button>
                     <div class="flex space-x-2">
-                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg" onclick="resetFilters(); window.location.href='cars.php';">Сбросить фильтры</button>
+                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg" onclick="resetFilters();">Сбросить фильтры</button>
 
                         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Показать результаты</button>
                     </div>
                 </div>
             </form>
-            <div id="advanced-search" class="hidden">
-                <!-- Здесь можно добавить дополнительные поля для расширенного поиска -->
-                <input type="text" placeholder="Дополнительный фильтр" class="border border-gray-300 rounded-lg p-2 w-full">
-            </div>
         </div>
         <div class="container mx-auto py-20 px-20">
             <div class="flex flex-col w-full p-5 space-y-5">
@@ -159,6 +168,15 @@
                 }
                 if ($transmission) {
                     $query .= " AND car.car_transmission_box = '$transmission'";
+                }
+
+                // Добавление сортировки
+                if (isset($_GET['sort_by']) && $_GET['sort_by'] !== 'default') {
+                    $sort_by = $_GET['sort_by'];
+                    $sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'asc';
+                    $query .= ($sort_by === 'price' ? ' ORDER BY car.car_price' : ($sort_by === 'year' ? ' ORDER BY car.car_year_made' : ' ORDER BY car.car_mileage')) . " $sort_order";
+                } else {
+                    $query .= " ORDER BY car.car_id ASC"; // Сортировка по умолчанию по ID
                 }
 
                 $result = $conn->query($query);
@@ -210,6 +228,22 @@
     include 'template/footer.php';
     ?>
     <script>
+function resetFilters() {
+    // Reset all filter inputs
+    document.getElementById('brand').selectedIndex = 0; // Reset brand select
+    document.getElementById('model').innerHTML = '<option value="">Модель</option>'; // Reset model select
+    document.querySelector('input[name="price_from"]').value = ''; // Reset price from
+    document.querySelector('input[name="price_to"]').value = ''; // Reset price to
+    document.querySelector('input[name="power_from"]').value = ''; // Reset power from
+    document.querySelector('input[name="power_to"]').value = ''; // Reset power to
+    document.querySelector('select[name="year_from"]').selectedIndex = 0; // Reset year from
+    document.querySelector('select[name="year_to"]').selectedIndex = 0; // Reset year to
+    document.querySelector('select[name="drive_type"]').selectedIndex = 0; // Reset drive type
+    document.querySelector('select[name="transmission"]').selectedIndex = 0; // Reset transmission
+    // Optionally submit the form to refresh the page
+    document.querySelector('form').submit();
+}
+
 function loadModels() {
     var brandId = document.getElementById('brand').value;
     var modelSelect = document.getElementById('model');

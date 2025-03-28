@@ -1,4 +1,14 @@
-/* Add your custom styles here */
+.link-button {
+    color: #007bff; /* Bootstrap primary color */
+    text-decoration: underline; /* Underline to indicate it's a link */
+    font-weight: bold; /* Make the text bold */
+}
+
+.link-button:hover {
+    color: #0056b3; /* Darker shade on hover */
+    text-decoration: none; /* Remove underline on hover */
+}
+
 #applications td {
     font-size: 10px; /* Уменьшение размера шрифта для ячеек таблицы */
 }

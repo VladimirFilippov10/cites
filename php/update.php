@@ -155,16 +155,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $fileName = $car_id . '_' . $maxNumber . '.png';
                 $filePath = $uploadDir . $fileName;
                 
-                if (move_uploaded_file($tmpName, $filePath)) {
+               /* if (move_uploaded_file($tmpName, $filePath)) {*/
                     // Файл успешно перемещен
                     $insertPhotoQuery = "INSERT INTO car_photo (car_photo_image_patch, car_id) VALUES (?, ?)";
                     $photoStmt = $conn->prepare($insertPhotoQuery);
                     $photoPath = '/' . $fileName;
                     $photoStmt->bind_param("si", $photoPath, $car_id);
                     $photoStmt->execute();
-                } else {
+               /* } else {
                     echo "<script>console.log('Failed to move file: " . $fileName . "');</script>"; // Debugging output
-                }
+                }*/
             }
         }
     }

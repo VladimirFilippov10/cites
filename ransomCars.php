@@ -82,7 +82,7 @@
             Здесь вы можете подать заявку на выкуп вашего автомобиля или оставить заявку на предоставление вашего автомобиля на комиссию. В данном случае мы гарантируем частоту сделку с оформлением договора, продажа и передача автомобиля происходит при участии вас или вашего представителя.
         </p>
         <div class="bg-white p-6 rounded-lg shadow-lg">
-            <form action="php/redemption_request_submit.php" class="space-y-4" method="POST">
+            <form action="php/redemptionRequestSubmit.php" class="space-y-4" method="POST">
                 <div>
                     <label class="block text-sm font-medium text-gray-700" for="name">ФИО</label>
                     <input class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" id="name" name="name" required="" type="text"/>

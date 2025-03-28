@@ -22,8 +22,18 @@ checkAuth();
         $searchPhone = isset($_POST['searchPhone']) ? $_POST['searchPhone'] : '';
         $searchType = isset($_POST['searchType']) ? $_POST['searchType'] : '';
 
+        // Обработка параметров сортировки
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : 'client_name';
+        $order = isset($_GET['order']) && $_GET['order'] === 'desc' ? 'asc' : 'desc'; // Изменение порядка сортировки
+        $valid_columns = ['client_name', 'client_phone_number', 'client_type_client'];
+
+        if (!in_array($sort, $valid_columns)) {
+            $sort = 'client_name'; // Default sorting column
+        }
+
         // Запрос для получения всех клиентов
-        $clientsQuery = "SELECT * FROM client WHERE 1=1";
+        $clientsQuery = "SELECT * FROM client WHERE 1=1 ORDER BY $sort $order";
+
 
         if ($searchName) {
             $clientsQuery .= " AND client_name LIKE '%" . $conn->real_escape_string($searchName) . "%'";
@@ -59,9 +69,22 @@ checkAuth();
         <table class="min-w-full border-collapse border border-gray-300">
             <thead>
                 <tr>
-                    <th class="border border-gray-300 p-2">Имя клиента</th>
-                    <th class="border border-gray-300 p-2">Номер телефона</th>
-                    <th class="border border-gray-300 p-2">Тип клиента</th>
+                    <th class="border border-gray-300 p-2">
+                        <a href="?sort=client_name&order=<?php echo $sort === 'client_name' ? $order : 'asc'; ?>">Имя клиента 
+                            <?php echo $sort === 'client_name' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                        </a>
+                    </th>
+                    <th class="border border-gray-300 p-2">
+                        <a href="?sort=client_phone_number&order=<?php echo $sort === 'client_phone_number' ? $order : 'asc'; ?>">Номер телефона 
+                            <?php echo $sort === 'client_phone_number' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                        </a>
+                    </th>
+                    <th class="border border-gray-300 p-2">
+                        <a href="?sort=client_type_client&order=<?php echo $sort === 'client_type_client' ? $order : 'asc'; ?>">Тип клиента 
+                            <?php echo $sort === 'client_type_client' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                        </a>
+                    </th>
+
                     <th class="border border-gray-300 p-2">Действия</th>
                 </tr>
             </thead>

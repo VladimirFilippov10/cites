@@ -206,7 +206,8 @@ checkAuth(); // Проверка авторизации
                     <button type="button" class="move-up bg-yellow-500 text-white p-1 rounded" onclick="movePhotoUp(this)">↑</button>
                     <button type="button" class="move-down bg-yellow-500 text-white p-1 rounded" onclick="movePhotoDown(this)">↓</button>
 
-                            <img src="http://localhost/cites/img/cars/<?php echo $photo['car_photo_image_patch']; ?>" alt="Фото" class="mb-2" style="max-width: 100px;">
+                <img src="http://localhost/cites/img/cars<?php echo ltrim($photo['car_photo_image_patch']); ?>" alt="Фото" class="mb-2" style="max-width: 100px;">
+
                 <input type="hidden" name="car_photo_id" value="<?php echo $photo['car_photo_id']; ?>">
                 <button type="button" class="delete-photo bg-red-500 text-white p-1 rounded" onclick="deletePhoto('<?php echo $photo['car_photo_id']; ?>')">Удалить</button>
                         </div>

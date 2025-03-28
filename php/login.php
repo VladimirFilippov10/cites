@@ -23,7 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['user_id'] = $row['employee_id'];
             $_SESSION['username'] = $row['employee_name'];
             $_SESSION['employee_role'] = $row['employee_role'];
+            // Установка куки для сохранения авторизованного профиля
+            setcookie("user_id", $row['employee_id'], time() + (86400 * 30), "/"); // Кука на 30 дней
+            setcookie("username", $row['employee_name'], time() + (86400 * 30), "/");
+            
             header("Location: ../dashboard.php");
+
             exit();
         } else {
             $_SESSION['outputMessage'] = "Неверный пароль."; // Установка сообщения об ошибке

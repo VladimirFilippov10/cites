@@ -1,3 +1,8 @@
+<?php
+session_start();
+include 'php/auth.php';
+checkAuth(); 
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
