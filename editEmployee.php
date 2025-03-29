@@ -2,7 +2,10 @@
 session_start();
 include 'php/auth.php';
 checkAuth(); // Проверка аутентификации
-
+if ($_SESSION['employee_role'] != 1) { 
+    header('Location: dashboard.php');
+    exit;
+}
 // Остальной код остается без изменений
 ?>
 <!DOCTYPE html>

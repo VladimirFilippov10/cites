@@ -3,7 +3,10 @@ session_start();
 include 'php/auth.php';
 checkAuth(); // Проверка аутентификации
 include 'php/dbconnect.php'; // Подключение к базе данных
-
+if ($_SESSION['employee_role'] == 3 || $_SESSION['employee_role'] == 4) { // Если роль 3, перенаправляем на dashboard
+    header('Location: dashboard.php');
+    exit;
+}
 // Обработка параметров сортировки
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'car_buyback_datetime';
 $order = isset($_GET['order']) && $_GET['order'] === 'desc' ? 'asc' : 'desc'; // Изменение порядка сортировки

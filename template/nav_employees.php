@@ -1,5 +1,6 @@
 <nav class="bg-white shadow-md rounded-lg mb-4">
 <ul class="flex p-4 justify-between w-full relative">
+    <?php if ($_SESSION['employee_role'] != 3): // Доступ для ролей 1, 2, 4 ?>
     <li class="group relative">
         <a href="#" class="text-gray-700 hover:text-blue-700">Автомобили</a>
         <ul class="hidden absolute bg-white shadow-md rounded-lg mt-2 z-10">
@@ -14,7 +15,13 @@
             <li><a href="newClient.php" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Добавить клиента</a></li>
         </ul>
     </li>
+    <?php endif; ?>
+
+    <?php if (in_array($_SESSION['employee_role'], [1, 2, 3])): // Заявки для 1,2,3 ?>
     <li><a href="viewAllRedemptionRequests.php" class="text-blue-500 hover:text-blue-700">Заявки</a></li>
+    <?php endif; ?>
+
+    <?php if ($_SESSION['employee_role'] != 3): // Доступ для ролей 1, 2, 4 ?>
     <li class="group relative">
         <a href="#" class="text-gray-700 hover:text-blue-700">Выкупы</a>
         <ul class="hidden absolute bg-white shadow-md rounded-lg mt-2 z-10">
@@ -29,8 +36,16 @@
             <li><a href="newCarSales.php" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Продать авто</a></li>
         </ul>
     </li>
+    <?php endif; ?>
+
+    <?php if ($_SESSION['employee_role'] == 1): // Сотрудники только для админа ?>
     <li><a href="viewAllEmployees.php" class="text-gray-700 hover:text-blue-700">Сотрудники</a></li>
+    <?php endif; ?>
+
+    <?php if ($_SESSION['employee_role'] != 3): // Марки и модели для 1,2,4 ?>
     <li><a href="addBrandsAndModels.php" class="text-gray-700 hover:text-blue-700">Марки и модели</a></li>
+    <?php endif; ?>
+
     <div class="flex items-center">
         <?php if (isset($_SESSION['user_id'])): ?>
             <span class="mr-4">Привет, <?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Гость'; ?></span>

@@ -2,7 +2,13 @@
 session_start();
 include 'php/auth.php';
 checkAuth(); // Проверка аутентификации
+if ($_SESSION['employee_role'] != 1) { // Если роль 3, перенаправляем на dashboard
+    header('Location: dashboard.php');
+    exit;
+}
 ?>
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>

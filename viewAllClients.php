@@ -2,6 +2,12 @@
 session_start();
 include 'php/auth.php'; // Включение проверки авторизации
 checkAuth();
+
+// Проверка прав доступа
+if ($_SESSION['employee_role'] == 3) { // Если роль 3, перенаправляем на dashboard
+    header('Location: dashboard.php');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -34,7 +40,6 @@ checkAuth();
         // Запрос для получения всех клиентов
         $clientsQuery = "SELECT * FROM client WHERE 1=1 ORDER BY $sort $order";
 
-
         if ($searchName) {
             $clientsQuery .= " AND client_name LIKE '%" . $conn->real_escape_string($searchName) . "%'";
         }
@@ -52,17 +57,17 @@ checkAuth();
         <form method="POST" class="mb-4">
             <input type="text" name="searchName" placeholder="Поиск по имени" value="<?php echo htmlspecialchars($searchName); ?>" class="border p-2 mr-2">
             <input type="text" name="searchPhone" placeholder="Поиск по номеру телефона" value="<?php echo htmlspecialchars($searchPhone); ?>" class="border p-2 mr-2">
-<select name="searchType" class="border p-2 mr-2">
-    <option value="">Все типы</option>
-    <?php
-        $typeQuery = "SELECT DISTINCT client_type_client FROM client";
-        $typeResult = $conn->query($typeQuery);
-        while ($type = $typeResult->fetch_assoc()) {
-            $selected = ($type['client_type_client'] == $searchType) ? 'selected' : '';
-            echo "<option value='" . htmlspecialchars($type['client_type_client']) . "' $selected>" . htmlspecialchars($type['client_type_client']) . "</option>";
-        }
-    ?>
-</select>
+            <select name="searchType" class="border p-2 mr-2">
+                <option value="">Все типы</option>
+                <?php
+                    $typeQuery = "SELECT DISTINCT client_type_client FROM client";
+                    $typeResult = $conn->query($typeQuery);
+                    while ($type = $typeResult->fetch_assoc()) {
+                        $selected = ($type['client_type_client'] == $searchType) ? 'selected' : '';
+                        echo "<option value='" . htmlspecialchars($type['client_type_client']) . "' $selected>" . htmlspecialchars($type['client_type_client']) . "</option>";
+                    }
+                ?>
+            </select>
 
             <button type="submit" class="bg-blue-500 text-white p-2">Поиск</button>
         </form>
