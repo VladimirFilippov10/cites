@@ -38,8 +38,8 @@ if ($_SESSION['employee_role'] == 3) { // Если роль 3, перенапр�
         }
 
         // Запрос для получения всех клиентов
-        $clientsQuery = "SELECT * FROM client WHERE 1=1 ORDER BY $sort $order";
-
+        $clientsQuery = "SELECT * FROM client WHERE 1=1";
+        
         if ($searchName) {
             $clientsQuery .= " AND client_name LIKE '%" . $conn->real_escape_string($searchName) . "%'";
         }
@@ -49,6 +49,7 @@ if ($_SESSION['employee_role'] == 3) { // Если роль 3, перенапр�
         if ($searchType) {
             $clientsQuery .= " AND client_type_client LIKE '%" . $conn->real_escape_string($searchType) . "%'";
         }
+        $clientsQuery .= " ORDER BY $sort $order";
 
         $clientsResult = $conn->query($clientsQuery);
     ?>

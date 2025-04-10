@@ -30,7 +30,7 @@ if ($_SESSION['employee_role'] == 3 || $_SESSION['employee_role'] == 4) { // Е�
         $filterStatus = isset($_POST['filterStatus']) ? $_POST['filterStatus'] : '';
 
         // Основной запрос
-        $query = "SELECT *, DATE_FORMAT(redemption_request_date, '%d.%m.%Y %H:%i') as formatted_created_at FROM redemption_request WHERE 1=1";
+        $query = "SELECT *,e.employee_name, DATE_FORMAT(redemption_request_date, '%d.%m.%Y %H:%i') as formatted_created_at FROM redemption_request r JOIN employee e ON r.redemption_request_employee = e.employee_id WHERE 1=1 ";
 
 
 
@@ -49,7 +49,7 @@ if ($_SESSION['employee_role'] == 3 || $_SESSION['employee_role'] == 4) { // Е�
 
         $result = $conn->query($query);
     ?>
-    <div class="max-w-7xl w-2/4 mx-auto p-4 bg-white shadow-md mt-10">
+    <div class="max-w-9xl w-5/6 mx-auto p-4 bg-white shadow-md mt-10">
         <h1 class="text-2xl font-bold mb-6">Список заявок на выкуп</h1>
         
         <!-- Форма поиска -->
@@ -73,9 +73,9 @@ if ($_SESSION['employee_role'] == 3 || $_SESSION['employee_role'] == 4) { // Е�
                 <th class="border border-gray-300 p-2">Код заявки</th>
                     <th class="border border-gray-300 p-2">Дата создания</th>
                     <th class="border border-gray-300 p-2">Имя клиента</th>
-
                     <th class="border border-gray-300 p-2">Модель авто</th>
                     <th class="border border-gray-300 p-2">Телефон</th>
+                    <th class="border border-gray-300 p-2">Сотрудник</th>
                     <th class="border border-gray-300 p-2">Статус</th>
                     <th class="border border-gray-300 p-2">Действия</th>
                 </tr>
@@ -90,6 +90,7 @@ if ($_SESSION['employee_role'] == 3 || $_SESSION['employee_role'] == 4) { // Е�
 
                         <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($row['redemption_request_model_car']); ?></td>
                         <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($row['redemption_request_number_phone']); ?></td>
+                        <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($row['employee_name']); ?></td>
                         <td class="border border-gray-300 p-2"><?php echo htmlspecialchars($row['redemption_request_status']); ?></td>
                         <td class="border border-gray-300 p-2">
                             <a href="editRedemptionRequest.php?id=<?php echo $row['redemption_request_id']; ?>" class="bg-green-500 text-white p-1 rounded">Редактировать</a>

@@ -7,7 +7,7 @@ if ($_SESSION['employee_role'] != 1) { // Если роль 3, перенапр�
     exit;
 }
 ?>
-?>
+
 
 <!DOCTYPE html>
 <html lang="ru">

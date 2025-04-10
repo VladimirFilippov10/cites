@@ -1,6 +1,9 @@
 <nav class="bg-white shadow-md rounded-lg mb-4">
 <ul class="flex p-4 justify-between w-full relative">
+<li><a href="dashboard.php" class="text-blue-500 hover:text-blue-700">Главная</a></li>
+    </li>
     <?php if ($_SESSION['employee_role'] != 3): // Доступ для ролей 1, 2, 4 ?>
+        
     <li class="group relative">
         <a href="#" class="text-gray-700 hover:text-blue-700">Автомобили</a>
         <ul class="hidden absolute bg-white shadow-md rounded-lg mt-2 z-10">

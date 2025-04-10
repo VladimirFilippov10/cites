@@ -4,7 +4,7 @@
      <ul class="flex space-x-6 text-white shadow-lg rounded-bl-lg">
 
       <li>
-       <a class="hover:text-blue-300 transition duration-300" href="index.php">
+       <a class="hover:text-blue-300 transition duration-200" href="index.php">
 
         Главная
        </a>
@@ -42,13 +42,13 @@
       <!-- Links for authenticated users will be replaced with nav_employees.php -->
       <?php if (!isset($_SESSION['user_id'])): ?>
         <li>
-         <a class="hover:text-blue-300 transition duration-300" href="auto.php">
+         <a class="hover:text-blue-300 transition duration-300" href="authorization.php">
 
           Вход
          </a>
         </li>
         <li>
-         <a class="hover:text-blue-300 transition duration-300" href="registr.php">
+         <a class="hover:text-blue-300 transition duration-300" href="registration.php">
 
           Регистрация
          </a>
