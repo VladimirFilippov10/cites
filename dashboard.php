@@ -73,9 +73,55 @@ checkAuth(); // Проверка аутентификации
 <?php
  if ($a == 0) { 
     echo '<p>Открытых заявок нет<p>';} }
-if (true)
+if ($_SESSION['employee_role'] == 4)
 {
-    
+    $query = "SELECT car.*, model.model_name, brand.brand_name FROM car 
+    JOIN model ON car.model_id = model.model_id
+    JOIN brand ON model.brand_id = brand.brand_id
+    WHERE car.car_in_price = true";
+    echo "<div class=\"flex justify-center\"><h1 class=\"text-2xl font-bold mb-6 text-center\">Список авто в продаже</h1></div>";
+    echo "<div class=\"container mx-auto py-20 px-20\">";
+    echo "<div class=\"flex flex-col w-full p-5 space-y-5\">";
+    $result = $conn->query($query);
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $car_id = $row['car_id'] ?? null; // Проверка на существование ключа
+            if ($car_id) {
+                $query_photo = "SELECT * FROM car_photo WHERE car_id = " . $car_id . " LIMIT 1;";
+                $res_photo= $conn->query($query_photo);
+                $photo = $res_photo->fetch_assoc();
+                echo '<a href="editCar.php?id=' . $car_id . '" class="flex w-full bg-gray-200 h-350 rounded-lg overflow-hidden shadow-lg">';
+                echo '<div class="w-1/5">';
+                echo '<img alt="' . $car_id . '1" class="h-full w-full object-cover" wight="250px" height="150px" src="img/cars/' . ($photo["car_photo_image_patch"] ?? '') . '" />'; // Проверка на существование ключа
+                echo '</div>';
+                echo '<div class="w-2/3 pl-4 flex flex-col justify-between">';
+                echo '<div>';
+                echo '<h2 class="text-xl font-bold">' . $row['brand_name'] . ' ' . $row['model_name'] . '</h2>'; // Объединение марки и модели
+                echo '<p class="text-gray-600 text-sm">' . ($row['car_volume'] ?? 'Неизвестно') . ' л/' . ($row['car_power'] ?? 'Неизвестно') . ' л.с./' . ($row['car_type_oil'] ?? 'Неизвестно') . '</p>';
+                echo '<p class="text-gray-600 text-sm">' . ($row['car_onwers'] ?? 'Неизвестно') . ' владельцев</p>';
+                echo '<p class="text-gray-600 text-sm">' . ($row['car_bodywork'] ?? 'Неизвестно') . '</p>';
+                echo '<div class="flex items-center mt-2">';
+                echo '<span class="text-green-600 text-lg font-bold">' . ($row['car_price'] ?? 'Неизвестно') . ' ₽</span>';
+                echo '</div>';
+                echo '<div class="flex items-center mt-2">';
+                echo '<span class="text-gray-600 text-sm">' . ($row['car_year_made'] ?? 'Неизвестно') . '</span>';
+                echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['car_mileage'] ?? 'Неизвестно') . ' км</span>';
+                echo '</div>';
+                echo '<div class="flex items-center mt-2">';
+                echo '<span class="text-gray-600 text-sm">' . ($row['car_drive'] ?? 'Неизвестно') . '</span>';
+                echo '<span class="ml-4 text-gray-600 text-sm">' . ($row['car_color'] ?? 'Неизвестно') . '</span>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+                echo '</a>';
+            } else {
+                echo '<p class="text-center">Ошибка: ID автомобиля не найден.</p>';
+            }
+        }
+    } else {
+        echo '<p class="text-center">Нет доступных автомобилей.</p>';
+    }
+    echo "</div></div>";
 }
 ?>
 </div>
