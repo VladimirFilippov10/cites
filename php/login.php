@@ -23,6 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['user_id'] = $row['employee_id'];
             $_SESSION['username'] = $row['employee_name'];
             $_SESSION['employee_role'] = $row['employee_role'];
+            
+            // Обновление времени последнего захода
+            $update_query = "UPDATE employee SET employye_last_activity = NOW() WHERE employee_id = " . intval($row['employee_id']);
+            $conn->query($update_query);
+
             // Установка куки для сохранения авторизованного профиля
             setcookie("user_id", $row['employee_id'], time() + (86400 * 30), "/"); // Кука на 30 дней
             setcookie("username", $row['employee_name'], time() + (86400 * 30), "/");

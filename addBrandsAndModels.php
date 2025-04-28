@@ -109,23 +109,24 @@ if ($_SESSION['employee_role'] == 3 || $_SESSION['employee_role'] == 4) { // Е�
                 $marksResult = $conn->query($marksQuery);
                 if ($marksResult->num_rows > 0) {
                     while ($row = $marksResult->fetch_assoc()) {
-                        echo '<div class="mb-6"><h3 class="text-lg font-semibold mb-2">'.$row['brand_name'].'</h3>';
+                        echo '<div class="mb-6 p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">';
+                        echo '<h3 class="text-xl font-semibold mb-3 text-green-700">'.$row['brand_name'].'</h3>';
                         $modelQuery = 'SELECT * FROM model WHERE brand_id = '.$row['brand_id'].' ORDER BY model_name ASC';
                         $modelResult = $conn->query($modelQuery);
                         
                         if ($modelResult->num_rows > 0) {
-                            echo '<ul class="ml-4">';
+                            echo '<ul class="ml-4 list-disc list-inside space-y-1">';
                             while ($rowModel = $modelResult->fetch_assoc()) {
-                                echo '<li class="mb-1">'.$rowModel['model_name'].'</li>';
+                                echo '<li class="text-gray-700 hover:text-green-600 cursor-pointer transition-colors">'.$rowModel['model_name'].'</li>';
                             }
                             echo '</ul>';
                         } else {
-                            echo '<p class="text-gray-500 ml-4">Нет моделей для этой марки</p>';
+                            echo '<p class="text-gray-500 ml-4 italic">Нет моделей для этой марки</p>';
                         }
                         echo '</div>';
                     }
                 } else {
-                    echo '<p class="text-gray-500">Нет доступных марок</p>';
+                    echo '<p class="text-gray-500 italic">Нет доступных марок</p>';
                 }
                 ?>
             </div>

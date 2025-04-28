@@ -30,13 +30,13 @@ if ($_SESSION['employee_role'] != 1) { // Если роль 3, перенапр�
     // Обработка параметров сортировки
     $sort = isset($_GET['sort']) ? $_GET['sort'] : 'employee_name';
     $order = isset($_GET['order']) && $_GET['order'] === 'desc' ? 'asc' : 'desc'; // Изменение порядка сортировки
-    $valid_columns = ['employee_id', 'employee_name', 'employee_number_phone', 'role_name'];
+    $valid_columns = ['employee_id', 'employee_name', 'employee_number_phone', 'role_name', 'employye_last_activity'];
 
     if (!in_array($sort, $valid_columns)) {
         $sort = 'employee_name'; // Default sorting column
     }
 
-    $query = "SELECT e.employee_id, e.employee_name, e.employee_number_phone, r.role_name 
+    $query = "SELECT e.employee_id, e.employye_last_activity, e.employee_name, e.employee_number_phone, r.role_name 
               FROM employee e 
               JOIN role r ON e.employee_role = r.role_id
               ORDER BY $sort $order";
@@ -77,7 +77,12 @@ if ($_SESSION['employee_role'] != 1) { // Если роль 3, перенапр�
                         <?php echo $sort === 'role_name' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
                     </a>
                 </th>
+                <th class="border px-4 py-2"> 
+                <a href="?sort=employye_last_activity&order=<?php echo $sort === 'employye_last_activity' ? $order : 'asc'; ?>">Последний заход 
+                        <?php echo $sort === 'employye_last_activity' ? ($order === 'asc' ? '↑' : '↓') : ''; ?>
+                    </a>
 
+                </th>
                 <th class="border px-4 py-2">Действия</th>
             </tr>
         </thead>
@@ -108,6 +113,7 @@ if ($_SESSION['employee_role'] != 1) { // Если роль 3, перенапр�
                     <td class="border px-4 py-2"><?php echo $employee['employee_name']; ?></td>
                     <td class="border px-4 py-2"><?php echo $employee['employee_number_phone']; ?></td>
                     <td class="border px-4 py-2"><?php echo $employee['role_name']; ?></td>
+                    <td class="border px-4 py-2"><?php echo $employee['employye_last_activity']; ?></td>
                     <td class="border px-4 py-2">
                         <a class="text-blue-500 hover:underline" href="editEmployee.php?id=<?php echo $employee['employee_id']; ?>">Редактировать</a>
                     </td>
