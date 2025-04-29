@@ -33,8 +33,8 @@ checkAuth(); // Проверка аутентификации
             include 'php/auth.php'; // Включение проверки авторизации
             checkAuth(); 
             include 'php/dbconnect.php';
-            if ($_SESSION['employee_role'] == 3)
-            {// Проверка авторизации
+    if ($_SESSION['employee_role'] == 3)
+    {// Проверка авторизации
         $query = "SELECT *,e.employee_name, DATE_FORMAT(redemption_request_date, '%d.%m.%Y %H:%i') as formatted_created_at FROM redemption_request r JOIN employee e ON r.redemption_request_employee = e.employee_id WHERE redemption_request_closed=0 ";
         $result = $conn->query($query);
     ?>
@@ -79,6 +79,145 @@ checkAuth(); // Проверка аутентификации
     <?php
      if ($a == 0) { 
         echo '<p>Открытых заявок нет<p>';} }
+    ?>
+    <?php
+    if ($_SESSION['employee_role'] == 1) {
+        $query = "SELECT employee_name, employye_last_activity FROM employee WHERE employye_last_activity > DATE_SUB(NOW(), INTERVAL 10 MINUTE)";
+        $result = $conn->query($query);
+        echo '<div class="max-w-9xl w-5/6 mx-auto p-4 bg-white shadow-md mt-10">';
+        echo '<h1 class="text-2xl font-bold mb-6">Пользователи онлайн</h1>';
+        if ($result->num_rows > 0) {
+            echo '<table class="min-w-full border-collapse border border-gray-300">';
+            echo '<thead><tr><th class="border border-gray-300 p-2">Имя пользователя</th><th class="border border-gray-300 p-2">Последняя активность</th></tr></thead>';
+            echo '<tbody>';
+            while ($row = $result->fetch_assoc()) {
+                echo '<tr>';
+                echo '<td class="border border-gray-300 p-2">' . htmlspecialchars($row['employee_name']) . '</td>';
+                echo '<td class="border border-gray-300 p-2">' . htmlspecialchars($row['employye_last_activity']) . '</td>';
+                echo '</tr>';
+            }
+            echo '</tbody></table>';
+        } else {
+            echo '<p>Пользователей онлайн нет</p>';
+        }
+        echo '</div>';
+    }
+    ?>
+    <!-- Analytics charts for admin -->
+    <div class="max-w-9xl w-5/6 mx-auto p-4 bg-white shadow-md mt-10">
+        <h1 class="text-2xl font-bold mb-6">Аналитика по выкупам и продажам</h1>
+        <div>
+            <label for="periodSelect">Период:</label>
+            <select id="periodSelect" onchange="updateCharts()">
+                <option value="today" selected>Сегодня</option>
+                <option value="week">Неделя</option>
+                <option value="month">Месяц</option>
+                <option value="halfyear">Полгода</option>
+                <option value="all">Все время</option>
+            </select>
+        </div>
+        <canvas id="redemptionChart" width="800" height="400"></canvas>
+        <canvas id="salesChart" width="800" height="400" class="mt-10"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script>
+        const redemptionCtx = document.getElementById('redemptionChart').getContext('2d');
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        let redemptionChart;
+        let salesChart;
+
+        async function fetchData(period) {
+            try {
+                const response = await fetch('php/dashboard_analytics_data.php?period=' + period);
+                if (!response.ok) {
+                    console.error('Ошибка загрузки данных:', response.statusText);
+                    return null;
+                }
+                const data = await response.json();
+                console.log('Получены данные:', data);
+
+                // Преобразование строк дат в объекты Date для Chart.js
+                data.redemptions.dates = data.redemptions.dates.map(dateStr => new Date(dateStr));
+                data.sales.dates = data.sales.dates.map(dateStr => new Date(dateStr));
+
+                return data;
+            } catch (error) {
+                console.error('Ошибка при запросе данных:', error);
+                return null;
+            }
+        }
+
+        function createChart(ctx, label, data, borderColor) {
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.dates,
+                    datasets: [{
+                        label: label,
+                        data: data.counts,
+                        borderColor: borderColor,
+                        backgroundColor: borderColor,
+                        fill: false,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                tooltipFormat: 'dd.MM.yyyy'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Дата'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            precision: 0,
+                            title: {
+                                display: true,
+                                text: 'Сумма (руб.)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + ' ₽';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        async function updateCharts() {
+            const period = document.getElementById('periodSelect').value;
+            console.log('Выбран период:', period);
+            const data = await fetchData(period);
+            console.log('Данные для графиков:', data);
+            if (!data) {
+                console.error('Нет данных для отображения графиков');
+                return;
+            }
+
+            if (redemptionChart) redemptionChart.destroy();
+            if (salesChart) salesChart.destroy();
+
+            redemptionChart = createChart(redemptionCtx, 'Выкупы', data.redemptions, 'rgba(75, 192, 192, 1)');
+            salesChart = createChart(salesCtx, 'Продажи', data.sales, 'rgba(255, 99, 132, 1)');
+        }
+
+        updateCharts();
+    </script>
+    <?php
     if ($_SESSION['employee_role'] == 4)
     {
         $query = "SELECT car.*, model.model_name, brand.brand_name FROM car 
@@ -130,7 +269,7 @@ checkAuth(); // Проверка аутентификации
         }
         echo "</div></div>";
     }
-    if ($_SESSION['employee_role'] == 1) {
+  /*  if ($_SESSION['employee_role'] == 1) {
         $query = "SELECT employee_name, employye_last_activity FROM employee WHERE employye_last_activity > DATE_SUB(NOW(), INTERVAL 10 MINUTE)";
         $result = $conn->query($query);
         echo '<div class="max-w-9xl w-5/6 mx-auto p-4 bg-white shadow-md mt-10">';
@@ -150,7 +289,7 @@ checkAuth(); // Проверка аутентификации
             echo '<p>Пользователей онлайн нет</p>';
         }
         echo '</div>';
-    }
+    }*/
     ?>
     </div>
     <?php     

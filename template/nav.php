@@ -39,6 +39,12 @@
         Вакансии
        </a>
       </li>
+      <li>
+       <a class="hover:text-blue-300 transition duration-300" href="games.php">
+
+        Мини-игры
+       </a>
+      </li>
       <!-- Links for authenticated users will be replaced with nav_employees.php -->
       <?php if (!isset($_SESSION['user_id'])): ?>
         <li>

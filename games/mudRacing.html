@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<meta charset="UTF-8" />
+
+<html>
+  <head>
+    <title>Гонки на выживание</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #222;
+        overflow: hidden;
+      }
+      canvas {
+        border: 2px solid #444;
+        box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+      }
+      #gameInfo {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: white;
+        font-family: Arial, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="gameInfo">
+      Скорость: <span id="speed">0</span> км/ч | Дистанция:
+      <span id="distance">0</span> м | Очки: <span id="score">0</span>
+    </div>
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+
+    <script>
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+      const speedDisplay = document.getElementById("speed");
+      const distanceDisplay = document.getElementById("distance");
+      const scoreDisplay = document.getElementById("score");
+
+      // Игровые переменные
+      let gameSpeed = 0;
+      let maxSpeed = 200;
+      let acceleration = 0.1;
+      let deceleration = 0.05;
+      let roadOffset = 0;
+      let playerX = canvas.width / 2 - 15;
+      let score = 0;
+      let distance = 0;
+      let obstacles = [];
+      let gameRunning = true;
+
+      // Машина игрока
+      const playerCar = {
+        x: playerX,
+        y: canvas.height - 100,
+        width: 30,
+        height: 50,
+        color: "#3498db",
+      };
+
+      // Дорога с разметкой
+      function drawRoad() {
+        // Асфальт
+        ctx.fillStyle = "#2c3e50";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Разметка
+        ctx.strokeStyle = "#f1c40f";
+        ctx.lineWidth = 5;
+        ctx.setLineDash([40, 30]);
+        ctx.lineDashOffset = -roadOffset;
+
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, 0);
+        ctx.lineTo(canvas.width / 2, canvas.height);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Машина игрока
+      function drawPlayerCar() {
+        ctx.fillStyle = playerCar.color;
+        ctx.fillRect(
+          playerCar.x,
+          playerCar.y,
+          playerCar.width,
+          playerCar.height
+        );
+
+        // Фары
+        ctx.fillStyle = "#f1c40f";
+        ctx.fillRect(playerCar.x - 3, playerCar.y + 5, 3, 5);
+        ctx.fillRect(playerCar.x + playerCar.width, playerCar.y + 5, 3, 5);
+
+        // Окна
+        ctx.fillStyle = "#7f8c8d";
+        ctx.fillRect(
+          playerCar.x + 5,
+          playerCar.y + 5,
+          playerCar.width - 10,
+          15
+        );
+      }
+
+      // Препятствия
+      function createObstacle() {
+        if (Math.random() < 0.02 && gameSpeed > 50) {
+          const width = 30 + Math.random() * 30;
+          const x = 50 + Math.random() * (canvas.width - 100 - width);
+
+          obstacles.push({
+            x: x,
+            y: -50,
+            width: width,
+            height: 50,
+            color: "#e74c3c",
+            speed: 3 + gameSpeed / 30,
+          });
+        }
+      }
+
+      function drawObstacles() {
+        obstacles.forEach((obstacle) => {
+          ctx.fillStyle = obstacle.color;
+          ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+
+          // Окна препятствия
+          ctx.fillStyle = "#7f8c8d";
+          ctx.fillRect(obstacle.x + 5, obstacle.y + 5, obstacle.width - 10, 15);
+        });
+      }
+
+      function updateObstacles() {
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+          obstacles[i].y += obstacles[i].speed;
+
+          // Проверка столкновения
+          if (checkCollision(playerCar, obstacles[i])) {
+            gameOver();
+            return;
+          }
+
+          // Удаление вышедших за экран препятствий
+          if (obstacles[i].y > canvas.height) {
+            obstacles.splice(i, 1);
+            score += 10;
+          }
+        }
+      }
+
+      function checkCollision(player, obstacle) {
+        return (
+          player.x < obstacle.x + obstacle.width &&
+          player.x + player.width > obstacle.x &&
+          player.y < obstacle.y + obstacle.height &&
+          player.y + player.height > obstacle.y
+        );
+      }
+
+      function gameOver() {
+        gameRunning = false;
+        ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#e74c3c";
+        ctx.font = "30px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("АВАРИЯ!", canvas.width / 2, canvas.height / 2 - 30);
+        ctx.font = "20px Arial";
+        ctx.fillText(
+          `Ваш счет: ${score}`,
+          canvas.width / 2,
+          canvas.height / 2 + 20
+        );
+        ctx.fillText(
+          "Нажмите F5 для перезапуска",
+          canvas.width / 2,
+          canvas.height / 2 + 60
+        );
+      }
+
+      // Управление
+      document.addEventListener("keydown", (e) => {
+        if (!gameRunning) return;
+
+        if (e.key === "ArrowLeft" && playerCar.x > 50) {
+          playerCar.x -= 20;
+        } else if (
+          e.key === "ArrowRight" &&
+          playerCar.x < canvas.width - 50 - playerCar.width
+        ) {
+          playerCar.x += 20;
+        } else if (e.key === "ArrowUp") {
+          gameSpeed = Math.min(gameSpeed + 5, maxSpeed);
+        } else if (e.key === "ArrowDown") {
+          gameSpeed = Math.max(gameSpeed - 5, 0);
+        }
+      });
+
+      // Игровой цикл
+      function gameLoop() {
+        if (!gameRunning) return;
+
+        // Очистка экрана
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Обновление скорости
+        if (gameSpeed < maxSpeed) {
+          gameSpeed += acceleration;
+        }
+
+        // Обновление дороги
+        roadOffset += gameSpeed / 10;
+        if (roadOffset > 70) roadOffset = 0;
+
+        // Обновление дистанции
+        distance += gameSpeed / 20;
+
+        // Создание препятствий
+        createObstacle();
+
+        // Отрисовка
+        drawRoad();
+        drawObstacles();
+        drawPlayerCar();
+
+        // Обновление препятствий
+        updateObstacles();
+
+        // Обновление информации
+        speedDisplay.textContent = Math.floor(gameSpeed);
+        distanceDisplay.textContent = Math.floor(distance);
+        scoreDisplay.textContent = score;
+
+        requestAnimationFrame(gameLoop);
+      }
+
+      // Запуск игры
+      gameLoop();
+    </script>
+  </body>
+</html>

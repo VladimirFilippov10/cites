@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реалистичный драг-рейсинг</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+        }
+        #gameContainer {
+            width: 800px;
+            height: 400px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            background-color: #333;
+        }
+        #road {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: #444;
+            background-image: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 49px,
+                white 49px,
+                white 50px
+            );
+        }
+        .car {
+            width: 100px;
+            height: 50px;
+            position: absolute;
+            bottom: 50px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: left 0.1s linear;
+        }
+        #playerCar {
+            left: 50px;
+            z-index: 10;
+        }
+        .opponent {
+            left: 50px;
+        }
+        #menuScreen, #raceScreen, #resultScreen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        #raceScreen {
+            display: none;
+            background-color: transparent;
+        }
+        #resultScreen {
+            display: none;
+        }
+        .carSelection {
+            display: flex;
+            margin: 20px 0;
+        }
+        .carOption {
+            width: 100px;
+            height: 60px;
+            margin: 0 10px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            border: 2px solid #555;
+            cursor: pointer;
+        }
+        .carOption:hover, .carOption.selected {
+            border-color: #ff0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #dashboard {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 780px;
+            height: 80px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        #rpmMeter {
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(to right, green, yellow, red);
+            margin-bottom: 5px;
+            position: relative;
+        }
+        #rpmIndicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 20px;
+            background-color: white;
+        }
+        #gearDisplay {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+        #speedDisplay {
+            font-size: 18px;
+            text-align: center;
+        }
+        #message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="road">
+            <div id="playerCar" class="car"></div>
+            <div id="opponentCar" class="car opponent"></div>
+            <div id="message"></div>
+        </div>
+        
+        <div id="dashboard">
+            <div id="rpmMeter">
+                <div id="rpmIndicator"></div>
+            </div>
+            <div id="gearDisplay">N</div>
+            <div id="speedDisplay">0 км/ч</div>
+        </div>
+        
+        <div id="menuScreen">
+            <h1>Реалистичный драг-рейсинг</h1>
+            <h2>Выберите автомобиль</h2>
+            <div class="carSelection">
+                <div class="carOption" data-car="1"></div>
+                <div class="carOption" data-car="2"></div>
+                <div class="carOption" data-car="3"></div>
+                <div class="carOption" data-car="4"></div>
+                <div class="carOption" data-car="5"></div>
+            </div>
+            <button id="startRace">Начать гонку</button>
+        </div>
+        
+        <div id="resultScreen">
+            <h1 id="resultTitle">Результат</h1>
+            <p id="resultDistance">Пройдено: 0 м</p>
+            <p id="resultMaxSpeed">Макс. скорость: 0 км/ч</p>
+            <p id="resultTime">Время: 0.00 сек</p>
+            <button id="raceAgain">Гонять снова</button>
+        </div>
+    </div>
+
+    <script>
+        // Ждем полной загрузки DOM перед выполнением скрипта
+        document.addEventListener('DOMContentLoaded', function() {
+            // Игровые данные
+            const cars = [
+                { 
+                    id: 1, 
+                    name: "Городской седан", 
+                    power: 120, 
+                    acceleration: 0.02, 
+                    maxSpeed: 180, 
+                    color: "blue",
+                    gears: [20, 40, 70, 110, 150],
+                    redline: 6500,
+                    shiftTime: 0.5
+                },
+                { 
+                    id: 2, 
+                    name: "Спортивный купе", 
+                    power: 180, 
+                    acceleration: 0.03, 
+                    maxSpeed: 240, 
+                    color: "red",
+                    gears: [30, 60, 100, 150, 200],
+                    redline: 8000,
+                    shiftTime: 0.4
+                },
+                { 
+                    id: 3, 
+                    name: "Мышка", 
+                    power: 300, 
+                    acceleration: 0.04, 
+                    maxSpeed: 320, 
+                    color: "silver",
+                    gears: [40, 80, 140, 200, 280],
+                    redline: 9000,
+                    shiftTime: 0.3
+                },
+                { 
+                    id: 4, 
+                    name: "Дрифт-кар", 
+                    power: 220, 
+                    acceleration: 0.035, 
+                    maxSpeed: 280, 
+                    color: "orange",
+                    gears: [35, 70, 120, 180, 240],
+                    redline: 8500,
+                    shiftTime: 0.35
+                },
+                { 
+                    id: 5, 
+                    name: "Суперкар", 
+                    power: 400, 
+                    acceleration: 0.05, 
+                    maxSpeed: 380, 
+                    color: "yellow",
+                    gears: [50, 100, 180, 260, 350],
+                    redline: 10000,
+                    shiftTime: 0.25
+                }
+            ];
+            
+            // Состояние игры
+            let gameState = {
+                selectedCar: null,
+                playerSpeed: 0,
+                playerPosition: 0,
+                raceTime: 0,
+                raceStarted: false,
+                raceFinished: false,
+                maxPlayerSpeed: 0,
+                currentGear: 0,
+                rpm: 0,
+                isShifting: false,
+                shiftTimer: 0,
+                opponentPosition: 0,
+                opponentSpeed: 0
+            };
+            
+            // DOM элементы
+            const menuScreen = document.getElementById('menuScreen');
+            const raceScreen = document.getElementById('raceScreen');
+            const resultScreen = document.getElementById('resultScreen');
+            const playerCar = document.getElementById('playerCar');
+            const opponentCar = document.getElementById('opponentCar');
+            const rpmIndicator = document.getElementById('rpmIndicator');
+            const gearDisplay = document.getElementById('gearDisplay');
+            const speedDisplay = document.getElementById('speedDisplay');
+            const message = document.getElementById('message');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultDistance = document.getElementById('resultDistance');
+            const resultMaxSpeed = document.getElementById('resultMaxSpeed');
+            const resultTime = document.getElementById('resultTime');
+            const startRaceBtn = document.getElementById('startRace');
+            const raceAgainBtn = document.getElementById('raceAgain');
+            
+            // Инициализация выбора автомобилей
+            document.querySelectorAll('.carOption').forEach((option, index) => {
+                option.style.backgroundColor = cars[index].color;
+                option.setAttribute('title', `${cars[index].name}\nМощность: ${cars[index].power} л.с.\nМакс. скорость: ${cars[index].maxSpeed} км/ч`);
+                
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.carOption').forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    gameState.selectedCar = cars[index];
+                });
+            });
+            
+            // Начало гонки
+            startRaceBtn.addEventListener('click', () => {
+                if (!gameState.selectedCar) {
+                    showMessage('Выберите автомобиль!', 2000);
+                    return;
+                }
+                
+                menuScreen.style.display = 'none';
+                raceScreen.style.display = 'block';
+                
+                // Настройка автомобилей
+                playerCar.style.backgroundColor = gameState.selectedCar.color;
+                opponentCar.style.backgroundColor = 'red';
+                
+                // Сброс состояния игры
+                resetGame();
+                
+                // Запуск игрового цикла
+                startRace();
+            });
+            
+            function resetGame() {
+                gameState.playerSpeed = 0;
+                gameState.playerPosition = 0;
+                gameState.raceTime = 0;
+                gameState.raceStarted = false;
+                gameState.raceFinished = false;
+                gameState.maxPlayerSpeed = 0;
+                gameState.currentGear = 0;
+                gameState.rpm = 0;
+                gameState.isShifting = false;
+                gameState.shiftTimer = 0;
+                gameState.opponentPosition = 0;
+                gameState.opponentSpeed = 0;
+                
+                playerCar.style.left = '50px';
+                opponentCar.style.left = '50px';
+                gearDisplay.textContent = 'N';
+                speedDisplay.textContent = '0 км/ч';
+                rpmIndicator.style.left = '0%';
+            }
+            
+            // Управление клавишами
+            document.addEventListener('keydown', (e) => {
+                if (!gameState.raceStarted || gameState.raceFinished || gameState.isShifting) return;
+                
+                const car = gameState.selectedCar;
+                
+                // Переключение передач (1-5)
+                if (e.key >= '1' && e.key <= '5') {
+                    const newGear = parseInt(e.key);
+                    if (newGear !== gameState.currentGear) {
+                        shiftGear(newGear);
+                    }
+                }
+                
+                // Переключение на нейтраль
+                if (e.key === '0' || e.key === 'N' || e.key === 'n') {
+                    if (gameState.currentGear !== 0) {
+                        shiftGear(0);
+                    }
+                }
+            });
+            
+            function shiftGear(newGear) {
+                gameState.isShifting = true;
+                gameState.shiftTimer = gameState.selectedCar.shiftTime;
+                gameState.currentGear = newGear;
+                gearDisplay.textContent = newGear === 0 ? 'N' : newGear;
+            }
+            
+            // Игровой цикл
+            function startRace() {
+                gameState.raceStarted = true;
+                const startTime = Date.now();
+                
+                const gameLoop = setInterval(() => {
+                    if (gameState.raceFinished) {
+                        clearInterval(gameLoop);
+                        return;
+                    }
+                    
+                    // Расчет времени
+                    gameState.raceTime = (Date.now() - startTime) / 1000;
+                    
+                    // Движение игрока
+                    updatePlayerCar();
+                    
+                    // Движение противника
+                    updateOpponentCar();
+                    
+                    // Обновление UI
+                    updateDashboard();
+                    
+                    // Проверка условий окончания гонки
+                    checkRaceConditions();
+                }, 16);
+            }
+            
+            function updatePlayerCar() {
+                const car = gameState.selectedCar;
+                
+                // Если переключаем передачу
+                if (gameState.isShifting) {
+                    gameState.shiftTimer -= 0.016;
+                    if (gameState.shiftTimer <= 0) {
+                        gameState.isShifting = false;
+                    }
+                    return;
+                }
+                
+                // Если двигатель заглох
+                if (gameState.rpm >= car.redline) {
+                    showMessage('Двигатель заглох! Сбросьте скорость!', 2000);
+                    gameState.raceFinished = true;
+                    resultTitle.textContent = 'Поражение!';
+                    return;
+                }
+                
+                // Расчет скорости и RPM
+                if (gameState.currentGear > 0) {
+                    const maxGearSpeed = car.gears[gameState.currentGear - 1] / 3.6;
+                    
+                    if (gameState.playerSpeed < maxGearSpeed) {
+                        gameState.playerSpeed += car.acceleration;
+                    }
+                    
+                    // Расчет RPM
+                    const gearRatio = gameState.playerSpeed / maxGearSpeed;
+                    gameState.rpm = 1000 + gearRatio * (car.redline - 1000);
+                    
+                    // Если достигли максималки на передаче
+                    if (gameState.playerSpeed >= maxGearSpeed * 0.95) {
+                        gameState.rpm += 100;
+                    }
+                } else {
+                    // На нейтрали - теряем скорость
+                    gameState.playerSpeed = Math.max(0, gameState.playerSpeed - 0.05);
+                    gameState.rpm = Math.max(0, gameState.rpm - 200);
+                }
+                
+                // Обновление позиции
+                gameState.playerPosition += gameState.playerSpeed;
+                playerCar.style.left = `${50 + (gameState.playerPosition / 1000) * 700}px`;
+                
+                // Обновление максимальной скорости
+                const currentSpeedKmh = gameState.playerSpeed * 3.6;
+                if (currentSpeedKmh > gameState.maxPlayerSpeed) {
+                    gameState.maxPlayerSpeed = currentSpeedKmh;
+                }
+            }
+            
+            function updateOpponentCar() {
+                const car = gameState.selectedCar;
+                
+                // ИИ противника
+                const currentSpeedKmh = gameState.opponentSpeed * 3.6;
+                let optimalGear = 1;
+                
+                for (let i = 0; i < car.gears.length; i++) {
+                    if (currentSpeedKmh < car.gears[i] * 0.9) {
+                        optimalGear = i + 1;
+                        break;
+                    }
+                }
+                
+                // Ускорение противника
+                const maxGearSpeed = car.gears[optimalGear - 1] / 3.6;
+                if (gameState.opponentSpeed < maxGearSpeed) {
+                    gameState.opponentSpeed += car.acceleration * 1.1;
+                }
+                
+                gameState.opponentPosition += gameState.opponentSpeed;
+                opponentCar.style.left = `${50 + (gameState.opponentPosition / 1000) * 700}px`;
+            }
+            
+            function updateDashboard() {
+                // Обновление RPM метра
+                const rpmPercent = Math.min(100, (gameState.rpm / gameState.selectedCar.redline) * 100);
+                rpmIndicator.style.left = `${rpmPercent}%`;
+                
+                // Обновление скорости
+                speedDisplay.textContent = `${(gameState.playerSpeed * 3.6).toFixed(0)} км/ч`;
+            }
+            
+            function checkRaceConditions() {
+                // Проверка дистанции (гонка на 1000 метров)
+                if (gameState.playerPosition >= 1000 || gameState.opponentPosition >= 1000) {
+                    gameState.raceFinished = true;
+                    
+                    if (gameState.playerPosition >= 1000 && gameState.opponentPosition < 1000) {
+                        resultTitle.textContent = 'Победа!';
+                    } else {
+                        resultTitle.textContent = 'Поражение!';
+                    }
+                    
+                    showResults();
+                }
+            }
+            
+            function showResults() {
+                raceScreen.style.display = 'none';
+                resultScreen.style.display = 'flex';
+                
+                resultDistance.textContent = `Пройдено: ${Math.min(1000, gameState.playerPosition).toFixed(0)} м`;
+                resultMaxSpeed.textContent = `Макс. скорость: ${gameState.maxPlayerSpeed.toFixed(0)} км/ч`;
+                resultTime.textContent = `Время: ${gameState.raceTime.toFixed(2)} сек`;
+            }
+            
+            function showMessage(text, duration) {
+                message.textContent = text;
+                message.style.display = 'block';
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, duration);
+            }
+            
+            // Кнопка "Гонять снова"
+            raceAgainBtn.addEventListener('click', () => {
+                resultScreen.style.display = 'none';
+                raceScreen.style.display = 'block';
+                resetGame();
+                startRace();
+            });
+            
+            // Помощь по управлению
+            showMessage('Управление: 1-5 - передачи, 0/N - нейтраль. Не допускайте перегрева двигателя!', 5000);
+        });
+    </script>
+</body>
+</html>

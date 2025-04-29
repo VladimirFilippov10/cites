@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Заправщик-обманщик</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 20px;
+      }
+      .game-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+      .customer-info {
+        background-color: #e9f7ef;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+      .fuel-types {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .fuel-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        min-width: 120px;
+      }
+      .diesel {
+        background-color: #4a4a4a;
+        color: white;
+      }
+      .petrol-92 {
+        background-color: #ffcc00;
+      }
+      .petrol-95 {
+        background-color: #ff9900;
+      }
+      .petrol-100 {
+        background-color: #ff3300;
+        color: white;
+      }
+      .fuel-panel {
+        margin: 20px 0;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      }
+      .fuel-meter {
+        height: 40px;
+        background-color: #e0e0e0;
+        border-radius: 20px;
+        position: relative;
+        margin-bottom: 10px;
+        overflow: hidden;
+      }
+      .fuel-level {
+        height: 100%;
+        background-color: #4caf50;
+        width: 0%;
+        border-radius: 20px;
+        transition: width 0.3s;
+      }
+      .target-marker {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 2px;
+        background-color: red;
+      }
+      .fuel-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .action-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .fill-btn {
+        background-color: #2196f3;
+        color: white;
+      }
+      .complete-btn {
+        background-color: #4caf50;
+        color: white;
+      }
+      .underfill-btn {
+        background-color: #ff9800;
+        color: white;
+      }
+      .log {
+        height: 150px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 20px;
+        background-color: #f9f9f9;
+      }
+      .game-over {
+        color: red;
+        font-weight: bold;
+        text-align: center;
+        font-size: 24px;
+        display: none;
+      }
+      .restart-btn {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .fuel-info {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-container">
+      <div class="header">
+        <h1>Заправщик</h1>
+        <div>
+          <h2>Баланс: <span id="balance">1000</span> руб.</h2>
+        </div>
+      </div>
+
+      <div class="customer-info">
+        <h2>Клиент</h2>
+        <p>Машина: <span id="car-model">Ожидание клиента...</span></p>
+        <p>Требуемое топливо: <span id="required-fuel">-</span></p>
+        <p>Требуемый объем: <span id="required-amount">-</span> л.</p>
+        <p>Внимательность: <span id="customer-attention">-</span>%</p>
+      </div>
+
+      <div class="fuel-types">
+        <button class="fuel-btn diesel" onclick="selectFuel('diesel')">
+          Дизель (60 руб/л)
+        </button>
+        <button class="fuel-btn petrol-92" onclick="selectFuel('petrol-92')">
+          Бензин 92 (45 руб/л)
+        </button>
+        <button class="fuel-btn petrol-95" onclick="selectFuel('petrol-95')">
+          Бензин 95 (50 руб/л)
+        </button>
+        <button class="fuel-btn petrol-100" onclick="selectFuel('petrol-100')">
+          Бензин 100 (60 руб/л)
+        </button>
+      </div>
+
+      <div class="fuel-panel">
+        <h3>Заправка</h3>
+        <div class="fuel-meter">
+          <div class="fuel-level" id="fuel-level"></div>
+          <div class="target-marker" id="target-marker"></div>
+        </div>
+        <div class="fuel-info">
+          <span>0 л</span>
+          <span id="current-fuel-amount">0</span> /
+          <span id="target-fuel-amount">0</span> л
+          <span id="max-fuel-amount">0 л</span>
+        </div>
+        <div class="fuel-actions">
+          <button class="action-btn fill-btn" id="fill-btn" onclick="addFuel()">
+            Заправить (+1 л)
+          </button>
+          <button
+            class="action-btn underfill-btn"
+            id="underfill-btn"
+            onclick="underfillTank()"
+          >
+            Недолить
+          </button>
+          <button
+            class="action-btn complete-btn"
+            id="complete-btn"
+            onclick="completeFuel()"
+            disabled
+          >
+            Сдать машину
+          </button>
+        </div>
+      </div>
+
+      <div class="log" id="game-log">
+        Добро пожаловать на заправку!<br />
+        Ожидайте первого клиента...
+      </div>
+
+      <div class="game-over" id="game-over">ВЫ УВОЛЕНЫ!</div>
+
+      <button class="restart-btn" id="restart-btn" onclick="restartGame()">
+        Начать заново
+      </button>
+    </div>
+
+    <script>
+      // Игровые переменные
+      let balance = 1000;
+      let selectedFuel = null;
+      let currentCustomer = null;
+      let gameActive = true;
+      let currentFuelAmount = 0;
+      let targetFuelAmount = 0;
+      let maxFuelAmount = 50; // Максимальный объем бака для визуализации
+
+      // База данных клиентов
+      const customers = [
+        {
+          name: "Иван",
+          car: "Lada Granta",
+          fuelType: "petrol-92",
+          minTip: 50,
+          maxTip: 150,
+          detectionChance: 0.05, // 5%
+          fuelDetectionChance: 0.1, // 10% для неправильного топлива
+        },
+        {
+          name: "Сергей",
+          car: "Kia Rio",
+          fuelType: "petrol-95",
+          minTip: 100,
+          maxTip: 200,
+          detectionChance: 0.1, // 10%
+          fuelDetectionChance: 0.2, // 20% для неправильного топлива
+        },
+        {
+          name: "Ольга",
+          car: "Mercedes C-Class",
+          fuelType: "petrol-100",
+          minTip: 200,
+          maxTip: 500,
+          detectionChance: 0.15, // 15%
+          fuelDetectionChance: 0.3, // 30% для неправильного топлива
+        },
+        {
+          name: "Дмитрий",
+          car: "Volkswagen Passat",
+          fuelType: "diesel",
+          minTip: 150,
+          maxTip: 300,
+          detectionChance: 0.2, // 20%
+          fuelDetectionChance: 0.4, // 40% для неправильного топлива
+        },
+        {
+          name: "Алексей",
+          car: "Toyota Camry",
+          fuelType: "petrol-95",
+          minTip: 100,
+          maxTip: 250,
+          detectionChance: 0.25, // 25%
+          fuelDetectionChance: 0.5, // 50% для неправильного топлива
+        },
+      ];
+
+      // Цены на топливо
+      const fuelPrices = {
+        diesel: 60,
+        "petrol-92": 45,
+        "petrol-95": 50,
+        "petrol-100": 60,
+      };
+
+      // Названия топлива
+      const fuelNames = {
+        diesel: "Дизель",
+        "petrol-92": "Бензин АИ-92",
+        "petrol-95": "Бензин АИ-95",
+        "petrol-100": "Бензин АИ-100",
+      };
+
+      // Разрешенные замены топлива (какое можно заливать вместо какого)
+      const fuelReplacements = {
+        "petrol-92": ["petrol-92"],
+        "petrol-95": ["petrol-92", "petrol-95"],
+        "petrol-100": ["petrol-95", "petrol-100"],
+        diesel: ["diesel"],
+      };
+
+      // Инициализация игры
+      function initGame() {
+        balance = 10000;
+        gameActive = true;
+        currentFuelAmount = 0;
+        targetFuelAmount = 0;
+        document.getElementById("game-over").style.display = "none";
+        document.getElementById("restart-btn").style.display = "none";
+        document.getElementById("complete-btn").disabled = true;
+        document.getElementById("underfill-btn").disabled = true;
+        updateBalance();
+        updateFuelMeter();
+        generateCustomer();
+      }
+
+      // Обновление баланса на экране
+      function updateBalance() {
+        document.getElementById("balance").textContent = balance;
+
+        if (balance < -3000) {
+          endGame();
+        }
+      }
+
+      // Обновление индикатора заправки
+      function updateFuelMeter() {
+        const fuelLevel = document.getElementById("fuel-level");
+        const targetMarker = document.getElementById("target-marker");
+
+        // Обновляем уровень топлива
+        fuelLevel.style.width = `${(currentFuelAmount / maxFuelAmount) * 100}%`;
+
+        // Обновляем позицию красной метки
+        targetMarker.style.left = `${
+          (targetFuelAmount / maxFuelAmount) * 100
+        }%`;
+
+        // Обновляем цифровые значения
+        document.getElementById("current-fuel-amount").textContent =
+          currentFuelAmount;
+        document.getElementById("target-fuel-amount").textContent =
+          targetFuelAmount;
+        document.getElementById("max-fuel-amount").textContent =
+          maxFuelAmount + " л";
+
+        // Активируем кнопку недолива если заправлено больше половины
+        document.getElementById("underfill-btn").disabled =
+          currentFuelAmount < targetFuelAmount * 0.5;
+      }
+
+      // Генерация нового клиента
+      function generateCustomer() {
+        if (!gameActive) return;
+
+        const randomCustomer =
+          customers[Math.floor(Math.random() * customers.length)];
+        const requiredAmount = Math.floor(Math.random() * 30) + 10; // От 10 до 40 литров
+
+        currentCustomer = {
+          ...randomCustomer,
+          requiredAmount: requiredAmount,
+        };
+
+        // Сброс значений заправки
+        currentFuelAmount = 0;
+        targetFuelAmount = requiredAmount;
+        maxFuelAmount = Math.max(requiredAmount + 10, 40); // Чтобы было немного места справа
+
+        document.getElementById(
+          "car-model"
+        ).textContent = `${randomCustomer.car} (${randomCustomer.name})`;
+        document.getElementById("required-fuel").textContent =
+          fuelNames[randomCustomer.fuelType];
+        document.getElementById("required-amount").textContent = requiredAmount;
+        document.getElementById("customer-attention").textContent = Math.round(
+          randomCustomer.detectionChance * 100
+        );
+
+        // Сброс кнопок
+        document.getElementById("complete-btn").disabled = true;
+        document.getElementById("fill-btn").disabled = false;
+        document.getElementById("underfill-btn").disabled = true;
+
+        updateFuelMeter();
+
+        addToLog(
+          `Приехал новый клиент: ${randomCustomer.name} на ${randomCustomer.car}`
+        );
+        addToLog(
+          `Требуется: ${
+            fuelNames[randomCustomer.fuelType]
+          }, ${requiredAmount} литров`
+        );
+        addToLog(
+          `Внимательность клиента: ${Math.round(
+            randomCustomer.detectionChance * 100
+          )}%`
+        );
+      }
+
+      // Выбор топлива
+      function selectFuel(fuelType) {
+        if (!gameActive) return;
+
+        selectedFuel = fuelType;
+        addToLog(`Выбрано топливо: ${fuelNames[fuelType]}`);
+        document.getElementById("fill-btn").disabled = false;
+      }
+
+      // Добавление топлива
+      function addFuel() {
+        if (!gameActive || !currentCustomer || !selectedFuel) {
+          addToLog("Сначала выберите топливо!");
+          return;
+        }
+
+        // Добавляем 1 литр
+        currentFuelAmount += 1;
+
+        // Если достигли или превысили целевой объем, активируем кнопку "Сдать машину"
+        if (currentFuelAmount >= targetFuelAmount - 1) {
+          // Погрешность 1 литр
+          document.getElementById("complete-btn").disabled = false;
+        }
+
+        updateFuelMeter();
+      }
+
+      // Недолив бака
+      function underfillTank() {
+        if (!gameActive || !currentCustomer || !selectedFuel) return;
+
+        // Устанавливаем объем на 10-30% меньше требуемого
+        const underfillPercent = 0.1 + Math.random() * 0.2; // 10-30%
+        currentFuelAmount = Math.max(
+          1,
+          Math.floor(targetFuelAmount * (1 - underfillPercent))
+        );
+
+        document.getElementById("complete-btn").disabled = false;
+        updateFuelMeter();
+
+        addToLog(
+          `Вы намеренно недолили ${targetFuelAmount - currentFuelAmount} литров`
+        );
+      }
+
+      // Завершение заправки
+      function completeFuel() {
+        if (!gameActive || !currentCustomer || !selectedFuel) return;
+
+        let tip = 0;
+        let message = "";
+        const difference = currentFuelAmount - targetFuelAmount;
+        const absoluteDifference = Math.abs(difference);
+
+        // Проверка на правильность топлива
+        const isCorrectFuel =
+          fuelReplacements[currentCustomer.fuelType].includes(selectedFuel);
+        let fuelTypeNoticed = false;
+
+        if (!isCorrectFuel) {
+          // Клиент может заметить неправильное топливо
+          fuelTypeNoticed = Math.random() < currentCustomer.fuelDetectionChance;
+
+          if (fuelTypeNoticed) {
+            balance -= 5000;
+            message = `Ошибка! Клиент заметил, что вы залили ${
+              fuelNames[selectedFuel]
+            } вместо ${fuelNames[currentCustomer.fuelType]}. Штраф: 5000 руб.`;
+          } else {
+            // Если не заметил - получаем разницу в цене
+            const priceDifference =
+              fuelPrices[currentCustomer.fuelType] - fuelPrices[selectedFuel];
+            const profit = priceDifference * currentFuelAmount;
+            balance += profit;
+            message = `Вы залили ${fuelNames[selectedFuel]} вместо ${
+              fuelNames[currentCustomer.fuelType]
+            }. Клиент не заметил. `;
+            message += `Вы заработали на разнице цен: +${profit} руб. (${priceDifference} руб/л)`;
+          }
+        }
+
+        // Если топливо правильное или клиент не заметил подмену
+        if (isCorrectFuel || !fuelTypeNoticed) {
+          // Проверяем, насколько точно заправили
+          if (absoluteDifference <= 1) {
+            // Погрешность до 1 литра - идеально
+            message = "Вы заправили почти идеально (погрешность до 1 литра).";
+          } else if (difference < -1) {
+            // Недолив более 1 литра
+            const underfillAmount = targetFuelAmount - currentFuelAmount;
+
+            if (!message) message = `Вы недолили ${underfillAmount} литров.`;
+
+            // Проверка, заметил ли клиент
+            if (Math.random() < currentCustomer.detectionChance) {
+              const penalty = underfillAmount * fuelPrices[selectedFuel] + 200;
+              balance -= penalty;
+              message += ` Клиент заметил недолив! Штраф: ${penalty} руб.`;
+            } else {
+              // Если не заметил - забираем стоимость недолитого себе
+              const profit = underfillAmount * fuelPrices[selectedFuel];
+              balance += profit;
+              message += ` Клиент не заметил недолив. Вы заработали на этом ${profit} руб.`;
+            }
+          } else {
+            // Перелив более 1 литра
+            const overfillAmount = difference;
+            const overfillCost = overfillAmount * fuelPrices[selectedFuel];
+            balance -= overfillCost;
+            if (!message)
+              message = `Вы перелили ${overfillAmount} литров. Доп. стоимость: ${overfillCost} руб.`;
+          }
+
+          // Начисление чаевых (если не было обнаружено нарушений)
+          if (
+            !fuelTypeNoticed &&
+            (absoluteDifference <= 1 ||
+              (difference < -1 &&
+                Math.random() >= currentCustomer.detectionChance))
+          ) {
+            tip =
+              Math.floor(
+                Math.random() *
+                  (currentCustomer.maxTip - currentCustomer.minTip + 1)
+              ) + currentCustomer.minTip;
+            balance += tip;
+            message += ` Чаевые: +${tip} руб.`;
+          }
+
+          // Стандартная оплата за заправку
+          const fillPayment = 250;
+          balance += fillPayment;
+          message += ` Оплата за заправку: +${fillPayment} руб.`;
+        }
+
+        addToLog(message);
+        updateBalance();
+        generateCustomer();
+      }
+
+      // Добавление сообщения в лог
+      function addToLog(message) {
+        const log = document.getElementById("game-log");
+        log.innerHTML += `<br>${message}`;
+        log.scrollTop = log.scrollHeight;
+      }
+
+      // Конец игры
+      function endGame() {
+        gameActive = false;
+        document.getElementById("game-over").style.display = "block";
+        document.getElementById("restart-btn").style.display = "block";
+        document.getElementById("fill-btn").disabled = true;
+        document.getElementById("complete-btn").disabled = true;
+        document.getElementById("underfill-btn").disabled = true;
+        addToLog("Ваш баланс опустился ниже -3000 руб. ВЫ УВОЛЕНЫ!");
+      }
+
+      // Перезапуск игры
+      function restartGame() {
+        document.getElementById("game-log").innerHTML =
+          "Добро пожаловать на заправку!<br>Ожидайте первого клиента...";
+        initGame();
+      }
+
+      // Запуск игры при загрузке страницы
+      window.onload = initGame;
+    </script>
+  </body>
+</html>

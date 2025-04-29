@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<meta charset="UTF-8" />
+
+<html>
+  <head>
+    <title>Мини-механик</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background: #1a1a1a;
+        color: white;
+        margin: 0;
+        padding: 20px;
+      }
+      .game-container {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      .car-image {
+        width: 400px;
+        height: 250px;
+        border: 3px solid #e67e22;
+        border-radius: 10px;
+        margin: 20px auto;
+        object-fit: cover;
+      }
+      .client-info {
+        background: #2c3e50;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 10px;
+      }
+      .options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin: 20px;
+      }
+      .options button {
+        padding: 15px;
+        cursor: pointer;
+        background: #27ae60;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        font-size: 16px;
+        transition: 0.3s;
+      }
+      .options button:hover {
+        background: #219a52;
+        transform: scale(1.02);
+      }
+      .money {
+        font-size: 28px;
+        color: #f1c40f;
+        margin: 20px;
+        font-weight: bold;
+      }
+      .game-over {
+        color: #e74c3c;
+        font-size: 40px;
+        display: none;
+        margin: 30px;
+      }
+      .client-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 10px auto;
+        border: 2px solid #3498db;
+      }
+      .difficulty {
+        font-style: italic;
+        color: #e67e22;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-container">
+      <h1>🚗 АвтоМастер🛠️</h1>
+      <div class="money">Баланс: $<span id="money">1000</span></div>
+      <img
+        id="car-img"
+        class="car-image"
+        src="https://via.placeholder.com/400x250?text=Автомобиль"
+      />
+      <div class="client-info">
+        <img
+          id="client-avatar"
+          class="client-avatar"
+          src="https://via.placeholder.com/80?text=Клиент"
+        />
+        <p id="client-name">Клиент:</p>
+        <p id="car-model">Авто:</p>
+        <p id="problem-text">Жалоба:</p>
+        <p id="difficulty" class="difficulty">Сложность:</p>
+      </div>
+      <div class="options" id="options"></div>
+      <div id="game-over" class="game-over">ВАС УВОЛИЛИ!</div>
+    </div>
+
+    <script>
+      // Полные данные об автомобилях и проблемах
+      const cars = [
+        {
+          // 0 - Старый седан
+          model: "Буревестник-2100",
+          image:
+            "https://placehold.co/400x250/333333/FFFFFF?text=Буревестник-2100",
+          problems: [
+            {
+              complaint: "При повороте влево хрустит, руль вибрирует",
+              answer: "ШРУС",
+              options: [
+                "ШРУС",
+                "Тормозные колодки",
+                "Рулевая рейка",
+                "Стойка стабилизатора",
+              ],
+              difficulty: "easy",
+            },
+            {
+              complaint: "Чёрный дым из выхлопа, глохнет на холостых",
+              answer: "ДМРВ",
+              options: [
+                "ДМРВ",
+                "Свечи зажигания",
+                "Катализатор",
+                "Лямбда-зонд",
+              ],
+              difficulty: "medium",
+            },
+            {
+              complaint: "Педаль тормоза проваливается, лужа под авто",
+              answer: "Тормозной цилиндр",
+              options: [
+                "Тормозной цилиндр",
+                "Главный тормозной цилиндр",
+                "ABS-модуль",
+                "Тормозные диски",
+              ],
+              difficulty: "hard",
+            },
+            {
+              complaint: "Стук в подвеске при проезде неровностей",
+              answer: "Амортизаторы",
+              options: [
+                "Амортизаторы",
+                "Рулевая рейка",
+                "Стойка стабилизатора",
+                "Подшипник ступицы",
+              ],
+              difficulty: "medium",
+            },
+            {
+              complaint: "Проблемы с запуском двигателя в холодную погоду",
+              answer: "Свечи накала",
+              options: [
+                "Свечи накала",
+                "Аккумулятор",
+                "Стартер",
+                "Топливный насос",
+              ],
+              difficulty: "hard",
+            },
+          ],
+        },
+        {
+          // 1 - Внедорожник
+          model: "Iron Mastodon",
+          image:
+            "https://placehold.co/400x250/555555/FFFFFF?text=Iron+Mastodon",
+          problems: [
+            {
+              complaint: "Скрежет при включении полного привода",
+              answer: "Раздаточная коробка",
+              options: ["Раздатка", "КПП", "Сцепление", "Карданный вал"],
+              difficulty: "hard",
+            },
+            {
+              complaint: "Руль бьёт на скорости 80+ км/ч",
+              answer: "Балансировка колёс",
+              options: [
+                "Диски кривые",
+                "Балансировка колёс",
+                "Шаровые опоры",
+                "Рулевые тяги",
+              ],
+              difficulty: "easy",
+            },
+            {
+              complaint: "Перегрев двигателя в пробках, запах горелого масла",
+              answer: "Прокладка ГБЦ",
+              options: [
+                "Прокладка ГБЦ",
+                "Термостат",
+                "Водяная помпа",
+                "Вентилятор охлаждения",
+              ],
+              difficulty: "hard",
+            },
+            {
+              complaint: "Посторонний шум из-под капота при ускорении",
+              answer: "Ремень ГРМ",
+              options: [
+                "Ремень ГРМ",
+                "Термостат",
+                "Водяная помпа",
+                "Генератор",
+              ],
+              difficulty: "medium",
+            },
+            {
+              complaint: "Проблемы с переключением передач",
+              answer: "Сцепление",
+              options: [
+                "Сцепление",
+                "КПП",
+                "Карданный вал",
+                "Раздаточная коробка",
+              ],
+              difficulty: "hard",
+            },
+          ],
+        },
+        {
+          // 2 - Спортивный автомобиль
+          model: "Blue Lightning GT",
+          image:
+            "https://placehold.co/400x250/000080/FFFFFF?text=Blue+Lightning",
+          problems: [
+            {
+              complaint: "При разгоне двигатель дёргается, свист из турбины",
+              answer: "Турбокомпрессор",
+              options: [
+                "Турбокомпрессор",
+                "Топливный насос",
+                "Дроссельная заслонка",
+                "Катушки зажигания",
+              ],
+              difficulty: "medium",
+            },
+            {
+              complaint: "Запах бензина в салоне, горит Check Engine",
+              answer: "Топливный фильтр",
+              options: [
+                "Топливный фильтр",
+                "Бензобак",
+                "Топливная магистраль",
+                "Форсунки",
+              ],
+              difficulty: "medium",
+            },
+            {
+              complaint: "Хлопок при переключении на пониженную передачу",
+              answer: "Выпускной коллектор",
+              options: [
+                "Выпускной коллектор",
+                "Глушитель",
+                "Катализатор",
+                "Лямбда-зонд",
+              ],
+              difficulty: "hard",
+            },
+            {
+              complaint: "Проблемы с запуском двигателя после простоя",
+              answer: "Аккумулятор",
+              options: [
+                "Аккумулятор",
+                "Стартер",
+                "Топливный насос",
+                "Катушки зажигания",
+              ],
+              difficulty: "easy",
+            },
+            {
+              complaint: "Потеря мощности на высоких оборотах",
+              answer: "Дроссельная заслонка",
+              options: [
+                "Дроссельная заслонка",
+                "Турбокомпрессор",
+                "Катализатор",
+                "Свечи зажигания",
+              ],
+              difficulty: "medium",
+            },
+          ],
+        },
+        {
+          // 3 - Хэтчбек
+          model: "EcoSprinter",
+          image: "https://placehold.co/400x250/008000/FFFFFF?text=EcoSprinter",
+          problems: [
+            {
+              complaint:
+                "На холодную двигатель не заводится, стартер крутит вхолостую",
+              answer: "Венец маховика",
+              options: [
+                "Венец маховика",
+                "Стартер",
+                "Аккумулятор",
+                "Генератор",
+              ],
+              difficulty: "hard",
+            },
+            {
+              complaint: "При торможении скрип, машину тянет вправо",
+              answer: "Тормозные колодки",
+              options: [
+                "Тормозные колодки",
+                "Тормозные диски",
+                "Суппорт",
+                "ABS датчик",
+              ],
+              difficulty: "easy",
+            },
+            {
+              complaint: "Кондиционер дует тёплым воздухом, под капотом шипит",
+              answer: "Радиатор кондиционера",
+              options: [
+                "Радиатор кондиционера",
+                "Компрессор",
+                "Вентилятор",
+                "Фреон",
+              ],
+              difficulty: "medium",
+            },
+            {
+              complaint: "Проблемы с зарядкой аккумулятора",
+              answer: "Генератор",
+              options: [
+                "Генератор",
+                "Аккумулятор",
+                "Реле регулятор",
+                "Стартер",
+              ],
+              difficulty: "medium",
+            },
+            {
+              complaint: "Появление вибрации на руле при движении",
+              answer: "Шаровые опоры",
+              options: [
+                "Шаровые опоры",
+                "Рулевая рейка",
+                "Балансировка колёс",
+                "Подшипник ступицы",
+              ],
+              difficulty: "easy",
+            },
+          ],
+        },
+        {
+          // 4 - Минивэн
+          model: "Family Cruiser",
+          image:
+            "https://placehold.co/400x250/FFA500/000000?text=Family+Cruiser",
+          problems: [
+            {
+              complaint:
+                "При повороте руля на месте вой, жидкость в бачке мутная",
+              answer: "Насос ГУР",
+              options: [
+                "Насос ГУР",
+                "Рулевая рейка",
+                "Приводной ремень",
+                "Бачок ГУР",
+              ],
+              difficulty: "medium",
+            },
+            {
+              complaint: "На скорости 60+ км/ч сзади гудит как самолёт",
+              answer: "Подшипник ступицы",
+              options: [
+                "Подшипник ступицы",
+                "Карданный вал",
+                "Редуктор",
+                "ШРУС",
+              ],
+              difficulty: "hard",
+            },
+            {
+              complaint: "Двигатель троит, на свечах чёрный нагар",
+              answer: "Катушка зажигания",
+              options: [
+                "Катушка зажигания",
+                "Свечи",
+                "Высоковольтные провода",
+                "ДПКВ",
+              ],
+              difficulty: "easy",
+            },
+            {
+              complaint: "Проблемы с системой охлаждения двигателя",
+              answer: "Термостат",
+              options: [
+                "Термостат",
+                "Водяная помпа",
+                "Радиатор",
+                "Вентилятор охлаждения",
+              ],
+              difficulty: "medium",
+            },
+            {
+              complaint: "Появление посторонних шумов при движении",
+              answer: "Сайлентблоки",
+              options: [
+                "Сайлентблоки",
+                "Амортизаторы",
+                "Подшипник ступицы",
+                "Рулевая рейка",
+              ],
+              difficulty: "hard",
+            },
+          ],
+        },
+      ];
+
+      // Клиенты с уникальными описаниями
+      const clients = [
+        {
+          name: "Дед Николай",
+          avatar: "https://placehold.co/80x80/FF9999/000000?text=Дед",
+          description: "Старый клиент, ездит аккуратно, но машина древняя",
+          carIndex: 0,
+          problemIndex: 0,
+        },
+        {
+          name: "Бизнесмен Артём",
+          avatar: "https://placehold.co/80x80/9999FF/000000?text=Артём",
+          description: "Вечно спешит, машину не жалеет",
+          carIndex: 1,
+          problemIndex: 0,
+        },
+        {
+          name: "Молодая мама Алина",
+          avatar: "https://placehold.co/80x80/FF99FF/000000?text=Алина",
+          description:
+            "Не разбирается в машинах, но хочет чтобы всё было идеально",
+          carIndex: 3,
+          problemIndex: 1,
+        },
+        {
+          name: "Таксист Виктор",
+          avatar: "https://placehold.co/80x80/FFFF99/000000?text=Виктор",
+          description:
+            "Машина работает на износ, ремонтирует только когда ломается",
+          carIndex: 0,
+          problemIndex: 1,
+        },
+        {
+          name: "Студент Кирилл",
+          avatar: "https://placehold.co/80x80/99FF99/000000?text=Кирилл",
+          description:
+            "Купил первую машину, пытается сам разобраться в проблемах",
+          carIndex: 2,
+          problemIndex: 0,
+        },
+        {
+          name: "Пенсионерка Валентина",
+          avatar: "https://placehold.co/80x80/FFCC99/000000?text=Валя",
+          description:
+            "Приезжает по любому поводу, даже если просто загорелась лампочка",
+          carIndex: 4,
+          problemIndex: 2,
+        },
+        {
+          name: "Спортсмен Макс",
+          avatar: "https://placehold.co/80x80/CCCCFF/000000?text=Макс",
+          description: "Гоняет на своей тачке, любит тюнинг",
+          carIndex: 2,
+          problemIndex: 1,
+        },
+        {
+          name: "Фермер Пётр",
+          avatar: "https://placehold.co/80x80/CCFFCC/000000?text=Пётр",
+          description: "Машина работает в тяжелых условиях",
+          carIndex: 1,
+          problemIndex: 1,
+        },
+        {
+          name: "Учительница Елена",
+          avatar: "https://placehold.co/80x80/FFCCCC/000000?text=Лена",
+          description: "Аккуратный водитель, следит за машиной",
+          carIndex: 3,
+          problemIndex: 0,
+        },
+        {
+          name: "Строитель Дмитрий",
+          avatar: "https://placehold.co/80x80/CCCCCC/000000?text=Дима",
+          description: "Машина вся в грязи, но на ходу",
+          carIndex: 1,
+          problemIndex: 2,
+        },
+        {
+          name: "Фрилансер Олег",
+          avatar: "https://placehold.co/80x80/99CCFF/000000?text=Олег",
+          description: "Работает в машине, поэтому ей много ездит",
+          carIndex: 4,
+          problemIndex: 0,
+        },
+        {
+          name: "Врач Светлана",
+          avatar: "https://placehold.co/80x80/FF9999/000000?text=Света",
+          description: "Машина должна быть всегда готова к экстренному выезду",
+          carIndex: 0,
+          problemIndex: 2,
+        },
+        {
+          name: "Инженер Алексей",
+          avatar: "https://placehold.co/80x80/99FFCC/000000?text=Лёша",
+          description: "Разбирается в технике, но сам ремонтировать не хочет",
+          carIndex: 2,
+          problemIndex: 2,
+        },
+        {
+          name: "Семья Ивановых",
+          avatar: "https://placehold.co/80x80/FFCCFF/000000?text=Семья",
+          description: "Большая семья - минивэн всегда загружен",
+          carIndex: 4,
+          problemIndex: 1,
+        },
+        {
+          name: "Доставщик пиццы",
+          avatar: "https://placehold.co/80x80/FFFFCC/000000?text=Курьер",
+          description: "Машина работает без остановки",
+          carIndex: 3,
+          problemIndex: 2,
+        },
+      ];
+
+      // Цены за ремонты
+      const prices = {
+        easy: { reward: 200, penalty: -150 },
+        medium: { reward: 400, penalty: -300 },
+        hard: { reward: 600, penalty: -450 },
+      };
+
+      // Игровые переменные
+      let currentClientIndex = 0;
+      let money = 1000;
+      let gameActive = true;
+      let correctCount = 0;
+      let incorrectCount = 0;
+
+      // Элементы интерфейса
+      const moneyElement = document.getElementById("money");
+      const carImage = document.getElementById("car-img");
+      const clientAvatar = document.getElementById("client-avatar");
+      const clientName = document.getElementById("client-name");
+      const carModel = document.getElementById("car-model");
+      const problemText = document.getElementById("problem-text");
+      const difficultyText = document.getElementById("difficulty");
+      const optionsDiv = document.getElementById("options");
+      const gameOverDiv = document.getElementById("game-over");
+      const gameSummaryDiv = document.createElement("div");
+      gameSummaryDiv.style.color = "#f1c40f";
+      gameSummaryDiv.style.fontSize = "24px";
+      gameSummaryDiv.style.margin = "30px";
+      gameSummaryDiv.style.whiteSpace = "pre-line";
+      gameSummaryDiv.style.fontWeight = "bold";
+      gameSummaryDiv.style.display = "none";
+      document.querySelector(".game-container").appendChild(gameSummaryDiv);
+
+      // Обновление игрового интерфейса
+      function updateGame() {
+        if (!gameActive) return;
+
+        if (currentClientIndex >= clients.length) {
+          // Показываем итоговую статистику
+          gameSummaryDiv.textContent = `Игра окончена!\nПравильных ответов: ${correctCount}\nНеправильных ответов: ${incorrectCount}\nИтоговый счёт: $${money}`;
+          gameSummaryDiv.style.display = "block";
+          optionsDiv.innerHTML = "";
+          gameOverDiv.style.display = "none";
+          gameActive = false;
+          return;
+        }
+
+        const client = clients[currentClientIndex];
+        const car = cars[client.carIndex];
+        const problem = car.problems[client.problemIndex];
+
+        // Обновляем интерфейс
+        carImage.src = car.image;
+        clientAvatar.src = client.avatar;
+        clientName.textContent = `Клиент: ${client.name} (${client.description})`;
+        carModel.textContent = `Авто: ${car.model}`;
+        problemText.textContent = `Жалоба: ${problem.complaint}`;
+        difficultyText.textContent = `Сложность: ${getDifficultyName(
+          problem.difficulty
+        )}`;
+        moneyElement.textContent = money;
+
+        // Создаём кнопки
+        optionsDiv.innerHTML = "";
+        problem.options.forEach((option) => {
+          const btn = document.createElement("button");
+          btn.textContent = option;
+          btn.onclick = () =>
+            checkAnswer(
+              option === problem.answer,
+              problem.difficulty,
+              problem.answer
+            );
+          optionsDiv.appendChild(btn);
+        });
+      }
+
+      // Проверка ответа
+      function checkAnswer(isCorrect, difficulty, correctAnswer) {
+        const { reward, penalty } = prices[difficulty];
+
+        if (isCorrect) {
+          money += reward;
+          correctCount++;
+          alert(`Верно! +$${reward}\nБаланс: $${money}`);
+        } else {
+          money += penalty;
+          incorrectCount++;
+          alert(`Ошибка! -$${Math.abs(penalty)}\nБаланс: $${money}`);
+        }
+
+        // Проверка на банкротство
+        if (money <= -1000) {
+          gameOverDiv.style.display = "block";
+          optionsDiv.innerHTML = "";
+          gameActive = false;
+          return;
+        }
+
+        // Переход к следующему клиенту
+        currentClientIndex++;
+        updateGame();
+      }
+
+      // Получение названия сложности
+      function getDifficultyName(difficulty) {
+        switch (difficulty) {
+          case "easy":
+            return "Лёгкая";
+          case "medium":
+            return "Средняя";
+          case "hard":
+            return "Сложная";
+          default:
+            return "";
+        }
+      }
+
+      // Начало игры
+      updateGame();
+    </script>
+  </body>
+</html>
