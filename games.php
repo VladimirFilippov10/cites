@@ -96,7 +96,7 @@
                 <p class="game-title">Мини-механик</p>
             </a>
             <a href="games/fuelman.html" class="game-card">
-                <img src="https://placehold.co/250x140?text=Мини-механик" alt="Заправщик" class="game-image" />
+                <img src="https://placehold.co/250x140?text=Заправщик-обманщик" alt="Заправщик" class="game-image" />
                 <p class="game-title">Заправщик-обманщик</p>
             </a>
         </div>

@@ -115,6 +115,7 @@ checkAuth(); // Проверка аутентификации
                 <option value="halfyear">Полгода</option>
                 <option value="all">Все время</option>
             </select>
+            <button id="generatePdfBtn" class="ml-4 bg-blue-500 text-white px-4 py-2 rounded" onclick="generatePDF()">Сгенерировать PDF</button>
         </div>
         <canvas id="redemptionChart" width="800" height="400"></canvas>
         <canvas id="salesChart" width="800" height="400" class="mt-10"></canvas>
@@ -213,6 +214,43 @@ checkAuth(); // Проверка аутентификации
 
             redemptionChart = createChart(redemptionCtx, 'Выкупы', data.redemptions, 'rgba(75, 192, 192, 1)');
             salesChart = createChart(salesCtx, 'Продажи', data.sales, 'rgba(255, 99, 132, 1)');
+        }
+
+        async function generatePDF() {
+            const period = document.getElementById('periodSelect').value;
+            // Get chart images as base64
+            const redemptionImage = redemptionChart.toBase64Image();
+            const salesImage = salesChart.toBase64Image();
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('period', period);
+            formData.append('redemptionImage', redemptionImage);
+            formData.append('salesImage', salesImage);
+
+            try {
+                const response = await fetch('php/sales_buyback_report_fpdf.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) {
+                    console.error('Ошибка при генерации PDF:', response.statusText);
+                    alert('Ошибка при генерации PDF');
+                    return;
+                }
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `sales_buyback_report_${period}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Ошибка при запросе генерации PDF:', error);
+                alert('Ошибка при запросе генерации PDF');
+            }
         }
 
         updateCharts();

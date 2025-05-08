@@ -1,3 +1,10 @@
+<?php
+session_start();
+include 'php/auth.php';
+checkAuth(); // Проверка аутентификации
+
+// Остальной код остается без изменений
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -77,6 +84,9 @@
 <body class="bg-gray-100 text-gray-800">
     <?php
         include 'template/header.php';
+        if (isset($_SESSION['user_id'])) {
+            include 'template/nav_employees.php'; // Подключение навигации для аутентифицированных пользователей
+        }
         include 'php/dbconnect.php'; // Подключение к базе данных
 
         // Проверка наличия ID автомобиля в параметрах URL

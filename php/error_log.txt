@@ -1,0 +1,18 @@
+[08-May-2025 09:34:09 Europe/Berlin] PHP Warning:  include(php/auth.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php on line 12
+[08-May-2025 09:34:09 Europe/Berlin] PHP Warning:  include(): Failed opening 'php/auth.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php on line 12
+[08-May-2025 09:34:09 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function checkAuth() in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php:13
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php on line 13
+[08-May-2025 09:34:39 Europe/Berlin] PHP Fatal error:  Uncaught Exception: FPDF error: Undefined font: dejavusans B in C:\xampp\htdocs\cites\php\fpdf\fpdf.php:267
+Stack trace:
+#0 C:\xampp\htdocs\cites\php\fpdf\fpdf.php(513): FPDF->Error('Undefined font:...')
+#1 C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php(160): FPDF->SetFont('dejavusans', 'B', 12)
+#2 {main}
+  thrown in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 267
+[08-May-2025 09:34:42 Europe/Berlin] PHP Fatal error:  Uncaught Exception: FPDF error: Undefined font: dejavusans B in C:\xampp\htdocs\cites\php\fpdf\fpdf.php:267
+Stack trace:
+#0 C:\xampp\htdocs\cites\php\fpdf\fpdf.php(513): FPDF->Error('Undefined font:...')
+#1 C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php(160): FPDF->SetFont('dejavusans', 'B', 12)
+#2 {main}
+  thrown in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 267
