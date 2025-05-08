@@ -5,11 +5,14 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
 require('fpdf/fpdf.php');
+
+// Подключение шрифта Arial с поддержкой windows-1251
+// Убедитесь, что файлы Arial.php, Arial.z и Arial.ttf находятся в папке fpdf/font
 include 'dbconnect.php';
 
 // Проверка авторизации администратора
 session_start();
-include 'auth.php';
+include './auth.php';
 checkAuth();
 if ($_SESSION['employee_role'] != 1 && $_SESSION['employee_role'] != 3) {
     http_response_code(403);
@@ -49,6 +52,20 @@ function getDateFormat($interval) {
 }
 
 $dateFormat = getDateFormat($interval);
+
+// Функция для получения описания периода
+function getPeriodDescription($period) {
+    $descriptions = [
+        'today' => 'сегодня',
+        'week' => 'за неделю',
+        'month' => 'за месяц',
+        'halfyear' => 'за полгода',
+        'all' => 'за все время'
+    ];
+    return isset($descriptions[$period]) ? $descriptions[$period] : $period;
+}
+
+$periodDescription = getPeriodDescription($period);
 
 // Запросы для данных выкупов
 if ($interval && $interval !== 'today') {
@@ -128,7 +145,7 @@ foreach ($allDates as $date) {
 
 // Создание PDF
 $pdf = new FPDF('P', 'mm', 'A4');
-$pdf->AddFont('DejaVuSans', '', 'DejaVuSans.php'); // Добавляем шрифт для кириллицы
+$pdf->AddFont('DejaVuSans', '', 'DejaVuSans.php'); // Добавляем шрифт DejaVuSans для поддержки кириллицы
 $pdf->SetFont('DejaVuSans', '', 12);
 $pdf->AddPage();
 
@@ -143,7 +160,7 @@ $periodFileNameMap = [
 
 $filePeriodName = isset($periodFileNameMap[$period]) ? $periodFileNameMap[$period] : $period;
 
-$pdf->Cell(0, 10, 'Отчет по продажам и выкупам ' . $periodDescription, 0, 1, 'C');
+$pdf->Cell(0, 10, iconv('UTF-8', 'windows-1251//IGNORE', 'Отчет по продажам и выкупам ' . $periodDescription), 0, 1, 'C');
 $pdf->Ln(5);
 
 // Вставка графика выкупов, если есть
@@ -158,13 +175,13 @@ if ($redemptionImageBase64) {
 
 // Таблица выкупов
 $pdf->SetFont('DejaVuSans', '', 12);
-$pdf->Cell(0, 10, 'Отчет по выкупам', 0, 1, 'L');
-$pdf->Cell(60, 10, 'Дата', 1);
-$pdf->Cell(65, 10, 'Сумма выкупов (руб.)', 1);
+$pdf->Cell(0, 10, iconv('UTF-8', 'windows-1251//IGNORE', 'Отчет по выкупам'), 0, 1, 'L');
+$pdf->Cell(60, 10, iconv('UTF-8', 'windows-1251//IGNORE', 'Дата'), 1);
+$pdf->Cell(65, 10, iconv('UTF-8', 'windows-1251//IGNORE', 'Сумма выкупов (руб.)'), 1);
 $pdf->Ln();
 
 foreach ($allDates as $index => $date) {
-    $pdf->Cell(60, 10, $date, 1);
+    $pdf->Cell(60, 10, iconv('UTF-8', 'windows-1251//IGNORE', $date), 1);
     $pdf->Cell(65, 10, strval($redemptionCounts[$index]), 1);
     $pdf->Ln();
 }
@@ -181,13 +198,13 @@ if ($salesImageBase64) {
 
 // Таблица продаж
 $pdf->SetFont('DejaVuSans', '', 12);
-$pdf->Cell(0, 10, 'Отчет по продажам', 0, 1, 'L');
-$pdf->Cell(60, 10, 'Дата', 1);
-$pdf->Cell(65, 10, 'Сумма продаж (руб.)', 1);
+$pdf->Cell(0, 10, iconv('UTF-8', 'windows-1251//IGNORE', 'Отчет по продажам'), 0, 1, 'L');
+$pdf->Cell(60, 10, iconv('UTF-8', 'windows-1251//IGNORE', 'Дата'), 1);
+$pdf->Cell(65, 10, iconv('UTF-8', 'windows-1251//IGNORE', 'Сумма продаж (руб.)'), 1);
 $pdf->Ln();
 
 foreach ($allDates as $index => $date) {
-    $pdf->Cell(60, 10, $date, 1);
+    $pdf->Cell(60, 10, iconv('UTF-8', 'windows-1251//IGNORE', $date), 1);
     $pdf->Cell(65, 10, strval($salesCounts[$index]), 1);
     $pdf->Ln();
 }

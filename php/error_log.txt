@@ -16,3 +16,14 @@ Stack trace:
 #1 C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php(160): FPDF->SetFont('dejavusans', 'B', 12)
 #2 {main}
   thrown in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 267
+[08-May-2025 09:44:11 Europe/Berlin] PHP Warning:  Undefined variable $periodDescription in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php on line 146
+[08-May-2025 09:48:20 Europe/Berlin] PHP Warning:  Undefined variable $periodDescription in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php on line 146
+[08-May-2025 10:45:10 Europe/Berlin] PHP Warning:  include(C:\xampp\htdocs\cites\php\fpdf/font/arial.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 1137
+[08-May-2025 10:45:10 Europe/Berlin] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\cites\php\fpdf/font/arial.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 1137
+[08-May-2025 10:45:10 Europe/Berlin] PHP Fatal error:  Uncaught Exception: FPDF error: Could not include font definition file: C:\xampp\htdocs\cites\php\fpdf/font/arial.php in C:\xampp\htdocs\cites\php\fpdf\fpdf.php:267
+Stack trace:
+#0 C:\xampp\htdocs\cites\php\fpdf\fpdf.php(1139): FPDF->Error('Could not inclu...')
+#1 C:\xampp\htdocs\cites\php\fpdf\fpdf.php(461): FPDF->_loadfont('C:\\xampp\\htdocs...')
+#2 C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php(148): FPDF->AddFont('arial', '', 'arial.php')
+#3 {main}
+  thrown in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 267
