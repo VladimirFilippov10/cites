@@ -101,8 +101,9 @@ checkAuth(); // Проверка аутентификации
             echo '<p>Пользователей онлайн нет</p>';
         }
         echo '</div>';
-    }
-    ?>
+
+    ?> 
+
     <!-- Analytics charts for admin -->
     <div class="max-w-9xl w-5/6 mx-auto p-4 bg-white shadow-md mt-10">
         <h1 class="text-2xl font-bold mb-6">Аналитика по выкупам и продажам</h1>
@@ -120,6 +121,9 @@ checkAuth(); // Проверка аутентификации
         <canvas id="redemptionChart" width="800" height="400"></canvas>
         <canvas id="salesChart" width="800" height="400" class="mt-10"></canvas>
     </div>
+            <?php
+            }
+    ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script>
@@ -255,6 +259,7 @@ checkAuth(); // Проверка аутентификации
 
         updateCharts();
     </script>
+
     <?php
     if ($_SESSION['employee_role'] == 4)
     {

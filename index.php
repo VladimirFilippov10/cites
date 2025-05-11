@@ -40,6 +40,7 @@
             $query = "SELECT car.*, model.model_name, brand.brand_name FROM car 
                       JOIN model ON car.model_id = model.model_id
                       JOIN brand ON model.brand_id = brand.brand_id
+                      WHERE car_in_price = 1
                       ORDER BY car.car_price DESC LIMIT 3";
             $result = $conn->query($query);
             while ($car = $result->fetch_assoc()):

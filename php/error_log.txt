@@ -27,3 +27,53 @@ Stack trace:
 #2 C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php(148): FPDF->AddFont('arial', '', 'arial.php')
 #3 {main}
   thrown in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 267
+[08-May-2025 12:35:37 Europe/Berlin] PHP Warning:  require_once(C:\xampp\htdocs\cites\php/tcpdf/tcpdf.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php on line 7
+[08-May-2025 12:35:37 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\xampp\htdocs\cites\php/tcpdf/tcpdf.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php:7
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php on line 7
+[08-May-2025 12:36:57 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "Com\Tecnick\Pdf\Tcpdf" not found in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php:146
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php on line 146
+[08-May-2025 12:37:23 Europe/Berlin] PHP Warning:  require_once(C:\xampp\htdocs\cites\php/tcpdf/tcpdf.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php on line 143
+[08-May-2025 12:37:23 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\xampp\htdocs\cites\php/tcpdf/tcpdf.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php:143
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php on line 143
+[08-May-2025 12:37:43 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "TCPDF" not found in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php:146
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php on line 146
+[08-May-2025 12:39:19 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "Com\Tecnick\Pdf\Tcpdf" not found in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php:146
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php on line 146
+[08-May-2025 12:51:16 Europe/Berlin] PHP Fatal error:  Declaration of tFPDF::Write($h, $txt) must be compatible with FPDF::Write($h, $txt, $link = '') in C:\xampp\htdocs\cites\php\tfpdf\tfpdf.php on line 8
+[10-May-2025 11:42:49 Europe/Berlin] PHP Warning:  include(C:\xampp\htdocs\cites\php\fpdf/font/DejaVuSerif.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 1137
+[10-May-2025 11:42:49 Europe/Berlin] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\cites\php\fpdf/font/DejaVuSerif.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 1137
+[10-May-2025 11:42:49 Europe/Berlin] PHP Fatal error:  Uncaught Exception: FPDF error: Could not include font definition file: C:\xampp\htdocs\cites\php\fpdf/font/DejaVuSerif.php in C:\xampp\htdocs\cites\php\fpdf\fpdf.php:267
+Stack trace:
+#0 C:\xampp\htdocs\cites\php\fpdf\fpdf.php(1139): FPDF->Error('Could not inclu...')
+#1 C:\xampp\htdocs\cites\php\fpdf\fpdf.php(461): FPDF->_loadfont('C:\\xampp\\htdocs...')
+#2 C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php(149): FPDF->AddFont('dejavuserif', '', 'DejaVuSerif.php')
+#3 {main}
+  thrown in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 267
+[10-May-2025 11:44:21 Europe/Berlin] PHP Warning:  include(C:\xampp\htdocs\cites\php\fpdf/font/DejaVuSerif.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 1137
+[10-May-2025 11:44:21 Europe/Berlin] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\cites\php\fpdf/font/DejaVuSerif.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 1137
+[10-May-2025 11:44:21 Europe/Berlin] PHP Fatal error:  Uncaught Exception: FPDF error: Could not include font definition file: C:\xampp\htdocs\cites\php\fpdf/font/DejaVuSerif.php in C:\xampp\htdocs\cites\php\fpdf\fpdf.php:267
+Stack trace:
+#0 C:\xampp\htdocs\cites\php\fpdf\fpdf.php(1139): FPDF->Error('Could not inclu...')
+#1 C:\xampp\htdocs\cites\php\fpdf\fpdf.php(461): FPDF->_loadfont('C:\\xampp\\htdocs...')
+#2 C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php(149): FPDF->AddFont('dejavuserif', '', 'DejaVuSerif.php')
+#3 {main}
+  thrown in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 267
+[10-May-2025 11:45:42 Europe/Berlin] PHP Warning:  include(C:\xampp\htdocs\cites\php\fpdf/font/DejaVuSerif.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 1137
+[10-May-2025 11:45:42 Europe/Berlin] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\cites\php\fpdf/font/DejaVuSerif.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 1137
+[10-May-2025 11:45:42 Europe/Berlin] PHP Fatal error:  Uncaught Exception: FPDF error: Could not include font definition file: C:\xampp\htdocs\cites\php\fpdf/font/DejaVuSerif.php in C:\xampp\htdocs\cites\php\fpdf\fpdf.php:267
+Stack trace:
+#0 C:\xampp\htdocs\cites\php\fpdf\fpdf.php(1139): FPDF->Error('Could not inclu...')
+#1 C:\xampp\htdocs\cites\php\fpdf\fpdf.php(461): FPDF->_loadfont('C:\\xampp\\htdocs...')
+#2 C:\xampp\htdocs\cites\php\sales_buyback_report_fpdf.php(149): FPDF->AddFont('dejavuserif', '', 'DejaVuSerif.php')
+#3 {main}
+  thrown in C:\xampp\htdocs\cites\php\fpdf\fpdf.php on line 267

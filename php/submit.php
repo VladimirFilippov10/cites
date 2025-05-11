@@ -54,24 +54,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
     $car_id = $stmt->insert_id;
 
     // Обработка загрузки фотографий и отладка
-    if (!empty($_FILES['car_photos'])) {
-        $photoCount = count($_FILES['car_photos']['name']);
-        for ($i = 0; $i < $photoCount; $i++) {
-            $photoTmpName = $_FILES['car_photos']['tmp_name'][$i];
-            $photoPath = "../img/cars/" . $car_id . "_" . ($i + 1) . ".png";
-            if (move_uploaded_file($photoTmpName, $photoPath)) {
-                // Вставка пути к фотографии в таблицу car_photo
-                $insertPhotoQuery = "INSERT INTO car_photo (car_photo_image_patch, car_id) VALUES (?, ?)";
-                $photoStmt = $conn->prepare($insertPhotoQuery);
-                $photoPath = '/' . $car_id . "_" . ($i + 1) . ".png"; // Update to save only the file name with leading slash
-                $photoStmt->bind_param("si", $photoPath, $car_id);
-
-                $photoStmt->execute();
-            } else {
-                error_log("Ошибка при загрузке файла: " . $_FILES['car_photos']['name'][$i]);
+if (!empty($_FILES['car_photos'])) {
+    $photoCount = count($_FILES['car_photos']['name']);
+    for ($i = 0; $i < $photoCount; $i++) {
+        $photoTmpName = $_FILES['car_photos']['tmp_name'][$i];
+        $photoPath = "../img/cars/" . $car_id . "_" . ($i + 1) . ".png";
+        if (move_uploaded_file($photoTmpName, $photoPath)) {
+            // Вставка пути к фотографии в таблицу car_photo
+            $insertPhotoQuery = "INSERT INTO car_photo (car_photo_image_patch, car_id) VALUES (?, ?)";
+            $photoStmt = $conn->prepare($insertPhotoQuery);
+            if ($photoStmt === false) {
+                error_log("Ошибка подготовки запроса вставки фото: " . $conn->error);
+                continue;
             }
+            $photoPathDb = '/' . $car_id . "_" . ($i + 1) . ".png"; // Update to save only the file name with leading slash
+            $photoStmt->bind_param("si", $photoPathDb, $car_id);
+            if (!$photoStmt->execute()) {
+                error_log("Ошибка выполнения запроса вставки фото: " . $photoStmt->error);
+            }
+        } else {
+            error_log("Ошибка при загрузке файла: " . $_FILES['car_photos']['name'][$i]);
         }
     }
+}
 
     // Обработка комплектации и элементов комплектации
     if (!empty($car_equipment_descriptions)) {
@@ -90,17 +95,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
     $equipment = $equipmentResult->fetch_assoc();
     $car_equipment_id = $equipment['car_equipment_id']; 
 
-    if (!empty($_POST['complectation'])) {
+if (!empty($_POST['complectation'])) {
+    if (!empty($car_id)) {
         foreach ($_POST['complectation'] as $element) {
             $insertElementQuery = "INSERT INTO car_equipment_element (car_equipment_element_text, car_equipment_id) VALUES (?, (SELECT car_equipment_id FROM car_equipment WHERE car_id = ? LIMIT 1))";
             $elementStmt = $conn->prepare($insertElementQuery);
-            $elementStmt->bind_param("si", $element, $car_equipment_id);
-            $elementStmt->execute();
+            if ($elementStmt === false) {
+                error_log("Ошибка подготовки запроса: " . $conn->error);
+                continue;
+            }
+            $elementStmt->bind_param("si", $element, $car_id);
+            if (!$elementStmt->execute()) {
+                error_log("Ошибка выполнения запроса: " . $elementStmt->error);
+            }
         }
+    } else {
+        error_log("car_id пустой, элементы комплектации не добавлены");
     }
+}
 
     // Возвращаем JSON-ответ с успешным добавлением
     // echo json_encode(['success' => true]);
+    header("Location: ../newCar.php");
     exit();
 }
 ?>
