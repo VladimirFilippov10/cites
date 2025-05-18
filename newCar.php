@@ -22,7 +22,7 @@ if ($_SESSION['employee_role'] == 3 || $_SESSION['employee_role'] == 4) { // Е�
         include 'template/nav_employees.php';
         include 'php/dbconnect.php'; // Подключение к базе данных
     ?>
-    <script src="js/newCarPhoto.js"></script>
+    <script src="js/newCarPhotoNew.js"></script>
     <script src="js/newCarComplect.js"></script>
     <script src="js/newCarLimitation.js"></script>
 

@@ -38,20 +38,28 @@ if ($_SESSION['employee_role'] == 3) { // Если роль 3, перенапр�
         }
 
         // Запрос для получения всех автомобилей с именами моделей
-        $carsQuery = "SELECT car.*, model.model_name FROM car JOIN model ON car.model_id = model.model_id ORDER BY $sort $order";
+        $carsQuery = "SELECT car.*, model.model_name FROM car JOIN model ON car.model_id = model.model_id";
+
+        $conditions = [];
 
         if ($searchWin) {
-            $carsQuery .= " AND car.car_win_code LIKE '%" . $conn->real_escape_string($searchWin) . "%'";
+            $conditions[] = "car.car_win_code LIKE '%" . $conn->real_escape_string($searchWin) . "%'";
         }
         if ($searchModel) {
-            $carsQuery .= " AND model.model_name LIKE '%" . $conn->real_escape_string($searchModel) . "%'";
+            $conditions[] = "model.model_name LIKE '%" . $conn->real_escape_string($searchModel) . "%'";
         }
         if ($car_state_number) {
-            $carsQuery .= " AND car.car_state_number LIKE '%" . $conn->real_escape_string($car_state_number) . "%'"; // Фильтр по гос номеру
+            $conditions[] = "car.car_state_number LIKE '%" . $conn->real_escape_string($car_state_number) . "%'"; // Фильтр по гос номеру
         }
         if ($filterSale) {
-            $carsQuery .= " AND car.car_in_price = 1"; // Предполагается, что 1 - это признак, что автомобиль на продаже
+            $conditions[] = "car.car_in_price = 1"; // Предполагается, что 1 - это признак, что автомобиль на продаже
         }
+
+        if (count($conditions) > 0) {
+            $carsQuery .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $carsQuery .= " ORDER BY $sort $order";
 
         $carsResult = $conn->query($carsQuery);
     ?>
