@@ -312,6 +312,48 @@ checkAuth(); // Проверка аутентификации
         }
         echo "</div></div>";
     }
+    if ($_SESSION['employee_role'] == 2)
+    {
+        $query = "SELECT cb.car_buyback_car_id, cb.car_buyback_price, car.car_price, cb.car_buyback_datetime, brand.brand_name, model.model_name 
+                  FROM car_buyback cb
+                  JOIN car ON cb.car_buyback_car_id = car.car_id
+                  JOIN model ON car.model_id = model.model_id
+                  JOIN brand ON model.brand_id = brand.brand_id
+                  LEFT JOIN car_sales cs ON cb.car_buyback_car_id = cs.car_sales_car_id
+                  WHERE (cs.car_sales_datatime IS NULL OR cs.car_sales_datatime > DATE_SUB(NOW(), INTERVAL 1 MONTH)) AND car.car_in_price = 1
+                  GROUP BY cb.car_buyback_car_id
+                  ORDER BY car.car_price ASC, cb.car_buyback_datetime DESC
+                  LIMIT 10";
+        echo "<div class=\"flex justify-center\"><h1 class=\"text-2xl font-bold mb-6 text-center\">Последние выкупленные автомобили</h1></div>";
+        echo "<div class=\"container mx-auto py-10 px-10\">";
+        echo "<div class=\"flex flex-col w-full p-5 space-y-5\">";
+        $result = $conn->query($query);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $car_id = $row['car_buyback_car_id'] ?? null;
+                if ($car_id) {
+                    $query_photo = "SELECT * FROM car_photo WHERE car_id = " . $car_id . " LIMIT 1;";
+                    $res_photo= $conn->query($query_photo);
+                    $photo = $res_photo->fetch_assoc();
+                    echo '<a href="editCar.php?id=' . $car_id . '" class="flex w-full bg-gray-200 h-48 rounded-lg overflow-hidden shadow-lg">';
+                    echo '<div class="w-1/5">';
+                    echo '<img alt="' . $car_id . '1" class="h-full w-full object-cover rounded-l-lg" wight="250px" height="150px" src="img/cars/' . ($photo["car_photo_image_patch"] ?? '') . '" />';
+                    echo '</div>';
+                    echo '<div class="w-2/3 pl-4 flex flex-col justify-center">';
+                    echo '<h2 class="text-xl font-bold">' . $row['brand_name'] . ' ' . $row['model_name'] . '</h2>';
+                    echo '<p class="text-green-600 text-lg font-bold">Цена выкупа ' . $row['car_buyback_price'] . ' ₽</p>';
+                    echo '<p class="text-green-600 text-lg font-bold">Цена для продажи ' . $row['car_price'] . ' ₽</p>';
+                    echo '</div>';
+                    echo '</a>';
+                } else {
+                    echo '<p class="text-center">Ошибка: ID автомобиля не найден.</p>';
+                }
+            }
+        } else {
+            echo '<p class="text-center">Нет выкупленных автомобилей.</p>';
+        }
+        echo "</div></div>";
+    }
   /*  if ($_SESSION['employee_role'] == 1) {
         $query = "SELECT employee_name, employye_last_activity FROM employee WHERE employye_last_activity > DATE_SUB(NOW(), INTERVAL 10 MINUTE)";
         $result = $conn->query($query);
