@@ -232,6 +232,107 @@ checkAuth(); // Проверка аутентификации
         } else {
             echo "<p>Автомобиль не найден.</p>";
         }
+
+        // Fetch similar cars panel
+        $similarCars = [];
+        $excludedIds = [$car_id];
+
+        // 1. Get cars with the same body type
+        $querySimilarBody = "SELECT car.car_id, brand.brand_name, model.model_name, car.car_year_made, car.car_price, car.car_bodywork
+                             FROM car
+                             JOIN model ON car.model_id = model.model_id
+                             JOIN brand ON model.brand_id = brand.brand_id
+                             WHERE car.car_bodywork = ? AND car.car_id != ? AND car.car_in_price = 1
+                             LIMIT 3";
+        $stmtSimilarBody = $conn->prepare($querySimilarBody);
+        $stmtSimilarBody->bind_param("si", $car['car_bodywork'], $car_id);
+        $stmtSimilarBody->execute();
+        $resultSimilarBody = $stmtSimilarBody->get_result();
+        while ($row = $resultSimilarBody->fetch_assoc()) {
+            $similarCars[] = $row;
+            $excludedIds[] = $row['car_id'];
+        }
+
+        // 2. If less than 3, add cars of the same brand excluding already selected
+        if (count($similarCars) < 3) {
+            $placeholders = implode(',', array_fill(0, count($excludedIds), '?'));
+            $types = str_repeat('i', count($excludedIds));
+            $querySimilarBrand = "SELECT car.car_id, brand.brand_name, model.model_name, car.car_year_made, car.car_price, car.car_bodywork
+                                  FROM car
+                                  JOIN model ON car.model_id = model.model_id
+                                  JOIN brand ON model.brand_id = brand.brand_id
+                                  WHERE brand.brand_name = ? AND car.car_id NOT IN ($placeholders) AND car.car_in_price = 1
+                                  LIMIT ?";
+            $stmtSimilarBrand = $conn->prepare($querySimilarBrand);
+            $params = array_merge([$car['brand_name']], $excludedIds, [3 - count($similarCars)]);
+            $bind_names[] = str_repeat('s', 1) . $types . 'i';
+            $bind_names = [];
+            $bind_names[] = str_repeat('s', 1) . $types . 'i';
+            $bind_names[0] = 's' . $types . 'i';
+            $stmtSimilarBrand->bind_param($bind_names[0], ...$params);
+            $stmtSimilarBrand->execute();
+            $resultSimilarBrand = $stmtSimilarBrand->get_result();
+            while ($row = $resultSimilarBrand->fetch_assoc()) {
+                $similarCars[] = $row;
+                $excludedIds[] = $row['car_id'];
+            }
+        }
+
+        // 3. If still less than 3, add any cars excluding already selected
+        if (count($similarCars) < 3) {
+            $placeholders = implode(',', array_fill(0, count($excludedIds), '?'));
+            $types = str_repeat('i', count($excludedIds));
+            $queryAnyCars = "SELECT car.car_id, brand.brand_name, model.model_name, car.car_year_made, car.car_price, car.car_bodywork
+                             FROM car
+                             JOIN model ON car.model_id = model.model_id
+                             JOIN brand ON model.brand_id = brand.brand_id
+                             WHERE car.car_id NOT IN ($placeholders) AND car.car_in_price = 1
+                             LIMIT ?";
+            $stmtAnyCars = $conn->prepare($queryAnyCars);
+            $params = array_merge($excludedIds, [3 - count($similarCars)]);
+            $bind_names = [];
+            $bind_names[0] = $types . 'i';
+            $stmtAnyCars->bind_param($bind_names[0], ...$params);
+            $stmtAnyCars->execute();
+            $resultAnyCars = $stmtAnyCars->get_result();
+            while ($row = $resultAnyCars->fetch_assoc()) {
+                $similarCars[] = $row;
+                $excludedIds[] = $row['car_id'];
+            }
+        }
+
+        // Display similar cars panel
+        if (count($similarCars) > 0) {
+            echo '<div class="max-w-5xl mx-auto p-4 bg-white shadow-md mt-8">';
+            echo '<h2 class="text-2xl font-bold mb-4">Похожие автомобили</h2>';
+            echo '<div class="grid grid-cols-3 gap-4">';
+            foreach ($similarCars as $simCar) {
+                // Get one photo for the similar car
+                $photoPath = '';
+                $queryPhoto = "SELECT car_photo_image_patch FROM car_photo WHERE car_id = ? LIMIT 1";
+                $stmtPhoto = $conn->prepare($queryPhoto);
+                $stmtPhoto->bind_param("i", $simCar['car_id']);
+                $stmtPhoto->execute();
+                $resultPhoto = $stmtPhoto->get_result();
+                if ($resultPhoto->num_rows > 0) {
+                    $photo = $resultPhoto->fetch_assoc();
+                    $photoPath = $photo['car_photo_image_patch'];
+                }
+                echo '<div class="border rounded p-2 shadow hover:shadow-lg">';
+                echo '<a href="carDetails.php?id=' . $simCar['car_id'] . '" class="block">';
+                if ($photoPath) {
+                    echo '<img src="img/cars' . $photoPath . '" alt="Фото автомобиля" class="w-full h-40 object-cover rounded mb-2">';
+                } else {
+                    echo '<div class="w-full h-40 bg-gray-200 flex items-center justify-center rounded mb-2">Нет фото</div>';
+                }
+                echo '<h3 class="text-lg font-semibold">' . htmlspecialchars($simCar['brand_name']) . ' ' . htmlspecialchars($simCar['model_name']) . '</h3>';
+                echo '<p>' . htmlspecialchars($simCar['car_year_made']) . '</p>';
+                echo '<p class="font-bold">' . number_format($simCar['car_price'], 0, ',', ' ') . ' ₽</p>';
+                echo '</a>';
+                echo '</div>';
+            }
+            echo '</div></div>';
+        }
     ?>
 </body>
 <?php
