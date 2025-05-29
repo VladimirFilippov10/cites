@@ -207,6 +207,18 @@ checkAuth(); // Проверка аутентификации
                     } else {
                         echo '<li>Нет информации о комплектации.</li>';
                     }
+                    if ($_SESSION['employee_role'] != 4)
+                    {
+                    $query = "SELECT * FROM car_buyback WHERE car_buyback_id = " . $car['car_id'] . " ORDER BY car_buyback_datetime ASC";
+                        $result = $conn->query($query);
+                         while ($buyback = $result->fetch_assoc()) {
+                            echo '<div class="bg-gray-100 border border-gray-300 rounded-md p-3 mb-3 shadow-sm">';
+                            echo '<p class="text-gray-700 font-semibold mb-1">Дата последнего выкупа: <span class="font-normal">' . $buyback['car_buyback_datetime'] . '</span></p>';
+                            echo '<p class="text-gray-700 font-semibold">Цена выкупа: <span class="font-normal">' . number_format($buyback['car_buyback_price'], 0, ",", " ") . ' ₽</span></p>';
+                            echo '</div>';
+                         }
+
+                    }
                     ?>
                 </ul>
                 <div class="mt-4 flex items-center space-x-4">

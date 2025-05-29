@@ -233,7 +233,7 @@ checkAuth(); // Проверка аутентификации
             formData.append('salesImage', salesImage);
 
             try {
-                const response = await fetch('php/sales_buyback_report_fpdf.php', {
+                const response = await fetch('php/salesBuybackReportFpdf.php', {
                     method: 'POST',
                     body: formData
                 });
