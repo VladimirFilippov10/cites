@@ -17,6 +17,6 @@
             </div>
         </div>
         <div class="container mx-auto text-center mt-4">
-            <p>&copy; 2025 АААААвтосалон. Все права защищены.</p>
+            <p>&copy; 2025 Автосалон. Все права защищены.</p>
         </div>
     </footer>
