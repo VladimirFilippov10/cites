@@ -61,16 +61,13 @@
     document.addEventListener('DOMContentLoaded', function () {
         // Находим все элементы с классом "group"
         const dropdowns = document.querySelectorAll('.group');
-
         // Для каждого элемента добавляем обработчики событий
         dropdowns.forEach(dropdown => {
             const menu = dropdown.querySelector('ul'); // Находим выпадающий список
-
             // Показываем меню при наведении на родительский элемент
             dropdown.addEventListener('mouseenter', () => {
                 menu.classList.remove('hidden');
             });
-
             // Скрываем меню при уходе курсора с родительского элемента или меню
             dropdown.addEventListener('mouseleave', () => {
                 // Проверяем, находится ли курсор внутри меню
@@ -80,7 +77,6 @@
                     }
                 }, 100); // Небольшая задержка для плавности
             });
-
             // Скрываем меню при уходе курсора с самого меню
             menu.addEventListener('mouseleave', () => {
                 menu.classList.add('hidden');

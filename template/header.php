@@ -3,7 +3,6 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="css/style.css">
-<!--<link rel="stylesheet" href="http://localhost/cites/css/style.css">-->
 <header class="bg-blue-900 text-white">
     <?php
         include 'nav.php';

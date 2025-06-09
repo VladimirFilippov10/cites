@@ -11,7 +11,7 @@ if (!function_exists('checkAuth')) {
             $_SESSION['user_id'] = $_COOKIE['user_id'];
             $_SESSION['username'] = $_COOKIE['username'];
 
-            header("Location: auto.php"); // Перенаправление на страницу авторизации
+            header("Location: authorization.php"); // Перенаправление на страницу авторизации
             exit();
         } else if (isset($_COOKIE['user_id']) && !isset($_SESSION['user_id'])) {
             // Если user_id в куки, но сессия не восстановлена, перенаправляем на авторизацию
