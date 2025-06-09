@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         if ($result->num_rows > 0) {
             $car = $result->fetch_assoc();
-            $new_price_status = !$car['car_in_price']; // Toggle the boolean value
+            $new_price_status = !$car['car_in_price'];
     
             // Обновление значения cars_in_price
             $updateQuery = "UPDATE car SET car_in_price = ? WHERE car_id = ?";

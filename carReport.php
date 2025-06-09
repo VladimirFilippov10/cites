@@ -21,7 +21,7 @@ if ($_SESSION['employee_role'] != 1 && $_SESSION['employee_role'] != 2) { // Е�
     <?php
     include 'template/header.php';
     include 'php/dbconnect.php'; 
-include 'template/nav_employees.php'; // Подключение к базе данных
+    include 'template/nav_employees.php'; // Подключение к базе данных
 
 
     // Извлечение идентификатора автомобиля из URL

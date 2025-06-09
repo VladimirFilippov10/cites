@@ -1,9 +1,8 @@
 <?php
 session_start();
-include 'php/auth.php';
-checkAuth(); // Проверка аутентификации
+//include 'php/auth.php';
+//checkAuth(); // Проверка аутентификации
 
-// Остальной код остается без изменений
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -207,7 +206,7 @@ checkAuth(); // Проверка аутентификации
                     } else {
                         echo '<li>Нет информации о комплектации.</li>';
                     }
-                    if ($_SESSION['employee_role'] != 4)
+                   /* if ($_SESSION['employee_role'] != 4)
                     {
                     $query = "SELECT * FROM car_buyback WHERE car_buyback_id = " . $car['car_id'] . " ORDER BY car_buyback_datetime ASC";
                         $result = $conn->query($query);
@@ -218,7 +217,7 @@ checkAuth(); // Проверка аутентификации
                             echo '</div>';
                          }
 
-                    }
+                    }*/
                     ?>
                 </ul>
                 <div class="mt-4 flex items-center space-x-4">

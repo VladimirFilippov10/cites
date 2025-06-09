@@ -25,7 +25,7 @@ if ($_SESSION['employee_role'] == 3) { // Если роль 3, перенапр�
         // Обработка данных формы поиска
         $searchWin = isset($_POST['searchWin']) ? $_POST['searchWin'] : '';
         $searchModel = isset($_POST['searchModel']) ? $_POST['searchModel'] : '';
-        $car_state_number = isset($_POST['car_state_number']) ? $_POST['car_state_number'] : ''; // Новое поле для гос номера
+        $car_state_number = isset($_POST['car_state_number']) ? $_POST['car_state_number'] : ''; 
         $filterSale = isset($_POST['filterSale']) ? $_POST['filterSale'] : '';
 
         // Обработка параметров сортировки

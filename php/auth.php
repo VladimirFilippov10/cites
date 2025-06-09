@@ -17,8 +17,6 @@ if (!function_exists('checkAuth')) {
             // Если user_id в куки, но сессия не восстановлена, перенаправляем на авторизацию
             header("Location: authorization.php");
             exit();
-
-            exit();
         }
 
         // Проверка таймаута сессии (10 минут)

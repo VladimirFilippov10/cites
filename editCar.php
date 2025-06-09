@@ -265,7 +265,7 @@ if ($_SESSION['employee_role'] == 3 || $_SESSION['employee_role'] == 4) { // Е�
 
         const files = e.target.files;
         const photoContainer = document.getElementById('photoContainer');
-        
+       
         // Сохраняем существующие превью
         const existingPreviews = photoContainer.innerHTML;
         
