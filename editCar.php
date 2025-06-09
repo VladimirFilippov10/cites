@@ -207,8 +207,8 @@ if ($_SESSION['employee_role'] == 3 || $_SESSION['employee_role'] == 4) { // Е�
                 <div id="photoContainer">
                     <?php while ($photo = $photoResult->fetch_assoc()): ?>
                 <div class="photo-item mb-4">
-                    <button type="button" class="move-up bg-yellow-500 text-white p-1 rounded" onclick="movePhotoUp(this)">↑</button>
-                    <button type="button" class="move-down bg-yellow-500 text-white p-1 rounded" onclick="movePhotoDown(this)">↓</button>
+                    <!--<button type="button" class="move-up bg-yellow-500 text-white p-1 rounded" onclick="movePhotoUp(this)">↑</button>-->
+                   <!-- <button type="button" class="move-down bg-yellow-500 text-white p-1 rounded" onclick="movePhotoDown(this)">↓</button>-->
 
                 <img src="http://localhost/cites/img/cars<?php echo ltrim($photo['car_photo_image_patch']); ?>" alt="Фото" class="mb-2" style="max-width: 100px;">
 
