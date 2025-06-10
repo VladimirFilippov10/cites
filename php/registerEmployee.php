@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($usernameResult->num_rows > 0) {
     $_SESSION['outputMessage'] = "Логин уже занят. Пожалуйста, выберите другой."; // Отладочное сообщение
 
-        header("Location: ../registr.php"); // Исправленный путь
+        header("Location: ../registration.php"); // Исправленный путь
         exit;
     }
 
@@ -29,20 +29,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!$codeResult) {
     $_SESSION['outputMessage'] = "Ошибка запроса: " . $conn->error;
 
-        header("Location: ../registr.php"); // Исправленный путь
+        header("Location: ../registration.php"); // Исправленный путь
         exit;
     }
 
     if ($codeResult->num_rows == 0) {
     $_SESSION['outputMessage'] = "Недействительный код регистрации. Пожалуйста, проверьте введенный код."; // Отладочное сообщение
 
-        header("Location: ../registr.php"); // Исправленный путь
+        header("Location: ../registration.php"); // Исправленный путь
         exit;
     } else {
         $registr = $codeResult->fetch_assoc();
         if (!$registr) {
             $_SESSION['outputMessage'] = "Недействительный код регистрации. Пожалуйста, проверьте введенный код.<br>";
-            header("Location: ../registr.php"); // Исправленный путь
+            header("Location: ../registration.php"); // Исправленный путь
             exit;
         }
         $id = $registr['employee_code_registration_id'];
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($conn->query($insertQuery) === TRUE) {
     $_SESSION['outputMessage'] = "Регистрация прошла успешно!";
 
-            header("Location: ../registr.php"); // Исправленный путь
+            header("Location: ../registration.php"); // Исправленный путь
             exit();
         }
     }

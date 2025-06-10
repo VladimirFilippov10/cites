@@ -232,11 +232,11 @@ session_start();
             echo "<p>Автомобиль не найден.</p>";
         }
 
-        // Fetch similar cars panel
+        // Получение панели похожих автомобилей
         $similarCars = [];
         $excludedIds = [$car_id];
 
-        // 1. Get cars with the same body type
+        // 1. Получить автомобили с таким же типом кузова
         $querySimilarBody = "SELECT car.car_id, brand.brand_name, model.model_name, car.car_year_made, car.car_price, car.car_bodywork
                              FROM car
                              JOIN model ON car.model_id = model.model_id
@@ -252,7 +252,7 @@ session_start();
             $excludedIds[] = $row['car_id'];
         }
 
-        // 2. If less than 3, add cars of the same brand excluding already selected
+        // 2. Если меньше 3, добавить автомобили той же марки, исключая уже выбранные
         if (count($similarCars) < 3) {
             $placeholders = implode(',', array_fill(0, count($excludedIds), '?'));
             $types = str_repeat('i', count($excludedIds));
@@ -277,7 +277,7 @@ session_start();
             }
         }
 
-        // 3. If still less than 3, add any cars excluding already selected
+        // 3. Если все еще меньше 3, добавить любые автомобили, исключая уже выбранные
         if (count($similarCars) < 3) {
             $placeholders = implode(',', array_fill(0, count($excludedIds), '?'));
             $types = str_repeat('i', count($excludedIds));
@@ -300,13 +300,13 @@ session_start();
             }
         }
 
-        // Display similar cars panel
+        // Отобразить панель похожих автомобилей
         if (count($similarCars) > 0) {
             echo '<div class="max-w-5xl mx-auto p-4 bg-white shadow-md mt-8">';
             echo '<h2 class="text-2xl font-bold mb-4">Похожие автомобили</h2>';
             echo '<div class="grid grid-cols-3 gap-4">';
             foreach ($similarCars as $simCar) {
-                // Get one photo for the similar car
+                // Получить одну фотографию для похожего автомобиля
                 $photoPath = '';
                 $queryPhoto = "SELECT car_photo_image_patch FROM car_photo WHERE car_id = ? LIMIT 1";
                 $stmtPhoto = $conn->prepare($queryPhoto);

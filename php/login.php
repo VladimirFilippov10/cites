@@ -37,12 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         } else {
             $_SESSION['outputMessage'] = "Неверный пароль."; // Установка сообщения об ошибке
-            header("Location: ../auto.php");
+            header("Location: ../authorization.php");
             exit();
         }
     } else {
         $_SESSION['outputMessage'] = "Пользователь не найден."; // Установка сообщения об ошибке
-        header("Location: ../auto.php");
+        header("Location: ../authorization.php");
         exit();
     }
 }
