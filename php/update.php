@@ -174,7 +174,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     }
-
     echo "<script>alert('Данные успешно обновлены!'); window.location.href = '../viewAllCars.php';</script>";
     exit();
 

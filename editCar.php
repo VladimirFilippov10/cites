@@ -262,34 +262,26 @@ if ($_SESSION['employee_role'] == 3 || $_SESSION['employee_role'] == 4) { // Е�
     }
 
     document.querySelector('input[type="file"]').addEventListener('change', function(e) {
-
         const files = e.target.files;
-        const photoContainer = document.getElementById('photoContainer');
-       
+        const photoContainer = document.getElementById('photoContainer');      
         // Сохраняем существующие превью
         const existingPreviews = photoContainer.innerHTML;
-        
         // Очищаем контейнер и восстанавливаем существующие превью
         photoContainer.innerHTML = existingPreviews;
-
         // Добавляем новые превью
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            const reader = new FileReader();
-            
+            const reader = new FileReader();           
             reader.onload = function(e) {
                 const img = document.createElement('img');
                 img.src = e.target.result;
                 img.style.maxWidth = '100px';
-                img.className = 'mb-2';
-                
+                img.className = 'mb-2';              
                 const div = document.createElement('div');
                 div.className = 'photo-item mb-4';
-                div.appendChild(img);
-                
+                div.appendChild(img);               
                 photoContainer.appendChild(div);
-            }
-            
+            }           
             reader.readAsDataURL(file);
         }
 
