@@ -146,7 +146,7 @@ foreach ($allDates as $date) {
 // Создание PDF
 
 $pdf = new tFPDF('P', 'mm', 'A4');
-$pdf->AddFont('dejavuserif', '', 'DejaVuSerif.php'); // Заменяем шрифт на dejavuserif для поддержки кириллицы
+$pdf->AddFont('DejaVuSerif', '', 'DejaVuSerif.php'); // Заменяем шрифт на DejaVuSerif для поддержки кириллицы
 $pdf->SetFont('dejavuserif', '', 12);
 $pdf->AddPage();
 
